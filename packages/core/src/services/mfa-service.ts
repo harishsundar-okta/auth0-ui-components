@@ -1,4 +1,4 @@
-import { get, del, isApiError } from '@core/api';
+import { get, del, isApiError } from '../api';
 import type { Authenticator, FactorMeta } from './types';
 
 export const factorsMeta: Record<string, FactorMeta> = {
