@@ -22,6 +22,7 @@
     }
   },
   "scripts": {
+    "build": "turbo run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
@@ -41,6 +42,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^8.56.0",
+    "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-json": "^6.1.0",
@@ -58,6 +60,7 @@
     "prettier": "^3.2.0",
     "rollup": "^4.41.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "turbo": "^2.5.4",
     "typescript": "^5.8.3"
   }
 }

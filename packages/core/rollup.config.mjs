@@ -1,9 +1,14 @@
-import { createBaseConfig } from '../../rollup.base.mjs';
+import typescript from '@rollup/plugin-typescript';
 
-export default createBaseConfig({
+export default {
   input: 'src/index.ts',
-  outputDir: 'dist',
-  tsconfig: './tsconfig.json',
-  external: [],
-  useBabel: false,
-});
+  output: {
+    dir: 'dist',
+    format: 'esm',
+    sourcemap: true,
+    preserveModules: true
+  },
+  plugins: [
+    typescript({ tsconfig: './tsconfig.json' })
+  ]
+};
