@@ -1,27 +1,37 @@
-import typescript from '@rollup/plugin-typescript';
+import typescript from 'rollup-plugin-typescript2';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import postcss from 'rollup-plugin-postcss';
-import alias from '@rollup/plugin-alias';
 
 export default {
   input: 'src/index.ts',
-  output: {
-    dir: 'dist',
-    format: 'esm',
-    sourcemap: true,
-    preserveModules: true,
-  },
-  external: ['react', 'react-dom', '@auth0-web-ui-components/core'],
+  output: [
+    {
+      dir: 'dist',
+      format: 'cjs',
+      sourcemap: true,
+      entryFileNames: '[name].cjs.js',
+      chunkFileNames: '[name]-[hash].cjs.js', 
+    },
+    {
+      dir: 'dist',
+      format: 'esm',
+      sourcemap: true,
+      entryFileNames: '[name].esm.js',
+      chunkFileNames: '[name]-[hash].esm.js',
+    },
+  ],
   plugins: [
-    alias({
-      entries: [{ find: '@core', replacement: '../../core/src' }],
+    nodeResolve(),
+    commonjs(),
+    typescript({
+      useTsconfigDeclarationDir: true,
     }),
     postcss({
-      extract: true,  // Extracts the CSS into a separate file
-      inject: true,   // Injects CSS into the HTML
-      config: {
-        path: './postcss.config.mjs', // Pointing to your PostCSS config
-      },
+      extract: true,
     }),
-    typescript({ tsconfig: './tsconfig.json' }),
   ],
+  external: ['react', 'react-dom'],
+  preserveEntrySignatures: 'strict',
+  inlineDynamicImports: true,
 };
