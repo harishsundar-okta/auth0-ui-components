@@ -12,7 +12,6 @@
   "dependencies": {
     "@auth0-web-ui-components/react": "workspace:*",
     "@auth0/auth0-react": "^2.0.0",
-    "@tailwindcss/vite": "^4.1.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

@@ -106,7 +106,7 @@ function getNestedValue<T extends object>(obj: T, path: string): string | null {
 function substituteVariables(translation: string, vars?: Record<string, unknown>): string {
   if (!vars) return translation;
 
-  return translation.replace(/\$\{(\w+)\}/g, (_, varName) => {
+  return translation.replace(/\$\{([\w-]+)\}/g, (_, varName) => {
     const value = vars[varName];
     return value !== undefined ? String(value) : '';
   });

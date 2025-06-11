@@ -1,12 +1,8 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import { ManageMfa } from '@auth0-web-ui-components/react';
 
 function App() {
-  const [count, setCount] = useState(0);
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
   const logoutWithRedirect = () =>
@@ -18,39 +14,39 @@ function App() {
 
   //TODO cleanup to add auth0 asset
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-      {!isAuthenticated && <button onClick={() => loginWithRedirect()}>Login</button>}
-      <button onClick={() => logoutWithRedirect()}>Logout</button>
-      {isAuthenticated && (
-        <ManageMfa
-          localization={{ title: 'My Factors' }}
-          factorConfig={{
-            duo: {
-              enabled: false,
-            },
-            'webauthn-platform': {
-              visible: false,
-            },
-          }}
-        />
+    <div>
+      <img
+        src="https://cdn.cookielaw.org/logos/5b38f79c-c925-4d4e-af5e-ec27e97e1068/01963fbf-a156-710c-9ff0-e3528aa88982/baec8c9a-62ca-45e4-8549-18024c4409b1/auth0-logo.png"
+        className="logo"
+        alt="Auth0 logo"
+      />
+      <h1 className="app-title">React SPA</h1>
+
+      {!isAuthenticated && (
+        <button className="auth-button" onClick={() => loginWithRedirect()}>
+          Login
+        </button>
       )}
-    </>
+      <button className="auth-button" onClick={() => logoutWithRedirect()}>
+        Logout
+      </button>
+
+      {isAuthenticated && (
+        <div className="mfa-container">
+          <ManageMfa
+            localization={{ title: 'MFA Factors' }}
+            factorConfig={{
+              duo: {
+                enabled: false,
+              },
+              'webauthn-platform': {
+                visible: false,
+              },
+            }}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 

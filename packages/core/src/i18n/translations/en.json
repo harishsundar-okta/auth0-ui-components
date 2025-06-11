@@ -28,7 +28,8 @@
       },
       "unsupported_challenge_type": {
         "sms": "SMS Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"SMS\" on Guardian MFA section.",
-        "topt": "OTP Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"Push notifications\" on Guardian MFA section (Push notications include OTP)."
+        "totp": "OTP Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"Push notifications\" on Guardian MFA section (Push notications include OTP).",
+        "push-notification": "Auth0 Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"Push notifications\" on Guardian MFA section."
       }
     },
     "sms": {

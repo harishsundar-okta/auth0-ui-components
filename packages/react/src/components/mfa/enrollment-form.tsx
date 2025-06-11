@@ -43,7 +43,6 @@ type OtpForm = {
   userOtp: string;
 };
 
-//TODO - move logic to leaf node - manage mfa , make this presentational component
 export function EnrollmentForm({
   open,
   onClose,
@@ -55,7 +54,8 @@ export function EnrollmentForm({
 }: EnrollmentFormProps) {
   const t = useI18n('mfa');
 
-  const [phase, setPhase] = React.useState<'enterContact' | 'enterOtp' | 'showOtp'>('enterContact');
+  // Initialize phase as null, meaning no UI shown by default
+  const [phase, setPhase] = React.useState<'enterContact' | 'enterOtp' | 'showOtp' | null>(null);
   const [oobCode, setOobCode] = React.useState<string | undefined>(undefined);
   const [otpData, setOtpData] = React.useState<{
     secret: string | null;
@@ -86,7 +86,7 @@ export function EnrollmentForm({
 
   React.useEffect(() => {
     if (!open) {
-      setPhase('enterContact');
+      setPhase(null); // reset phase to null when dialog closes
       setOobCode(undefined);
       setOtpData({ secret: null, barcodeUri: null, recoveryCodes: [] });
       setLoading(false);
@@ -94,6 +94,12 @@ export function EnrollmentForm({
       formOtp.reset();
     }
   }, [open, formContact, formOtp]);
+
+  React.useEffect(() => {
+    if (open && (factorType === 'email' || factorType === 'sms')) {
+      setPhase('enterContact');
+    }
+  }, [open, factorType]);
 
   const onSubmitContact = async (data: ContactForm) => {
     setLoading(true);
@@ -122,8 +128,7 @@ export function EnrollmentForm({
       }
     } catch (error) {
       const normalizedError = normalizeError(error, {
-        resolver: (code) =>
-          code === 'unsupported_challenge_type' ? t(`errors.${code}.${factorType}`) : null,
+        resolver: (code) => t(`errors.${code}.${factorType}`),
         fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
       });
       onError(normalizedError, 'enroll');
@@ -136,7 +141,6 @@ export function EnrollmentForm({
     setLoading(true);
 
     try {
-      //TODO
       const options = {
         oobCode,
         ...(factorType === 'email'
@@ -150,8 +154,9 @@ export function EnrollmentForm({
         onClose();
       }
     } catch (err) {
+      console.log(factorType);
       const normalizedError = normalizeError(err, {
-        resolver: (code) => (code === 'invalid_grant' ? t(`errors.${code}.${factorType}`) : null),
+        resolver: (code) => t(`errors.${code}.${factorType}`),
         fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
       });
       onError(normalizedError, 'confirm');
@@ -160,10 +165,9 @@ export function EnrollmentForm({
     }
   };
 
-  // Automatically initiate OTP enrollment when factorType is 'totp'
+  // Automatically initiate OTP enrollment when factorType is 'totp' or 'push-notification'
   React.useEffect(() => {
-    if (factorType === 'totp' && !otpData.secret) {
-      setPhase('showOtp');
+    if (['totp', 'push-notification'].includes(factorType) && !otpData.secret && open) {
       setLoading(true);
       const fetchOtpEnrollment = async () => {
         try {
@@ -175,13 +179,14 @@ export function EnrollmentForm({
               recoveryCodes: response.recovery_codes || [],
             });
           }
+          setPhase('showOtp');
         } catch (error) {
           const normalizedError = normalizeError(error, {
-            resolver: (code) =>
-              code === 'unsupported_challenge_type' ? t(`errors.${code}.${factorType}`) : null,
+            resolver: (code) => t(`errors.${code}.${factorType}`),
             fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
           });
           onError(normalizedError, 'enroll');
+          onClose();
         } finally {
           setLoading(false);
         }
@@ -189,7 +194,7 @@ export function EnrollmentForm({
 
       fetchOtpEnrollment();
     }
-  }, [factorType, enrollMfa, onError, otpData.secret]);
+  }, [factorType, enrollMfa, onError, otpData.secret, open]);
 
   // Render the appropriate form based on the current phase and factorType
   const renderForm = () => {
@@ -331,7 +336,7 @@ export function EnrollmentForm({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open && Boolean(phase)} onOpenChange={onClose}>
       <DialogContent aria-describedby={factorType}>
         <DialogHeader>
           <DialogTitle>

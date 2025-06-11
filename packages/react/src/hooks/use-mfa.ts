@@ -108,7 +108,7 @@ export function useMFA() {
    */
   const fetchFactors = useCallback(
     async (onlyActive = false) => {
-      validatePrerequisites();
+      if (!isProxyMode) validatePrerequisites();
       return fetchMfaFactors(apiBaseUrl!, accessToken ?? undefined, onlyActive);
     },
     [apiBaseUrl, accessToken, isProxyMode],
@@ -131,7 +131,7 @@ export function useMFA() {
    */
   const enrollMfa = useCallback(
     async (factorName: MFAType, options: EnrollOptions = {}): Promise<EnrollMfaResponse> => {
-      validatePrerequisites();
+      if (!isProxyMode) validatePrerequisites();
       const params = buildEnrollParams(factorName, options);
       const response = await enrollMfaRequest(apiBaseUrl!, params, accessToken ?? undefined);
       return response;
@@ -148,7 +148,7 @@ export function useMFA() {
    */
   const deleteMfa = useCallback(
     async (authenticatorId: string): Promise<void> => {
-      validatePrerequisites();
+      if (!isProxyMode) validatePrerequisites();
       await deleteMfaFactor(apiBaseUrl!, authenticatorId, accessToken ?? undefined);
     },
     [apiBaseUrl, accessToken],
@@ -171,7 +171,7 @@ export function useMFA() {
       options: { oobCode?: string; userOtpCode?: string; userEmailOtpCode?: string },
     ): Promise<unknown | null> => {
       // Validate prerequisites
-      validatePrerequisites();
+      if (!isProxyMode) validatePrerequisites();
       const baseData: {
         grant_type: string;
         oob_code?: string;
