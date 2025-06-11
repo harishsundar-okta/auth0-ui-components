@@ -3,6 +3,9 @@
 import * as React from 'react';
 import type { Auth0ComponentConfig } from './types';
 import { ProxyModeProvider } from './proxy-mode-provider';
+import type { TFactory } from '@auth0-web-ui-components/core';
+import { createI18n } from '@auth0-web-ui-components/core';
+import { I18nContext } from './i18n-provider';
 
 const SpaModeProvider = React.lazy(() => import('./spa-mode-provider'));
 
@@ -41,17 +44,63 @@ const SpaModeProvider = React.lazy(() => import('./spa-mode-provider'));
  */
 export const Auth0ComponentProvider = ({
   authProxyUrl,
+  i18n,
   ...props
 }: Auth0ComponentConfig & { children: React.ReactNode }) => {
   const isProxyMode = Boolean(authProxyUrl);
+  const [i18nState, setI18nState] = React.useState<{
+    initialized: boolean;
+    translator: TFactory | null;
+  }>({
+    initialized: false,
+    translator: null,
+  });
 
-  if (isProxyMode) {
-    return <ProxyModeProvider {...props} authProxyUrl={authProxyUrl} />;
-  }
+  React.useEffect(() => {
+    if (!i18n?.currentLanguage) {
+      setI18nState({ initialized: true, translator: null });
+      return;
+    }
+
+    const initializeTranslations = async () => {
+      try {
+        const instance = await createI18n({
+          currentLanguage: i18n.currentLanguage,
+          fallbackLanguage: i18n.fallbackLanguage,
+        });
+
+        setI18nState({
+          initialized: true,
+          translator: instance.t,
+        });
+      } catch {
+        setI18nState({
+          initialized: true,
+          translator: null,
+        });
+      }
+    };
+
+    initializeTranslations();
+  }, [i18n?.currentLanguage, i18n?.fallbackLanguage]);
+
+  const i18nValue = React.useMemo(
+    () => ({
+      translator: i18nState.translator,
+      initialized: i18nState.initialized,
+    }),
+    [i18nState.translator, i18nState.initialized],
+  );
 
   return (
-    <React.Suspense fallback={null}>
-      <SpaModeProvider {...props} />
-    </React.Suspense>
+    <I18nContext.Provider value={i18nValue}>
+      {isProxyMode ? (
+        <ProxyModeProvider {...props} authProxyUrl={authProxyUrl} />
+      ) : (
+        <React.Suspense fallback="Loading authentication...">
+          <SpaModeProvider {...props} />
+        </React.Suspense>
+      )}
+    </I18nContext.Provider>
   );
 };

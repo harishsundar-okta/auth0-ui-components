@@ -35,5 +35,3 @@ export const Auth0ComponentContext = React.createContext<{
     apiBaseUrl: '',
   },
 });
-
-Auth0ComponentContext.displayName = 'Auth0ComponentContext';

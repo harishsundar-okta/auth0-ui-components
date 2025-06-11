@@ -61,9 +61,9 @@ export function useMFA() {
    * @throws {Error} When required values like API base URL, access token, or domain are missing.
    */
   function validatePrerequisites(): void {
-    if (!apiBaseUrl) throw new Error(t('errors.missingBaseURL')!);
-    if (!isProxyMode && !accessToken) throw new Error(t('errors.missingAccessToken')!);
-    if (!isProxyMode && !authDetails?.domain) throw new Error(t('errors.missingDomain')!);
+    if (!apiBaseUrl) throw new Error(t('errors.missing_base_url')!);
+    if (!isProxyMode && !accessToken) throw new Error(t('errors.missing_access_token')!);
+    if (!isProxyMode && !authDetails?.domain) throw new Error(t('errors.missing_domain')!);
   }
 
   /**

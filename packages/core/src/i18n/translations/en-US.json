@@ -1,28 +1,29 @@
 {
   "common": {
     "errors": {
-      "missingAccessToken": "Access token is required.",
-      "missingBaseURL": "Missing Auth0 API base URL",
-      "missingDomain": "Missing Auth0 domain",
-      "scopeRequired": "Scope is required",
-      "domainNotConfigured": "Auth0 domain is not configured",
-      "accessTokenError": "Access token is undefined"
+      "missing_access_token": "Access token is required.",
+      "missing_base_url": "Missing Auth0 API base URL",
+      "missing_domain": "Missing Auth0 domain",
+      "scope_required": "Scope is required",
+      "domain_not_configured": "Auth0 domain is not configured",
+      "access_token_error": "Access token is undefined"
     }
   },
   "mfa": {
     "title": "MFA Authenticators",
     "description": "Manage the MFA enrollments for your account.",
-    "noActiveMfa": "No active MFA factors enrolled.",
+    "no_active_mfa": "No active MFA factors enrolled.",
     "delete": "Delete",
     "enroll": "Enroll",
     "enrolling": "Enrolling...",
     "enrolled": "Enrolled",
-    "removeFactor": "Enrollment removed successfully.",
-    "enrollFactor": "Enrolled successfully.",
+    "remove_factor": "Enrollment removed successfully.",
+    "enroll_factor": "Enrolled successfully.",
+    "enroll_otp_mfa": "Enroll OTP MFA",
     "errors": {
-      "factorsLoadingError": "Error loading MFA factors!",
-      "accessTokenError": "Access token error: ${error}",
-      "unKnownError": "Unknown error occurred",
+      "factors_loading_error": "Error loading MFA factors!",
+      "access_token_error": "Access token error: ${error}",
+      "unknown_error": "Unknown error occurred",
       "invalid_grant": {
         "email": "Invalid Code"
       },

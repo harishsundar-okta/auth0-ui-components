@@ -33,9 +33,9 @@ import { EnrollmentForm } from '@/components/mfa/enrollment-form';
  *   errors: {
  *     factorsLoadingError: 'An error occurred while loading MFA factors.',
  *   },
- *   noActiveMfa: 'No active MFA factors found.',
- *   enrollFactor: 'Successfully enrolled the MFA factor.',
- *   removeFactor: 'Successfully removed the MFA factor.',
+ *   no_active_mfa: 'No active MFA factors found.',
+ *   enroll_factor: 'Successfully enrolled the MFA factor.',
+ *   remove_factor: 'Successfully removed the MFA factor.',
  *   delete: 'Delete',
  *   enroll: 'Enroll',
  * }}
@@ -90,7 +90,7 @@ export function ManageMfa({
       setFactors(factors);
       onFetch?.();
     } catch (err) {
-      setError(t('errors.factorsLoadingError'));
+      setError(t('errors.factors_loading_error'));
     }
 
     setLoading(false);
@@ -144,7 +144,7 @@ export function ManageMfa({
 
       try {
         await deleteMfa(factorId);
-        toast.success(t('removeFactor'), {
+        toast.success(t('remove_factor'), {
           duration: 2000,
           onAutoClose: async () => {
             onDelete?.();
@@ -169,7 +169,7 @@ export function ManageMfa({
   const handleEnrollSuccess = React.useCallback(async () => {
     setDialogOpen(false);
     setEnrollFactor(null);
-    toast.success(t('enrollFactor'), {
+    toast.success(t('enroll_factor'), {
       duration: 2000,
       onAutoClose: async () => {
         onEnroll?.();
@@ -192,7 +192,6 @@ export function ManageMfa({
     [onErrorAction],
   );
 
-  //TODO
   if (loading) return <p>{t('loading')}</p>;
   if (error) return <p className="text-3xl font-bold underline">{error}</p>;
 
@@ -209,7 +208,7 @@ export function ManageMfa({
 
         <CardContent className="grid gap-6 p-4 pt-0 md:p-6 md:pt-0">
           {showActiveOnly && visibleFactors.length === 0 ? (
-            <Label className="text-center text-muted-foreground">{t('noActiveMfa')}</Label>
+            <Label className="text-center text-muted-foreground">{t('no_active_mfa')}</Label>
           ) : (
             visibleFactors.map((factor, idx) => {
               const isEnabledFactor =
@@ -227,7 +226,7 @@ export function ManageMfa({
                       <span className="leading-6 text-left">
                         {t(`${factor.factorName}.title`)}
                         {factor.active && (
-                          <Badge variant="default" className="ml-3">
+                          <Badge variant="default" color="green" className="ml-3">
                             {t('enrolled')}
                           </Badge>
                         )}

@@ -154,7 +154,6 @@ export function EnrollmentForm({
         onClose();
       }
     } catch (err) {
-      console.log(factorType);
       const normalizedError = normalizeError(err, {
         resolver: (code) => t(`errors.${code}.${factorType}`),
         fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
@@ -344,7 +343,7 @@ export function EnrollmentForm({
               ? 'Enroll Email MFA'
               : factorType === 'sms'
                 ? 'Enroll SMS MFA'
-                : 'Enroll OTP MFA'}
+                : t('enroll_otp_mfa')}
           </DialogTitle>
         </DialogHeader>
         {renderForm()}

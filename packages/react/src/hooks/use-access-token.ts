@@ -54,7 +54,7 @@ export function useAccessToken(scope: string, audiencePath: string): UseAccessTo
         setState({
           token: null,
           loading: false,
-          error: new Error(t('errors.scopeRequired') ?? 'Scope required error'),
+          error: new Error(t('errors.scope_required')),
         });
         return;
       }
@@ -63,7 +63,7 @@ export function useAccessToken(scope: string, audiencePath: string): UseAccessTo
         setState({
           token: null,
           loading: false,
-          error: new Error(t('errors.domainNotConfigured') ?? 'Domain not configured error'),
+          error: new Error(t('errors.domain_not_configured')),
         });
         return;
       }
@@ -115,7 +115,7 @@ export function useAccessToken(scope: string, audiencePath: string): UseAccessTo
                 redirect_uri: typeof window !== 'undefined' ? window.location.origin : '',
               },
             });
-            if (!token) throw new Error(t('errors.accessTokenError') ?? 'Access token error');
+            if (!token) throw new Error(t('errors.access_token_error'));
             return token;
           }
           throw error;

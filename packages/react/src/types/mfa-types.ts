@@ -80,7 +80,7 @@ export interface MFAFactorContent {
 export interface MFALocaleContent {
   title: string;
   description: string;
-  noActiveMfa: string;
+  no_active_mfa: string;
   sms?: MFAFactorContent;
   'push-notification'?: MFAFactorContent;
   totp?: MFAFactorContent;

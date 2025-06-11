@@ -93,3 +93,30 @@ export type ThemeContextValue = {
   customOverrides: CustomOverrides;
   mergedTheme: Record<string, unknown>;
 };
+
+/**
+ * A function that performs string translation within a namespace.
+ *
+ * @param key - Translation key relative to namespace
+ * @param vars - Optional variables for interpolation
+ * @param overrides - Optional translation overrides
+ */
+type TranslationFunction = (
+  key: string,
+  vars?: Record<string, unknown>,
+  overrides?: Record<string, unknown>,
+) => string;
+
+/**
+ * Factory function that creates namespace-scoped translation functions.
+ *
+ * @param namespace - Translation namespace (e.g., "mfa", "login")
+ */
+export type TFactory = (namespace: string) => TranslationFunction;
+
+/** Defines the value provided by the i18n context. */
+export interface I18nContextValue {
+  /** The factory to create `t` functions. Null until initialized. */
+  translator: TFactory | null;
+  initialized: boolean;
+}
