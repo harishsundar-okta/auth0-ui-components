@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useI18n, useMFA } from '@/hooks';
+import { useComponentConfig, useI18n, useMFA } from '@/hooks';
 import type { ManageMfaProps, MFAType, Authenticator } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,6 +69,9 @@ export function ManageMfa({
   onBeforeAction,
 }: ManageMfaProps): React.JSX.Element {
   const t = useI18n('mfa', localization);
+  const {
+    config: { loader },
+  } = useComponentConfig();
   const { fetchFactors, enrollMfa, deleteMfa, confirmEnrollment } = useMFA();
 
   const [factors, setFactors] = React.useState<Authenticator[]>([]);
@@ -123,6 +126,11 @@ export function ManageMfa({
     setEnrollFactor(factor);
     setDialogOpen(true);
   };
+
+  const handleCloseDialog = React.useCallback(() => {
+    setDialogOpen(false);
+    setEnrollFactor(null);
+  }, []);
 
   /**
    * Handles the deletion of an MFA factor.
@@ -192,86 +200,93 @@ export function ManageMfa({
     [onErrorAction],
   );
 
-  if (loading) return <p>{t('loading')}</p>;
-  if (error) return <p className="text-3xl font-bold underline">{error}</p>;
-
   return (
     <>
       <Toaster position="top-right" />
-      <Card>
-        {!hideHeader && (
-          <CardHeader>
-            <CardTitle>{t('title')}</CardTitle>
-            <CardDescription>{t('description')}</CardDescription>
-          </CardHeader>
-        )}
+      {loading ? (
+        loader || (
+          <div className="flex items-center justify-center p-4">
+            <Label className="text-center text-muted-foreground">{t('loading')}</Label>
+          </div>
+        )
+      ) : error ? (
+        <div className="flex items-center justify-center p-4">
+          <Label className="text-center text-destructive">{error}</Label>
+        </div>
+      ) : (
+        <Card>
+          {!hideHeader && (
+            <CardHeader>
+              <CardTitle>{t('title')}</CardTitle>
+              <CardDescription>{t('description')}</CardDescription>
+            </CardHeader>
+          )}
 
-        <CardContent className="grid gap-6 p-4 pt-0 md:p-6 md:pt-0">
-          {showActiveOnly && visibleFactors.length === 0 ? (
-            <Label className="text-center text-muted-foreground">{t('no_active_mfa')}</Label>
-          ) : (
-            visibleFactors.map((factor, idx) => {
-              const isEnabledFactor =
-                factorConfig?.[factor.factorName as MFAType]?.enabled !== false;
+          <CardContent className="grid gap-6 p-4 pt-0 md:p-6 md:pt-0">
+            {showActiveOnly && visibleFactors.length === 0 ? (
+              <Label className="text-center text-muted-foreground">{t('no_active_mfa')}</Label>
+            ) : (
+              visibleFactors.map((factor, idx) => {
+                const isEnabledFactor =
+                  factorConfig?.[factor.factorName as MFAType]?.enabled !== false;
 
-              return (
-                <div
-                  key={`${factor.name}-${idx}`}
-                  className={`flex flex-col gap-6 ${!isEnabledFactor ? 'opacity-50 pointer-events-none' : ''}`}
-                  aria-disabled={!isEnabledFactor}
-                >
-                  {idx > 0 && <Separator />}
-                  <div className="flex flex-col items-center justify-between space-y-6 md:flex-row md:space-x-2 md:space-y-0">
-                    <Label className="flex flex-col items-start space-y-1">
-                      <span className="leading-6 text-left">
-                        {t(`${factor.factorName}.title`)}
-                        {factor.active && (
-                          <Badge variant="default" color="green" className="ml-3">
-                            {t('enrolled')}
-                          </Badge>
-                        )}
-                      </span>
-                      <p className="font-normal leading-snug text-muted-foreground text-left">
-                        {t(`${factor.factorName}.description`)}
-                      </p>
-                    </Label>
-
-                    <div className="flex items-center justify-end space-x-24 md:min-w-72">
-                      {factor.active
-                        ? !readOnly && (
-                            <Button
-                              type="submit"
-                              onClick={() => handleDelete(factor.id, factor.factorName as MFAType)}
-                              disabled={disableDelete || deleting || !isEnabledFactor}
-                              aria-label={`Delete authenticator ${factor.factorName}`}
-                            >
-                              {t('delete')}
-                            </Button>
-                          )
-                        : !readOnly && (
-                            <Button
-                              onClick={() => handleEnrollClick(factor.factorName as MFAType)}
-                              disabled={disableEnroll || !isEnabledFactor}
-                            >
-                              {t('enroll')}
-                            </Button>
+                return (
+                  <div
+                    key={`${factor.name}-${idx}`}
+                    className={`flex flex-col gap-6 ${!isEnabledFactor ? 'opacity-50 pointer-events-none' : ''}`}
+                    aria-disabled={!isEnabledFactor}
+                  >
+                    {idx > 0 && <Separator />}
+                    <div className="flex flex-col items-center justify-between space-y-6 md:flex-row md:space-x-2 md:space-y-0">
+                      <Label className="flex flex-col items-start space-y-1">
+                        <span className="leading-6 text-left">
+                          {t(`${factor.factorName}.title`)}
+                          {factor.active && (
+                            <Badge variant="default" color="green" className="ml-3">
+                              {t('enrolled')}
+                            </Badge>
                           )}
+                        </span>
+                        <p className="font-normal leading-snug text-muted-foreground text-left">
+                          {t(`${factor.factorName}.description`)}
+                        </p>
+                      </Label>
+
+                      <div className="flex items-center justify-end space-x-24 md:min-w-72">
+                        {factor.active
+                          ? !readOnly && (
+                              <Button
+                                type="submit"
+                                onClick={() =>
+                                  handleDelete(factor.id, factor.factorName as MFAType)
+                                }
+                                disabled={disableDelete || deleting || !isEnabledFactor}
+                                aria-label={t('delete_factor', { factorName: factor.factorName })}
+                              >
+                                {t('delete')}
+                              </Button>
+                            )
+                          : !readOnly && (
+                              <Button
+                                onClick={() => handleEnrollClick(factor.factorName as MFAType)}
+                                disabled={disableEnroll || !isEnabledFactor}
+                              >
+                                {t('enroll')}
+                              </Button>
+                            )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })
-          )}
-        </CardContent>
-      </Card>
-
+                );
+              })
+            )}
+          </CardContent>
+        </Card>
+      )}
       {enrollFactor && (
         <EnrollmentForm
           open={dialogOpen}
-          onClose={() => {
-            setDialogOpen(false);
-            setEnrollFactor(null);
-          }}
+          onClose={handleCloseDialog}
           factorType={enrollFactor}
           enrollMfa={enrollMfa}
           confirmEnrollment={confirmEnrollment}

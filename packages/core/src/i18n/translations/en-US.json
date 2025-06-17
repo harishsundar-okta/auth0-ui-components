@@ -1,16 +1,19 @@
 {
   "common": {
+    "loading_auth_details": "Loading authentication details...",
     "errors": {
       "missing_access_token": "Access token is required.",
       "missing_base_url": "Missing Auth0 API base URL",
       "missing_domain": "Missing Auth0 domain",
       "scope_required": "Scope is required",
       "domain_not_configured": "Auth0 domain is not configured",
-      "access_token_error": "Access token is undefined"
+      "access_token_error": "Access token is undefined",
+      "auth_details_error": "Authentication failed: ${message}"
     }
   },
   "mfa": {
     "title": "MFA Authenticators",
+    "loading": "Loading...",
     "description": "Manage the MFA enrollments for your account.",
     "no_active_mfa": "No active MFA factors enrolled.",
     "delete": "Delete",
@@ -20,12 +23,19 @@
     "remove_factor": "Enrollment removed successfully.",
     "enroll_factor": "Enrolled successfully.",
     "enroll_otp_mfa": "Enroll OTP MFA",
+    "delete_factor": "Delete authenticator ${factorName}",
     "errors": {
       "factors_loading_error": "Error loading MFA factors!",
       "access_token_error": "Access token error: ${error}",
       "unknown_error": "Unknown error occurred",
       "invalid_grant": {
         "email": "Invalid Code"
+      },
+      "phone_number_required": "Phone number is required for SMS enrollment.",
+      "email_required": "Email is required for Email enrollment.",
+      "unsupported_mfa_type": "Unsupported MFA type: ${factorName}",
+      "invalid_request": {
+        "totp": "Missing required parameter: otp"
       },
       "unsupported_challenge_type": {
         "sms": "SMS Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"SMS\" on Guardian MFA section.",
@@ -64,6 +74,22 @@
     "recovery-code": {
       "title": "Recovery Code",
       "description": "Use a unique recovery code to regain account access."
+    },
+    "enrollment_form": {
+      "email_address": "Email Address",
+      "phone_number": "Phone Number (SMS)",
+      "send_code": "Send Code",
+      "sending": "Sending...",
+      "enroll_email": "Enroll Email MFA",
+      "enroll_sms": "Enroll SMS MFA",
+      "show_otp": {
+        "title": "Scan the barcode with your authenticator app",
+        "save_recovery": "Save these recovery codes!",
+        "enter_code": "Enter the code from your authenticator app",
+        "verify_code": "Verify Code",
+        "verifying": "Verifying...",
+        "enter_verify_code": "Enter the verification code"
+      }
     }
   }
 }

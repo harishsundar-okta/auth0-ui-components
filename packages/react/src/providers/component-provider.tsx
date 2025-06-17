@@ -28,6 +28,9 @@ const SpaModeProvider = React.lazy(() => import('./spa-mode-provider'));
  * @param {Object} [props.i18n] - Internationalization configuration (language, fallback).
  * @param {Object} [props.themeSettings] - Theme and branding settings.
  * @param {Object} [props.customOverrides] - Optional CSS variable overrides for styling.
+ * @param {React.ReactNode} [props.loader] - Custom loading component to show while
+ *                                                    authentication is initializing.
+ *                                                    Defaults to "Loading authentication...".
  *
  * @returns {JSX.Element} The provider component for Auth0 context.
  *
@@ -97,7 +100,7 @@ export const Auth0ComponentProvider = ({
       {isProxyMode ? (
         <ProxyModeProvider {...props} authProxyUrl={authProxyUrl} />
       ) : (
-        <React.Suspense fallback="Loading authentication...">
+        <React.Suspense fallback={props.loader || 'Loading authentication...'}>
           <SpaModeProvider {...props} />
         </React.Suspense>
       )}

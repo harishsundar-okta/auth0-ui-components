@@ -164,36 +164,36 @@ export function EnrollmentForm({
     }
   };
 
+  const fetchOtpEnrollment = React.useCallback(async () => {
+    try {
+      const response = await enrollMfa(factorType, {});
+      if (response?.authenticator_type === 'otp') {
+        setOtpData({
+          secret: response.secret ?? null,
+          barcodeUri: response.barcode_uri ?? null,
+          recoveryCodes: response.recovery_codes || [],
+        });
+      }
+      setPhase('showOtp');
+    } catch (error) {
+      const normalizedError = normalizeError(error, {
+        resolver: (code) => t(`errors.${code}.${factorType}`),
+        fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
+      });
+      onError(normalizedError, 'enroll');
+      onClose();
+    } finally {
+      setLoading(false);
+    }
+  }, [factorType, enrollMfa, onError, onClose, t]);
+
   // Automatically initiate OTP enrollment when factorType is 'totp' or 'push-notification'
   React.useEffect(() => {
     if (['totp', 'push-notification'].includes(factorType) && !otpData.secret && open) {
       setLoading(true);
-      const fetchOtpEnrollment = async () => {
-        try {
-          const response = await enrollMfa(factorType, {});
-          if (response?.authenticator_type === 'otp') {
-            setOtpData({
-              secret: response.secret ?? null,
-              barcodeUri: response.barcode_uri ?? null,
-              recoveryCodes: response.recovery_codes || [],
-            });
-          }
-          setPhase('showOtp');
-        } catch (error) {
-          const normalizedError = normalizeError(error, {
-            resolver: (code) => t(`errors.${code}.${factorType}`),
-            fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
-          });
-          onError(normalizedError, 'enroll');
-          onClose();
-        } finally {
-          setLoading(false);
-        }
-      };
-
       fetchOtpEnrollment();
     }
-  }, [factorType, enrollMfa, onError, otpData.secret, open]);
+  }, [factorType, fetchOtpEnrollment, otpData.secret, open]);
 
   // Render the appropriate form based on the current phase and factorType
   const renderForm = () => {
@@ -209,7 +209,9 @@ export function EnrollmentForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        {factorType === 'email' ? 'Email Address' : 'Phone Number (SMS)'}
+                        {factorType === 'email'
+                          ? t('enrollment_form.email_address')
+                          : t('enrollment_form.phone_number')}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -222,7 +224,7 @@ export function EnrollmentForm({
                   )}
                 />
                 <Button type="submit" disabled={!formContact.formState.isValid || loading}>
-                  {loading ? 'Sending...' : 'Send Code'}
+                  {loading ? t('enrollment_form.sending') : t('enrollment_form.send_code')}
                 </Button>
               </form>
             </Form>
@@ -231,7 +233,7 @@ export function EnrollmentForm({
       case 'showOtp':
         return (
           <div className="text-center">
-            <p>Scan the barcode with your authenticator app</p>
+            <p>{t('enrollment_form.show_otp.title')}</p>
             <div className="flex justify-center items-center mt-6">
               <div className="border border-gray-300 p-4 rounded-lg shadow-lg bg-white inline-block">
                 <QRCode
@@ -246,7 +248,7 @@ export function EnrollmentForm({
               {otpData.recoveryCodes.length > 0 && (
                 <div className="mb-6">
                   <p>
-                    <strong>Save these recovery codes!</strong>
+                    <strong>{t('enrollment_form.show_otp.save_recovery')}</strong>
                   </p>
                   <ul className="list-none inline-block bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mt-2">
                     {otpData.recoveryCodes.map((code, index) => (
@@ -271,7 +273,7 @@ export function EnrollmentForm({
                       render={({ field }) => (
                         <FormItem className="text-center">
                           <FormLabel className="block w-full text-sm font-medium text-center">
-                            Enter the code from your authenticator app
+                            {t('enrollment_form.show_otp.enter_code')}
                           </FormLabel>
                           <FormControl>
                             <div className="flex justify-center">
@@ -292,7 +294,9 @@ export function EnrollmentForm({
                       )}
                     />
                     <Button type="submit" disabled={loading}>
-                      {loading ? 'Verifying...' : 'Verify Code'}
+                      {loading
+                        ? t('enrollment_form.show_otp.verifying')
+                        : t('enrollment_form.show_otp.verify_code')}
                     </Button>
                   </form>
                 </Form>
@@ -314,26 +318,32 @@ export function EnrollmentForm({
                   key={phase}
                   name="userOtp"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Enter the verification code</FormLabel>
+                    <FormItem className="text-center">
+                      <FormLabel className="block w-full text-sm font-medium text-center">
+                        {t('enrollment_form.show_otp.enter_verify_code')}
+                      </FormLabel>
                       <FormControl>
-                        <InputOTP maxLength={6} {...field} autoComplete="one-time-code">
-                          <InputOTPGroup>
-                            <InputOTPSlot index={0} />
-                            <InputOTPSlot index={1} />
-                            <InputOTPSlot index={2} />
-                            <InputOTPSlot index={3} />
-                            <InputOTPSlot index={4} />
-                            <InputOTPSlot index={5} />
-                          </InputOTPGroup>
-                        </InputOTP>
+                        <div className="flex justify-center">
+                          <InputOTP maxLength={6} {...field} autoComplete="one-time-code">
+                            <InputOTPGroup>
+                              <InputOTPSlot index={0} />
+                              <InputOTPSlot index={1} />
+                              <InputOTPSlot index={2} />
+                              <InputOTPSlot index={3} />
+                              <InputOTPSlot index={4} />
+                              <InputOTPSlot index={5} />
+                            </InputOTPGroup>
+                          </InputOTP>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <Button type="submit" disabled={loading}>
-                  {loading ? 'Verifying...' : 'Verify Code'}
+                  {loading
+                    ? t('enrollment_form.show_otp.verifying')
+                    : t('enrollment_form.show_otp.verify_code')}
                 </Button>
               </form>
             </Form>
@@ -350,9 +360,9 @@ export function EnrollmentForm({
         <DialogHeader>
           <DialogTitle className="text-center">
             {factorType === 'email'
-              ? 'Enroll Email MFA'
+              ? t('enrollment_form.enroll_email')
               : factorType === 'sms'
-                ? 'Enroll SMS MFA'
+                ? t('enrollment_form.enroll_sms')
                 : t('enroll_otp_mfa')}
           </DialogTitle>
         </DialogHeader>
