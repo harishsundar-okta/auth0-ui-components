@@ -2,8 +2,10 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import QRCode from 'react-qr-code';
 
-import { MFAType, normalizeError } from '@auth0-web-ui-components/core';
+import { MFAType, normalizeError, EnrollMfaResponse } from '@auth0-web-ui-components/core';
+
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -17,8 +19,18 @@ import {
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Input } from '@/components/ui/input';
 import { useI18n } from '@/hooks';
-import { EnrollMfaResponse } from '@auth0-web-ui-components/core';
-import QRCode from 'react-qr-code';
+import {
+  SHOW_OTP,
+  ENTER_OTP,
+  ENTER_CONTACT,
+  FACTOR_TYPE_EMAIL,
+  FACTOR_TYPE_SMS,
+  FACTOR_TYPE_OTP,
+  FACTOR_TYPE_TOPT,
+  FACTOR_TYPE_PUSH_NOTIFICATION,
+  ENROLL,
+  CONFIRM,
+} from '@/lib/constants';
 
 const phoneRegex = /^\+?[0-9\s\-()]{8,}$/;
 
@@ -32,7 +44,7 @@ type EnrollmentFormProps = {
     options: { oobCode?: string; userOtpCode?: string; userEmailOtpCode?: string },
   ) => Promise<unknown | null>;
   onSuccess: () => void;
-  onError: (error: Error, stage: 'enroll' | 'confirm') => void;
+  onError: (error: Error, stage: typeof ENROLL | typeof CONFIRM) => void;
 };
 
 type ContactForm = {
@@ -42,6 +54,8 @@ type ContactForm = {
 type OtpForm = {
   userOtp: string;
 };
+
+type EnrollmentPhase = typeof ENTER_CONTACT | typeof ENTER_OTP | typeof SHOW_OTP | null;
 
 export function EnrollmentForm({
   open,
@@ -55,7 +69,7 @@ export function EnrollmentForm({
   const t = useI18n('mfa');
 
   // Initialize phase as null, meaning no UI shown by default
-  const [phase, setPhase] = React.useState<'enterContact' | 'enterOtp' | 'showOtp' | null>(null);
+  const [phase, setPhase] = React.useState<EnrollmentPhase>(null);
   const [oobCode, setOobCode] = React.useState<string | undefined>(undefined);
   const [otpData, setOtpData] = React.useState<{
     secret: string | null;
@@ -70,9 +84,11 @@ export function EnrollmentForm({
 
   // Create schema for validating contact input based on MFA type
   const ContactSchema = React.useMemo(() => {
-    return factorType === 'email'
-      ? z.object({ contact: z.string().email({ message: 'Invalid email address' }) })
-      : z.object({ contact: z.string().regex(phoneRegex, { message: 'Invalid phone number' }) });
+    return factorType === FACTOR_TYPE_EMAIL
+      ? z.object({ contact: z.string().email({ message: t('errors.invalid_email') }) })
+      : z.object({
+          contact: z.string().regex(phoneRegex, { message: t('errors.invalid_phone_number') }),
+        });
   }, [factorType]);
 
   const formContact = useForm<ContactForm>({
@@ -96,8 +112,8 @@ export function EnrollmentForm({
   }, [open, formContact, formOtp]);
 
   React.useEffect(() => {
-    if (open && (factorType === 'email' || factorType === 'sms')) {
-      setPhase('enterContact');
+    if (open && (factorType === FACTOR_TYPE_EMAIL || factorType === FACTOR_TYPE_SMS)) {
+      setPhase(ENTER_CONTACT);
     }
   }, [open, factorType]);
 
@@ -105,9 +121,9 @@ export function EnrollmentForm({
     setLoading(true);
     try {
       const options: Record<string, string> =
-        factorType === 'email'
+        factorType === FACTOR_TYPE_EMAIL
           ? { email: data.contact }
-          : factorType === 'sms'
+          : factorType === FACTOR_TYPE_SMS
             ? { phone_number: data.contact }
             : {};
 
@@ -115,23 +131,23 @@ export function EnrollmentForm({
 
       if (response?.oob_code) {
         setOobCode(response.oob_code);
-        setPhase('enterOtp');
+        setPhase(ENTER_OTP);
       }
 
-      if (response?.authenticator_type === 'otp') {
+      if (response?.authenticator_type === FACTOR_TYPE_OTP) {
         setOtpData({
           secret: response.secret ?? null,
           barcodeUri: response.barcode_uri ?? null,
           recoveryCodes: response.recovery_codes || [],
         });
-        setPhase('showOtp');
+        setPhase(SHOW_OTP);
       }
     } catch (error) {
       const normalizedError = normalizeError(error, {
         resolver: (code) => t(`errors.${code}.${factorType}`),
         fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
       });
-      onError(normalizedError, 'enroll');
+      onError(normalizedError, ENROLL);
     } finally {
       setLoading(false);
     }
@@ -143,7 +159,7 @@ export function EnrollmentForm({
     try {
       const options = {
         oobCode,
-        ...(factorType === 'email'
+        ...(factorType === FACTOR_TYPE_EMAIL
           ? { userEmailOtpCode: data.userOtp }
           : { userOtpCode: data.userOtp }),
       };
@@ -158,7 +174,7 @@ export function EnrollmentForm({
         resolver: (code) => t(`errors.${code}.${factorType}`),
         fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
       });
-      onError(normalizedError, 'confirm');
+      onError(normalizedError, CONFIRM);
     } finally {
       setLoading(false);
     }
@@ -167,20 +183,20 @@ export function EnrollmentForm({
   const fetchOtpEnrollment = React.useCallback(async () => {
     try {
       const response = await enrollMfa(factorType, {});
-      if (response?.authenticator_type === 'otp') {
+      if (response?.authenticator_type === FACTOR_TYPE_OTP) {
         setOtpData({
           secret: response.secret ?? null,
           barcodeUri: response.barcode_uri ?? null,
           recoveryCodes: response.recovery_codes || [],
         });
       }
-      setPhase('showOtp');
+      setPhase(SHOW_OTP);
     } catch (error) {
       const normalizedError = normalizeError(error, {
         resolver: (code) => t(`errors.${code}.${factorType}`),
         fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
       });
-      onError(normalizedError, 'enroll');
+      onError(normalizedError, ENROLL);
       onClose();
     } finally {
       setLoading(false);
@@ -189,7 +205,11 @@ export function EnrollmentForm({
 
   // Automatically initiate OTP enrollment when factorType is 'totp' or 'push-notification'
   React.useEffect(() => {
-    if (['totp', 'push-notification'].includes(factorType) && !otpData.secret && open) {
+    if (
+      [FACTOR_TYPE_TOPT, FACTOR_TYPE_PUSH_NOTIFICATION].includes(factorType) &&
+      !otpData.secret &&
+      open
+    ) {
       setLoading(true);
       fetchOtpEnrollment();
     }
@@ -198,7 +218,7 @@ export function EnrollmentForm({
   // Render the appropriate form based on the current phase and factorType
   const renderForm = () => {
     switch (phase) {
-      case 'enterContact':
+      case ENTER_CONTACT:
         return (
           <div className="w-full max-w-sm mx-auto text-center">
             <Form {...formContact}>
@@ -209,13 +229,15 @@ export function EnrollmentForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        {factorType === 'email'
+                        {factorType === FACTOR_TYPE_EMAIL
                           ? t('enrollment_form.email_address')
                           : t('enrollment_form.phone_number')}
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder={factorType === 'email' ? 'your@email.com' : '+1234567890'}
+                          placeholder={
+                            factorType === FACTOR_TYPE_EMAIL ? 'your@email.com' : '+1234567890'
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -230,7 +252,7 @@ export function EnrollmentForm({
             </Form>
           </div>
         );
-      case 'showOtp':
+      case SHOW_OTP:
         return (
           <div className="text-center">
             <p>{t('enrollment_form.show_otp.title')}</p>
@@ -304,7 +326,7 @@ export function EnrollmentForm({
             </div>
           </div>
         );
-      case 'enterOtp':
+      case ENTER_OTP:
         return (
           <div className="w-full max-w-sm mx-auto text-center">
             <Form {...formOtp}>
@@ -359,9 +381,9 @@ export function EnrollmentForm({
       <DialogContent aria-describedby={factorType}>
         <DialogHeader>
           <DialogTitle className="text-center">
-            {factorType === 'email'
+            {factorType === FACTOR_TYPE_EMAIL
               ? t('enrollment_form.enroll_email')
-              : factorType === 'sms'
+              : factorType === FACTOR_TYPE_SMS
                 ? t('enrollment_form.enroll_sms')
                 : t('enroll_otp_mfa')}
           </DialogTitle>

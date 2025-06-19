@@ -20,6 +20,8 @@
     "enroll": "Enroll",
     "enrolling": "Enrolling...",
     "enrolled": "Enrolled",
+    "enrollment": "Enrollment",
+    "confirmation": "Confirmation",
     "remove_factor": "Enrollment removed successfully.",
     "enroll_factor": "Enrolled successfully.",
     "enroll_otp_mfa": "Enroll OTP MFA",
@@ -31,8 +33,11 @@
       "invalid_grant": {
         "email": "Invalid Code"
       },
+      "failed": "failed: ${message}",
       "phone_number_required": "Phone number is required for SMS enrollment.",
       "email_required": "Email is required for Email enrollment.",
+      "invalid_email": "Invalid email address",
+      "invalid_phone_number": "Invalid phone number",
       "unsupported_mfa_type": "Unsupported MFA type: ${factorName}",
       "invalid_request": {
         "totp": "Missing required parameter: otp"

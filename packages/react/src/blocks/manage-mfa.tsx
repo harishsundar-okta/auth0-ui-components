@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { EnrollmentForm } from '@/components/mfa/enrollment-form';
+import { ENROLL, CONFIRM } from '@/lib/constants';
 
 /**
  * ManageMfa Component
@@ -193,8 +194,10 @@ export function ManageMfa({
    * @param {string} stage - The stage of the process ('enroll' or 'confirm').
    */
   const handleEnrollError = React.useCallback(
-    (error: Error, stage: 'enroll' | 'confirm') => {
-      toast.error(`${stage === 'enroll' ? 'Enrollment' : 'Confirmation'} failed: ${error.message}`);
+    (error: Error, stage: typeof ENROLL | typeof CONFIRM) => {
+      toast.error(
+        `${stage === ENROLL ? t('enrollment') : t('confirmation')} ${t('errors.failed', { message: error.message })}`,
+      );
       onErrorAction?.(error, stage);
     },
     [onErrorAction],
@@ -242,7 +245,7 @@ export function ManageMfa({
                         <span className="leading-6 text-left">
                           {t(`${factor.factorName}.title`)}
                           {factor.active && (
-                            <Badge variant="default" color="green" className="ml-3">
+                            <Badge variant="success" className="ml-3">
                               {t('enrolled')}
                             </Badge>
                           )}

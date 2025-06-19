@@ -16,6 +16,12 @@ import type {
   ConfirmMfaEnrollmentParams,
 } from '@auth0-web-ui-components/core';
 import type { EnrollOptions } from '@/types';
+import {
+  FACTOR_TYPE_EMAIL,
+  FACTOR_TYPE_PUSH_NOTIFICATION,
+  FACTOR_TYPE_SMS,
+  FACTOR_TYPE_TOPT,
+} from '@/lib/constants';
 
 /**
  * Describes the methods returned by the `useMFA` hook for managing multi-factor authentication.
@@ -99,19 +105,19 @@ export function useMFA(): UseMfaResult {
    */
   const buildEnrollParams = (factorName: MFAType, options: EnrollOptions = {}): EnrollMfaParams => {
     switch (factorName) {
-      case 'sms':
+      case FACTOR_TYPE_SMS:
         if (!options.phone_number) throw new Error(t('errors.phone_number_required'));
         return {
           authenticator_types: ['oob'],
           oob_channels: ['sms'],
           phone_number: options.phone_number,
         };
-      case 'email':
+      case FACTOR_TYPE_EMAIL:
         if (!options.email) throw new Error(t('errors.email_required'));
         return { authenticator_types: ['oob'], oob_channels: ['email'], email: options.email };
-      case 'totp':
+      case FACTOR_TYPE_TOPT:
         return { authenticator_types: ['otp'] };
-      case 'push-notification':
+      case FACTOR_TYPE_PUSH_NOTIFICATION:
         return { authenticator_types: ['oob'], oob_channels: ['auth0'] };
       default:
         throw new Error(t('errors.email_required', { factorName }));
@@ -129,7 +135,7 @@ export function useMFA(): UseMfaResult {
   ): ConfirmMfaEnrollmentParams => {
     const baseParams: ConfirmMfaEnrollmentParams = {
       grant_type:
-        factorName === 'totp'
+        factorName === FACTOR_TYPE_TOPT
           ? 'http://auth0.com/oauth/grant-type/mfa-otp'
           : 'http://auth0.com/oauth/grant-type/mfa-oob',
       oob_code: options.oobCode,
@@ -137,13 +143,15 @@ export function useMFA(): UseMfaResult {
       mfa_token: token,
     };
 
-    if (factorName === 'totp') {
+    if (factorName === FACTOR_TYPE_TOPT) {
       baseParams.otp = options.userOtpCode;
-    } else if (['sms', 'email', 'push-notification'].includes(factorName)) {
+    } else if (
+      [FACTOR_TYPE_SMS, FACTOR_TYPE_EMAIL, FACTOR_TYPE_PUSH_NOTIFICATION].includes(factorName)
+    ) {
       baseParams.binding_code =
-        factorName === 'sms'
+        factorName === FACTOR_TYPE_SMS
           ? options.userOtpCode
-          : factorName === 'email'
+          : factorName === FACTOR_TYPE_EMAIL
             ? options.userEmailOtpCode
             : options.userOtpCode;
     }

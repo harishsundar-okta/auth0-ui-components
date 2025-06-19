@@ -20,6 +20,8 @@
     "enroll": "登録",
     "enrolling": "登録中...",
     "enrolled": "登録済み",
+    "enrollment": "登録",
+    "confirmation": "確認",
     "remove_factor": "登録を正常に削除しました。",
     "enroll_factor": "正常に登録されました。",
     "enroll_otp_mfa": "ワンタイムパスワードの登録",
@@ -30,8 +32,11 @@
       "invalid_grant": {
         "email": "無効なコード"
       },
+      "failed": "失敗しました: ${message}",
       "phone_number_required": "SMS登録には電話番号が必要です。",
       "email_required": "メール登録にはメールアドレスが必要です。",
+      "invalid_email": "無効なメールアドレス",
+      "invalid_phone_number": "無効な電話番号",
       "unsupported_mfa_type": "未対応のMFAタイプです: ${factorName}",
       "invalid_request": {
         "totp": "必須パラメーターがありません: otp"
