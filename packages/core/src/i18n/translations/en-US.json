@@ -34,9 +34,7 @@
       "factors_loading_error": "Error loading MFA factors!",
       "access_token_error": "Access token error: ${error}",
       "unknown_error": "Unknown error occurred",
-      "invalid_grant": {
-        "email": "Invalid Code"
-      },
+      "delete_factor": "Delete authenticator failed",
       "failed": "failed: ${message}",
       "phone_number_required": "Phone number is required for SMS enrollment.",
       "email_required": "Email is required for Email enrollment.",
@@ -53,6 +51,13 @@
       },
       "expired_token": {
         "email": "Verification code is expired"
+      },
+      "invalid_grant": {
+        "email": "Invalid Code",
+        "totp": "Invalid Otp Code"
+      },
+      "access_denied": {
+        "email": "Could not find the requested authenticator"
       }
     },
     "sms": {

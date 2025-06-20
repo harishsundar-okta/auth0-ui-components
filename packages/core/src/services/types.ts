@@ -81,4 +81,5 @@ export interface ConfirmMfaEnrollmentParams {
   oob_code?: string;
   binding_code?: string;
   otp?: string;
+  client_secret?: string;
 }

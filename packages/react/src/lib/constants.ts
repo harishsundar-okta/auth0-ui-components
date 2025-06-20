@@ -10,3 +10,5 @@ export const FACTOR_TYPE_TOPT = 'totp';
 
 export const ENROLL = 'enroll';
 export const CONFIRM = 'confirm';
+export const EMAIL_PLACEHOLDER = 'your@email.com';
+export const PHONE_NUMBER_PLACEHOLDER = '+1234567890';

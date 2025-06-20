@@ -189,27 +189,35 @@ export function ManageMfa({
   const handleConfirmDelete = React.useCallback(
     async (factorId: string) => {
       setIsDeletingFactor(true);
-      try {
-        await deleteMfa(factorId);
-        const factorsPromise = loadFactors();
-        toast.success(t('remove_factor'), {
-          duration: 2000,
-          onAutoClose: () => onDelete?.(),
-        });
 
-        await factorsPromise;
-      } catch (err) {
-        toast.dismiss();
-        if (err instanceof Error) {
-          toast.error(err.message);
-          onErrorAction?.(err, 'delete');
-        } else {
-          toast.error(t('errors.factors_loading_error'));
-        }
-      } finally {
+      const cleanUp = () => {
         setIsDeletingFactor(false);
         setIsDeleteDialogOpen(false);
         setFactorToDelete(null);
+      };
+
+      try {
+        await deleteMfa(factorId);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(t('errors.delete_factor'));
+        toast.error(t('errors.delete_factor'));
+        onErrorAction?.(error, 'delete');
+        cleanUp();
+        return;
+      }
+
+      toast.success(t('remove_factor'), {
+        duration: 2000,
+        onAutoClose: () => onDelete?.(),
+      });
+
+      try {
+        await loadFactors();
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(t('errors.factors_loading_error'));
+        onErrorAction?.(error, 'delete');
+      } finally {
+        cleanUp();
       }
     },
     [deleteMfa, loadFactors, onDelete, onErrorAction, t],
@@ -223,14 +231,13 @@ export function ManageMfa({
     setDialogOpen(false);
     setEnrollFactor(null);
     try {
-      const factorsPromise = loadFactors();
       toast.success(t('enroll_factor'), {
         duration: 2000,
         onAutoClose: () => {
           onEnroll?.();
         },
       });
-      await factorsPromise;
+      await loadFactors();
     } catch {
       toast.dismiss();
       toast.error(t('errors.factors_loading_error'));

@@ -30,6 +30,8 @@ import {
   FACTOR_TYPE_PUSH_NOTIFICATION,
   ENROLL,
   CONFIRM,
+  EMAIL_PLACEHOLDER,
+  PHONE_NUMBER_PLACEHOLDER,
 } from '@/lib/constants';
 
 const phoneRegex = /^\+?[0-9\s\-()]{8,}$/;
@@ -236,7 +238,9 @@ export function EnrollmentForm({
                       <FormControl>
                         <Input
                           placeholder={
-                            factorType === FACTOR_TYPE_EMAIL ? 'your@email.com' : '+1234567890'
+                            factorType === FACTOR_TYPE_EMAIL
+                              ? EMAIL_PLACEHOLDER
+                              : PHONE_NUMBER_PLACEHOLDER
                           }
                           {...field}
                         />

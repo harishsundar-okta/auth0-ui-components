@@ -35,9 +35,7 @@
       "factors_loading_error": "多要素認証の読み込みエラー！",
       "access_token_error": "アクセストークンエラー: ${error}",
       "unknown_error": "不明なエラーが発生しました",
-      "invalid_grant": {
-        "email": "無効なコード"
-      },
+      "delete_factor": "認証器の削除に失敗しました",
       "failed": "失敗しました: ${message}",
       "phone_number_required": "SMS登録には電話番号が必要です。",
       "email_required": "メール登録にはメールアドレスが必要です。",
@@ -54,6 +52,13 @@
       },
       "expired_token": {
         "email": "認証コードの有効期限が切れました"
+      },
+      "invalid_grant": {
+        "email": "無効なコード",
+        "totp": "無効な認証コードです"
+      },
+      "access_denied": {
+        "email": "認証器が見つかりませんでした"
       }
     },
     "sms": {

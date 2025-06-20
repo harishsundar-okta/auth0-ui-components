@@ -64,6 +64,13 @@ export function useAccessToken(scope: string, audiencePath: string): UseAccessTo
   const t = useI18n('common');
   const domain = authDetails?.domain;
 
+  if (authDetails?.scopes?.includes(scope) && authDetails.accessToken) {
+    return {
+      getToken: async () => authDetails.accessToken as string,
+      error: null,
+    };
+  }
+
   const pendingPromiseRef = React.useRef<Promise<string> | null>(null);
   const audience = domain ? `${domain}${audiencePath}/` : '';
 
@@ -86,7 +93,6 @@ export function useAccessToken(scope: string, audiencePath: string): UseAccessTo
             authorizationParams: {
               audience,
               scope,
-              redirect_uri: typeof window !== 'undefined' ? window.location.origin : undefined,
             },
             ...(ignoreCache ? { cacheMode: 'off' } : {}),
           });
@@ -95,24 +101,17 @@ export function useAccessToken(scope: string, audiencePath: string): UseAccessTo
 
           return token;
         } catch (error) {
-          if (
-            error instanceof Error &&
-            (error.message.includes('Consent required') ||
-              error.message.includes('interaction_required'))
-          ) {
-            const token = await getAccessTokenWithPopup({
-              authorizationParams: {
-                audience,
-                scope,
-                redirect_uri: typeof window !== 'undefined' ? window.location.origin : undefined,
-              },
-            });
+          const token = await getAccessTokenWithPopup({
+            authorizationParams: {
+              audience,
+              scope,
+              prompt: 'consent',
+            },
+          });
 
-            if (!token) throw new Error(t('errors.popup_closed_or_failed'));
+          if (!token) throw new Error(t('errors.popup_closed_or_failed'));
 
-            return token;
-          }
-          throw error;
+          return token;
         }
       };
 
