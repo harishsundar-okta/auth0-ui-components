@@ -1,0 +1,201 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "auth0-ui-components",
+  "homepage": "https://github.com/auth0/auth0-ui-components",
+  "items": [
+    {
+      "name": "manage-mfa",
+      "type": "registry:block",
+      "title": "Manage MFA",
+      "description": "A block for managing Multi-Factor Authentication (MFA) factors, including enrollment and deletion.",
+      "files": [
+        {
+          "path": "src/blocks/manage-mfa.tsx",
+          "type": "registry:block",
+          "target": "blocks/manage-mfa.tsx"
+        },
+        {
+          "path": "src/blocks/index.ts",
+          "type": "registry:file",
+          "target": "blocks/index.ts"
+        },
+        {
+          "path": "src/components/mfa/enrollment-form.tsx",
+          "type": "registry:component",
+          "target": "components/mfa/enrollment-form.tsx"
+        },
+        {
+          "path": "src/components/ui/badge.tsx",
+          "type": "registry:component",
+          "target": "components/ui/badge.tsx"
+        },
+        {
+          "path": "src/components/ui/button.tsx",
+          "type": "registry:component",
+          "target": "components/ui/button.tsx"
+        },
+        {
+          "path": "src/components/ui/card.tsx",
+          "type": "registry:component",
+          "target": "components/ui/card.tsx"
+        },
+        {
+          "path": "src/components/ui/dialog.tsx",
+          "type": "registry:component",
+          "target": "components/ui/dialog.tsx"
+        },
+        {
+          "path": "src/components/ui/form.tsx",
+          "type": "registry:component",
+          "target": "components/ui/form.tsx"
+        },
+        {
+          "path": "src/components/ui/input.tsx",
+          "type": "registry:component",
+          "target": "components/ui/input.tsx"
+        },
+        {
+          "path": "src/components/ui/input-otp.tsx",
+          "type": "registry:component",
+          "target": "components/ui/input-otp.tsx"
+        },
+        {
+          "path": "src/components/ui/label.tsx",
+          "type": "registry:component",
+          "target": "components/ui/label.tsx"
+        },
+        {
+          "path": "src/components/ui/separator.tsx",
+          "type": "registry:component",
+          "target": "components/ui/separator.tsx"
+        },
+        {
+          "path": "src/components/ui/sonner.tsx",
+          "type": "registry:component",
+          "target": "components/ui/sonner.tsx"
+        },
+        {
+          "path": "src/hooks/use-i18n.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-i18n.ts"
+        },
+        {
+          "path": "src/hooks/use-mfa.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-mfa.ts"
+        },
+        {
+          "path": "src/hooks/use-config.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-config.ts"
+        },
+        {
+          "path": "src/hooks/use-access-token.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-access-token.ts"
+        },
+        {
+          "path": "src/hooks/use-theme.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-theme.ts"
+        },
+        {
+          "path": "src/hooks/index.ts",
+          "type": "registry:file",
+          "target": "hooks/index.ts"
+        },
+        {
+          "path": "src/providers/context.ts",
+          "type": "registry:file",
+          "target": "providers/context.ts"
+        },
+        {
+          "path": "src/providers/types.ts",
+          "type": "registry:file",
+          "target": "providers/types.ts"
+        },
+        {
+          "path": "src/providers/component-provider.tsx",
+          "type": "registry:file",
+          "target": "providers/component-provider.tsx"
+        },
+        {
+          "path": "src/providers/i18n-provider.tsx",
+          "type": "registry:file",
+          "target": "providers/i18n-provider.tsx"
+        },
+        {
+          "path": "src/providers/proxy-mode-provider.tsx",
+          "type": "registry:file",
+          "target": "providers/proxy-mode-provider.tsx"
+        },
+        {
+          "path": "src/providers/spa-mode-provider.tsx",
+          "type": "registry:file",
+          "target": "providers/spa-mode-provider.tsx"
+        },
+        {
+          "path": "src/providers/theme-provider.tsx",
+          "type": "registry:file",
+          "target": "providers/theme-provider.tsx"
+        },
+        {
+          "path": "src/providers/index.ts",
+          "type": "registry:file",
+          "target": "providers/index.ts"
+        },
+        {
+          "path": "src/types/mfa-types.ts",
+          "type": "registry:file",
+          "target": "types/mfa-types.ts"
+        },
+        {
+          "path": "src/types/index.ts",
+          "type": "registry:file",
+          "target": "types/index.ts"
+        },
+        {
+          "path": "src/lib/utils.ts",
+          "type": "registry:file",
+          "target": "lib/utils.ts"
+        },
+        {
+          "path": "src/lib/constants.ts",
+          "type": "registry:file",
+          "target": "lib/constants.ts"
+        },
+        {
+          "path": "src/styles/globals.css",
+          "type": "registry:file",
+          "target": "styles/globals.css"
+        }
+      ],
+      "dependencies": [
+        "sonner",
+        "react-hook-form",
+        "@hookform/resolvers",
+        "zod",
+        "react-qr-code",
+        "@auth0/auth0-react",
+        "clsx",
+        "tailwind-merge",
+        "class-variance-authority",
+        "lucide-react",
+        "next-themes",
+        "input-otp"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "card",
+        "label",
+        "separator",
+        "sonner",
+        "dialog",
+        "form",
+        "input",
+        "input-otp"
+      ]
+    }
+  ]
+}

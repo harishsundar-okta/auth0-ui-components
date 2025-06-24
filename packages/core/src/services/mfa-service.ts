@@ -36,7 +36,17 @@ export async function fetchMfaFactors(
 ): Promise<Authenticator[]> {
   const response = await get<Authenticator[]>(`${apiBaseUrl}mfa/authenticators`, { accessToken });
 
-  const map = new Map<string, Authenticator>(response.map((f) => [f.id.split('|')[0], f]));
+  // Build map prioritizing active authenticators
+  const map = new Map<string, Authenticator>();
+  response.forEach((f) => {
+    const type = f.id.split('|')[0];
+    const existing = map.get(type);
+
+    // Only replace if the new one is active and existing is not, or if no existing factor
+    if (!existing || (f.active && !existing.active)) {
+      map.set(type, f);
+    }
+  });
 
   return Array.from(factorsMetaKeys).reduce<Authenticator[]>((acc, type) => {
     const factor = map.get(type);
@@ -48,7 +58,7 @@ export async function fetchMfaFactors(
     acc.push({
       id: factor?.id ?? '',
       authenticator_type: (factor?.authenticator_type ?? type) as AuthenticatorType,
-      oob_channels: factor?.oob_channels ?? [],
+      oob_channel: factor?.oob_channel ?? [],
       active: factor?.active ?? false,
       factorName,
     });

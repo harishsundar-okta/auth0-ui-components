@@ -13,12 +13,16 @@ import { I18nInstance, LangTranslations, TranslationFunction } from './types';
  */
 
 export async function createI18n(options: {
-  currentLanguage: string;
+  currentLanguage?: string;
   fallbackLanguage?: string;
 }): Promise<I18nInstance> {
   // Optimized caching
   const cache = new Map<string, LangTranslations | null>();
   let translations: LangTranslations | null = null;
+
+  const defaultLanguage = 'en-US';
+  const currentLanguage = options?.currentLanguage ?? defaultLanguage;
+  const fallbackLanguage = options?.fallbackLanguage;
 
   // Regex compile once
   const varRegex = /\${(\w+)}/g;
@@ -86,10 +90,7 @@ export async function createI18n(options: {
     return null;
   };
 
-  translations = await loadTranslationsWithFallback(
-    options.currentLanguage,
-    options.fallbackLanguage,
-  );
+  translations = await loadTranslationsWithFallback(currentLanguage, fallbackLanguage);
 
   // Optimized translator factory with string concatenation optimization
   const createTranslator = (namespace: string): TranslationFunction => {

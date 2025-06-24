@@ -61,16 +61,11 @@ export const Auth0ComponentProvider = ({
   });
 
   React.useEffect(() => {
-    if (!i18n?.currentLanguage) {
-      setI18nState({ initialized: true, translator: null });
-      return;
-    }
-
     const initializeTranslations = async () => {
       try {
         const instance = await createI18n({
-          currentLanguage: i18n.currentLanguage,
-          fallbackLanguage: i18n.fallbackLanguage,
+          currentLanguage: i18n?.currentLanguage,
+          fallbackLanguage: i18n?.fallbackLanguage,
         });
 
         setI18nState({
