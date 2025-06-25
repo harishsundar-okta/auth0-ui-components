@@ -249,7 +249,11 @@ export function EnrollmentForm({
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={!formContact.formState.isValid || loading}>
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={!formContact.formState.isValid || loading}
+                >
                   {loading ? t('enrollment_form.sending') : t('enrollment_form.send_code')}
                 </Button>
               </form>
@@ -319,7 +323,7 @@ export function EnrollmentForm({
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" disabled={loading}>
+                    <Button type="submit" size="sm" disabled={loading}>
                       {loading
                         ? t('enrollment_form.show_otp.verifying')
                         : t('enrollment_form.show_otp.verify_code')}
@@ -366,7 +370,7 @@ export function EnrollmentForm({
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" size="sm" disabled={loading}>
                   {loading
                     ? t('enrollment_form.show_otp.verifying')
                     : t('enrollment_form.show_otp.verify_code')}

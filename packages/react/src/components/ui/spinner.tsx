@@ -24,16 +24,14 @@ const spinnerVariants = cva(
   },
 );
 
-interface SpinnerProps
+export interface SpinnerProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof spinnerVariants> {}
 
-function Spinner({ variant, size, className, ...props }: SpinnerProps) {
+export function Spinner({ variant, size, className, ...props }: SpinnerProps) {
   return (
     <div className={cn(spinnerVariants({ variant, size }), className)} {...props}>
       <span className="sr-only">Loading...</span>
     </div>
   );
 }
-
-export { Spinner };

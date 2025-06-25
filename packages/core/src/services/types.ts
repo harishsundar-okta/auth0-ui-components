@@ -2,14 +2,14 @@
  * Represents an MFA authenticator linked to a user.
  * @property {string} id - Unique identifier of the authenticator.
  * @property {string} authenticator_type - Type of the authenticator.
- * @property {string[]} [oob_channels] - Optional out-of-band channels supported.
+ * @property {string[]} [oob_channel] - Optional out-of-band channels supported.
  * @property {string} [name] - Optional name of the authenticator.
  * @property {boolean} active - Whether the authenticator is active.
  */
 export interface Authenticator {
   id: string;
   authenticator_type: AuthenticatorType;
-  oob_channels?: OobChannel[];
+  oob_channel?: OobChannel[];
   name?: string;
   active: boolean;
   factorName?: MFAType;

@@ -298,7 +298,7 @@ export function ManageMfa({
                         <span className="leading-6 text-left">
                           {t(`${factor.factorName}.title`)}
                           {factor.active && (
-                            <Badge variant="success" className="ml-3">
+                            <Badge variant="success" size="sm" className="ml-3">
                               {t('enrolled')}
                             </Badge>
                           )}
@@ -313,6 +313,7 @@ export function ManageMfa({
                           ? !readOnly && (
                               <Button
                                 type="submit"
+                                size="sm"
                                 onClick={() =>
                                   handleDeleteClick(factor.id, factor.factorName as MFAType)
                                 }
@@ -324,6 +325,7 @@ export function ManageMfa({
                             )
                           : !readOnly && (
                               <Button
+                                size="sm"
                                 onClick={() => handleEnrollClick(factor.factorName as MFAType)}
                                 disabled={disableEnroll || !isEnabledFactor}
                               >
@@ -366,6 +368,7 @@ export function ManageMfa({
           <div className="flex justify-end gap-4 pt-4">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setIsDeleteDialogOpen(false)}
               disabled={isDeletingFactor}
             >
