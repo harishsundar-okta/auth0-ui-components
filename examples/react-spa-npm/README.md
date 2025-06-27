@@ -11,13 +11,13 @@ Before you begin, make sure you have the following installed on your system:
 
 - **Auth0 Account** - [Sign up for Auth0](https://auth0.com/signup)
 
-1. **MFA Grant Types Not Enabled**
+1. **Enable MFA Grant Types**
 
    - Navigate to your Auth0 Dashboard > Applications > [Your Application] > Advanced Settings > Grant Types
    - Ensure **MFA** grant type is enabled for the MFA component to work properly
    - Save the changes and redeploy if necessary
 
-2. **Google OAuth2 Connection Not Enabled**
+2. **Enable Google OAuth2 Connection**
 
    - Go to Auth0 Dashboard > Authentication > Social > Google
    - Make sure the Google OAuth2 connection is enabled and properly configured
