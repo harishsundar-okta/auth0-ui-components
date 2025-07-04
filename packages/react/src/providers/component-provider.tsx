@@ -57,24 +57,20 @@ export const Auth0ComponentProvider = ({
   const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(undefined);
   const [apiBaseUrl, setApiBaseUrl] = React.useState<string | undefined>(authProxyUrl);
   const [isI18nInitialized, setIsI18nInitialized] = React.useState(false);
-  const [currentLanguage, setCurrentLanguage] = React.useState<string | undefined>(
-    i18n?.currentLanguage,
-  );
+
+  const initI18n = React.useCallback(async () => {
+    setIsI18nInitialized(false); // Reset initialization state
+    await initializeI18n({
+      currentLanguage: i18n?.currentLanguage,
+      fallbackLanguage: i18n?.fallbackLanguage,
+    });
+    setIsI18nInitialized(true);
+  }, [i18n?.currentLanguage, i18n?.fallbackLanguage]);
 
   // Initialize i18n when language changes
   React.useEffect(() => {
-    const initI18n = async () => {
-      setIsI18nInitialized(false); // Reset initialization state
-      await initializeI18n({
-        currentLanguage: i18n?.currentLanguage,
-        fallbackLanguage: i18n?.fallbackLanguage,
-      });
-      setCurrentLanguage(i18n?.currentLanguage);
-      setIsI18nInitialized(true);
-    };
-
     initI18n();
-  }, [i18n?.currentLanguage, i18n?.fallbackLanguage]);
+  }, [initI18n]);
 
   const contextValue = React.useMemo<Auth0ComponentContextType>(
     () => ({
@@ -99,7 +95,6 @@ export const Auth0ComponentProvider = ({
       apiBaseUrl,
       authDetails,
       isI18nInitialized,
-      currentLanguage,
     ],
   );
 
