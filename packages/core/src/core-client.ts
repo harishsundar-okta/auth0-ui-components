@@ -12,9 +12,13 @@ class TokenManager {
     scope: string,
     audiencePath: string,
     ignoreCache: boolean = false,
-  ): Promise<string> {
+  ): Promise<string | undefined> {
     if (!this.coreClient.auth || !this.coreClient.auth.contextInterface) {
       throw new Error(this.coreClient.t('errors.not_initialized_core_client'));
+    }
+
+    if (this.coreClient.isProxyMode()) {
+      return Promise.resolve(undefined); // In proxy mode, don't send access tokens
     }
 
     const domain = this.coreClient.auth.domain;
@@ -152,10 +156,6 @@ export class CoreClient implements CoreClientInterface {
     audiencePath: string,
     ignoreCache: boolean = false,
   ): Promise<string | undefined> {
-    if (this.isProxyMode()) {
-      return undefined; // In proxy mode, don't send access tokens
-    }
-
     return this.tokenManager.getToken(scope, audiencePath, ignoreCache);
   }
 
