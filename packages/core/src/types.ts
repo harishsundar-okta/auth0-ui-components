@@ -126,11 +126,30 @@ export interface AuthDetailsCore {
   clientId: string | undefined;
   accessToken: string | undefined;
   scopes: string | undefined;
+  authProxyUrl: string | undefined;
   contextInterface: Auth0ContextInterface | undefined;
 }
 
 export interface CoreClientInterface {
   auth: AuthDetailsCore;
   t: TranslationFunction;
-  getToken: (scope: string, audiencePath: string, ignoreCache?: boolean) => Promise<string>;
+  authentication: AuthenticationAPIServiceInterface;
+  getToken: (
+    scope: string,
+    audiencePath: string,
+    ignoreCache?: boolean,
+  ) => Promise<string | undefined>;
+  getApiBaseUrl: () => string;
+  isProxyMode: () => boolean;
+}
+
+export interface MFAControllerInterface {
+  fetchFactors(onlyActive?: boolean, ignoreCache?: boolean): Promise<SafeAny[]>;
+  enrollFactor(factorName: string, options?: SafeAny, ignoreCache?: boolean): Promise<SafeAny>;
+  deleteFactor(authenticatorId: string, ignoreCache?: boolean): Promise<void>;
+  confirmEnrollment(factorName: string, options: SafeAny, ignoreCache?: boolean): Promise<unknown>;
+}
+
+export interface AuthenticationAPIServiceInterface {
+  mfa: MFAControllerInterface;
 }

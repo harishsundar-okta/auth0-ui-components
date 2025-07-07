@@ -4,7 +4,14 @@ export { del, post, get, patch, ApiError, normalizeError, createApiError } from 
 
 export { CoreClient } from './core-client';
 
-export { AuthDetailsCore, CoreClientInterface } from './types';
+export {
+  AuthDetailsCore,
+  CoreClientInterface,
+  AuthenticationAPIServiceInterface,
+  MFAControllerInterface,
+} from './types';
+
+export { AuthenticationAPIService } from './services/authentication-api-service';
 
 export {
   deleteMfaFactor,
@@ -22,6 +29,7 @@ export {
   buildConfirmParams,
   EnrollOptions,
   ConfirmEnrollmentOptions,
+  MFAController,
   FACTOR_TYPE_EMAIL,
   FACTOR_TYPE_SMS,
   FACTOR_TYPE_OTP,

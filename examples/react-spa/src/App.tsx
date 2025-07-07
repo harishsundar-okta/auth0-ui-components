@@ -15,8 +15,9 @@ function App() {
   const defaultAuthDetails = {
     clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
     domain: import.meta.env.VITE_AUTH0_DOMAIN,
-    accessToken: undefined,
+    accessToken: undefined, // TODO: Make optional all unnecessary properties
     scopes: undefined,
+    authProxyUrl: undefined,
     contextInterface: auth0ContextInterface,
   };
   return (

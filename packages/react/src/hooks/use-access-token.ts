@@ -9,9 +9,9 @@ interface UseAccessTokenResult {
   /**
    * Fetches an Auth0 access token.
    * @param ignoreCache - If true, bypasses the cache and forces a new token request.
-   * @returns Promise that resolves with the access token.
+   * @returns Promise that resolves with the access token, or undefined in proxy mode.
    */
-  getToken: (ignoreCache?: boolean) => Promise<string>;
+  getToken: (ignoreCache?: boolean) => Promise<string | undefined>;
 }
 
 /**
@@ -26,7 +26,7 @@ export function useAccessToken(scope: string, audiencePath: string): UseAccessTo
   }
 
   const getToken = React.useCallback(
-    async (ignoreCache = false): Promise<string> => {
+    async (ignoreCache = false): Promise<string | undefined> => {
       return coreClient.getToken(scope, audiencePath, ignoreCache);
     },
     [coreClient, scope, audiencePath],

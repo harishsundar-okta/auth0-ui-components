@@ -1,5 +1,6 @@
 import { AuthDetailsCore, CoreClientInterface } from './types';
 import { createI18n, TFactory, TranslationFunction } from './i18n';
+import { AuthenticationAPIService } from './services/authentication-api-service';
 
 // Store pending promises by a unique key (scope + audience combination)
 const pendingTokenRequests = new Map<string, Promise<string>>();
@@ -89,12 +90,14 @@ class TokenManager {
 export class CoreClient implements CoreClientInterface {
   public readonly auth: AuthDetailsCore;
   public readonly t: TranslationFunction;
+  public readonly authentication: AuthenticationAPIService;
   private readonly tokenManager: TokenManager;
 
   private constructor(auth: AuthDetailsCore, translator: TranslationFunction) {
     this.auth = auth;
     this.t = translator;
     this.tokenManager = new TokenManager(this);
+    this.authentication = new AuthenticationAPIService(this);
   }
 
   static async create(
@@ -148,7 +151,30 @@ export class CoreClient implements CoreClientInterface {
     scope: string,
     audiencePath: string,
     ignoreCache: boolean = false,
-  ): Promise<string> {
+  ): Promise<string | undefined> {
+    if (this.isProxyMode()) {
+      return undefined; // In proxy mode, don't send access tokens
+    }
+
     return this.tokenManager.getToken(scope, audiencePath, ignoreCache);
+  }
+
+  getApiBaseUrl(): string {
+    // Use authProxyUrl if provided (proxy mode)
+    if (this.isProxyMode()) {
+      return this.auth.authProxyUrl!.endsWith('/')
+        ? this.auth.authProxyUrl!
+        : `${this.auth.authProxyUrl!}/`;
+    }
+
+    const domain = this.auth.domain;
+    if (!domain) {
+      throw new Error(this.t('errors.domain_not_configured'));
+    }
+    return domain.endsWith('/') ? domain : `${domain}/`;
+  }
+
+  isProxyMode(): boolean {
+    return !!this.auth.authProxyUrl;
   }
 }

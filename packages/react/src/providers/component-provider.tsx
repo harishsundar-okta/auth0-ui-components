@@ -99,8 +99,14 @@ export const Auth0ComponentProvider = ({
 
     const initializeCoreClient = async () => {
       try {
+        // Combine authDetails with authProxyUrl
+        const authDetailsWithProxy = {
+          ...props.authDetails,
+          authProxyUrl,
+        };
+
         const initializedCoreClient = await CoreClient.create(
-          props.authDetails,
+          authDetailsWithProxy,
           i18nState.translator,
         );
 
@@ -115,6 +121,7 @@ export const Auth0ComponentProvider = ({
   }, [
     i18nState.initialized,
     i18nState.translator,
+    authProxyUrl,
     props.authDetails.contextInterface?.getAccessTokenSilently,
     props.authDetails.contextInterface?.getIdTokenClaims,
   ]);
