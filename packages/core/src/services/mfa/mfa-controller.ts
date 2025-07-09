@@ -1,4 +1,4 @@
-import { CoreClientInterface, MFAControllerInterface } from '../../types';
+import { CoreClientInterface } from '../../types';
 import {
   fetchMfaFactors,
   enrollMfaRequest,
@@ -12,6 +12,7 @@ import type {
   MFAType,
   EnrollOptions,
   ConfirmEnrollmentOptions,
+  MFAControllerInterface,
 } from './mfa-types';
 
 /**

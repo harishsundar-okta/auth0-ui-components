@@ -4,12 +4,9 @@ export { del, post, get, patch, ApiError, normalizeError, createApiError } from 
 
 export { CoreClient } from './core-client';
 
-export {
-  AuthDetailsCore,
-  CoreClientInterface,
-  AuthenticationAPIServiceInterface,
-  MFAControllerInterface,
-} from './types';
+export { AuthDetailsCore, CoreClientInterface, AuthenticationAPIServiceInterface } from './types';
+
+export { MFAControllerInterface } from './services/mfa/mfa-types';
 
 export { AuthenticationAPIService } from './services/authentication-api-service';
 

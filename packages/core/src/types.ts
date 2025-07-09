@@ -1,6 +1,7 @@
 import { TranslationFunction } from './i18n';
+import { MFAControllerInterface } from './services';
 
-// TODO: check this
+// TODO: Should we keep this as any?
 export type SafeAny = any; // eslint-disable-line
 
 export type TokenEndpointResponse = {
@@ -38,56 +39,14 @@ export interface User {
 }
 
 export interface GetTokenSilentlyOptions {
-  /**
-   * When `off`, ignores the cache and always sends a
-   * request to Auth0.
-   * When `cache-only`, only reads from the cache and never sends a request to Auth0.
-   * Defaults to `on`, where it both reads from the cache and sends a request to Auth0 as needed.
-   */
   cacheMode?: 'on' | 'off' | 'cache-only';
-
-  /**
-   * Parameters that will be sent back to Auth0 as part of a request.
-   */
   authorizationParams?: {
-    /**
-     * There's no actual redirect when getting a token silently,
-     * but, according to the spec, a `redirect_uri` param is required.
-     * Auth0 uses this parameter to validate that the current `origin`
-     * matches the `redirect_uri` `origin` when sending the response.
-     * It must be whitelisted in the "Allowed Web Origins" in your
-     * Auth0 Application's settings.
-     */
     redirect_uri?: string;
-
-    /**
-     * The scope that was used in the authentication request
-     */
     scope?: string;
-
-    /**
-     * The audience that was used in the authentication request
-     */
     audience?: string;
-
-    /**
-     * If you need to send custom parameters to the Authorization Server,
-     * make sure to use the original parameter name.
-     */
     [key: string]: SafeAny;
   };
-
-  /** A maximum number of seconds to wait before declaring the background /authorize call as failed for timeout
-   * Defaults to 60s.
-   */
   timeoutInSeconds?: number;
-
-  /**
-   * If true, the full response from the /oauth/token endpoint (or the cache, if the cache was used) is returned
-   * (minus `refresh_token` if one was issued). Otherwise, just the access token is returned.
-   *
-   * The default is `false`.
-   */
   detailedResponse?: boolean;
 }
 
@@ -141,13 +100,6 @@ export interface CoreClientInterface {
   ) => Promise<string | undefined>;
   getApiBaseUrl: () => string;
   isProxyMode: () => boolean;
-}
-
-export interface MFAControllerInterface {
-  fetchFactors(onlyActive?: boolean, ignoreCache?: boolean): Promise<SafeAny[]>;
-  enrollFactor(factorName: string, options?: SafeAny, ignoreCache?: boolean): Promise<SafeAny>;
-  deleteFactor(authenticatorId: string, ignoreCache?: boolean): Promise<void>;
-  confirmEnrollment(factorName: string, options: SafeAny, ignoreCache?: boolean): Promise<unknown>;
 }
 
 export interface AuthenticationAPIServiceInterface {

@@ -1,3 +1,5 @@
+import { SafeAny } from '@core/types';
+
 /**
  * Represents an MFA authenticator linked to a user.
  */
@@ -83,4 +85,14 @@ export interface ConfirmEnrollmentOptions {
   oobCode?: string;
   userOtpCode?: string;
   userEmailOtpCode?: string;
+}
+
+/**
+ * Interface for MFA controller.
+ */
+export interface MFAControllerInterface {
+  fetchFactors(onlyActive?: boolean, ignoreCache?: boolean): Promise<SafeAny[]>;
+  enrollFactor(factorName: string, options?: SafeAny, ignoreCache?: boolean): Promise<SafeAny>;
+  deleteFactor(authenticatorId: string, ignoreCache?: boolean): Promise<void>;
+  confirmEnrollment(factorName: string, options: SafeAny, ignoreCache?: boolean): Promise<unknown>;
 }

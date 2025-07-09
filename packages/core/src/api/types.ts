@@ -14,15 +14,19 @@ export interface HttpRequest {
   options?: RequestOptions;
 }
 
-/**
- * Type for structured API error data
- */
-export interface ApiErrorData {
-  code?: string;
-  message?: string;
-  [key: string]: unknown;
-}
-
 export interface ErrorResponse {
   message?: string;
+}
+
+/**
+ * Represents a standardized API error shape.
+ */
+export interface ApiError {
+  readonly name: 'ApiError';
+  readonly message: string;
+  readonly status: number;
+  readonly data?: {
+    error?: string;
+    [key: string]: unknown;
+  };
 }

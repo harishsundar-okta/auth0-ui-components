@@ -1,15 +1,4 @@
-/**
- * Represents a standardized API error shape.
- */
-export interface ApiError {
-  readonly name: 'ApiError';
-  readonly message: string;
-  readonly status: number;
-  readonly data?: {
-    error?: string;
-    [key: string]: unknown;
-  };
-}
+import { ApiError } from './types';
 
 /**
  * Creates an ApiError object to represent a failed API call.

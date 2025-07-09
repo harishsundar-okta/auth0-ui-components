@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { TFactory } from '@auth0-web-ui-components/core';
 import { createI18n } from '@auth0-web-ui-components/core';
 
-interface I18nConfig {
+interface I18nProps {
   currentLanguage?: string;
   fallbackLanguage?: string;
 }
@@ -15,7 +15,7 @@ interface I18nState {
 /**
  * Custom hook to handle i18n initialization
  */
-export const useI18nInitialization = (i18n?: I18nConfig) => {
+export const useI18nInitialization = (i18n?: I18nProps) => {
   const [i18nState, setI18nState] = React.useState<I18nState>({
     initialized: false,
     translator: undefined,
