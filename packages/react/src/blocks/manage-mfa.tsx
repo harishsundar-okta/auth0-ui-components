@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { EnrollmentForm } from '@/components/mfa/enrollment-form';
-import { ENROLL, CONFIRM } from '@/lib/constants';
+import { ENROLL, CONFIRM } from '@/lib/mfa-constants';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { withCoreClient } from '@/hoc';

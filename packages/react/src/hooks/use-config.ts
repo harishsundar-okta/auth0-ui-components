@@ -5,7 +5,6 @@ export const Auth0ComponentConfigContext = React.createContext<{
   config: Auth0ComponentConfig;
 }>({
   config: {
-    i18n: { currentLanguage: 'en-US', fallbackLanguage: 'en-US' },
     themeSettings: { mode: 'light' },
     customOverrides: {},
     loader: undefined,

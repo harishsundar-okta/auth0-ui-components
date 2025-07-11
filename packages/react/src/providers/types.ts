@@ -43,7 +43,7 @@ export interface Auth0ComponentProviderProps {
 /**
  * Configuration for Auth0ComponentProvider excluding authentication details.
  */
-export type Auth0ComponentConfig = Omit<Auth0ComponentProviderProps, 'authDetails'>;
+export type Auth0ComponentConfig = Omit<Auth0ComponentProviderProps, 'authDetails' | 'i18n'>;
 
 /**
  * BrandingTheme

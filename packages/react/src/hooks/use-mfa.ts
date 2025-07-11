@@ -24,7 +24,7 @@ export function useMFA(): UseMfaResult {
 
   if (!coreClient) {
     throw new Error(
-      'CoreClient is not initialized. Make sure you are using useMFA within an Auth0ComponentProvider.',
+      'useMFA must be used within Auth0ComponentProvider with initialized CoreClient',
     );
   }
 

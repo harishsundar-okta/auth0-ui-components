@@ -1,24 +1,11 @@
 {
-  "common": {
-    "loading_auth_details": "認証情報を読み込み中...",
-    "errors": {
-      "missing_access_token": "アクセストークンが必要です。",
-      "missing_base_url": "Auth0 APIのベースURLが見つかりません",
-      "missing_domain": "Auth0ドメインが見つかりません",
-      "scope_required": "スコープが必要です",
-      "domain_not_configured": "Auth0ドメインが設定されていません",
-      "access_token_error": "アクセストークンが未定義です",
-      "auth_details_error": "認証に失敗しました: ${message}"
-    }
-  },
+  "common": {},
   "mfa": {
     "title": "多要素認証",
-    "loading": "読み込み中...",
     "description": "アカウントの多要素認証の登録を管理します。",
     "no_active_mfa": "登録されている多要素認証はありません。",
     "delete": "削除",
     "enroll": "登録",
-    "enrolling": "登録中...",
     "enrolled": "登録済み",
     "enrollment": "登録",
     "confirmation": "確認",
@@ -29,11 +16,9 @@
     "delete_mfa_title": "MFA要素の削除",
     "delete_mfa_content": "このMFA要素を削除してもよろしいですか？この操作は元に戻せません。",
     "cancel": "キャンセル",
-    "confirm_delete": "削除",
     "deleting": "削除中...",
     "errors": {
       "factors_loading_error": "多要素認証の読み込みエラー！",
-      "access_token_error": "アクセストークンエラー: ${error}",
       "unknown_error": "不明なエラーが発生しました",
       "delete_factor": "認証器の削除に失敗しました",
       "failed": "失敗しました: ${message}",

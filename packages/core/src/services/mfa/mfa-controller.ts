@@ -102,7 +102,7 @@ export class MFAController implements MFAControllerInterface {
     const isProxyMode = this.coreClient.isProxyMode();
     const clientId = isProxyMode ? undefined : this.coreClient.auth.clientId;
 
-    const params = buildConfirmParams(factorName, options, clientId);
+    const params = buildConfirmParams(factorName, options, clientId, accessToken);
     return confirmMfaEnrollmentRequest(baseUrl, params, accessToken);
   }
 }

@@ -1,15 +1,10 @@
-import { LangTranslations, TranslationFunction, I18nInitOptions, TFactory } from './types';
-
-/**
- * Interface for the I18nService class.
- */
-export interface I18nServiceInterface {
-  currentLanguage: string;
-  fallbackLanguage: string | undefined;
-  translator: TFactory;
-  getCurrentTranslations(): LangTranslations | null;
-  changeLanguage(language: string, fallbackLanguage?: string): Promise<void>;
-}
+import {
+  LangTranslations,
+  TranslationFunction,
+  I18nInitOptions,
+  TFactory,
+  I18nServiceInterface,
+} from './types';
 
 /**
  * I18nService class for managing translations and language settings.
@@ -37,6 +32,10 @@ export class I18nService implements I18nServiceInterface {
   get translator(): TFactory {
     return (namespace: string, overrides?: Record<string, unknown>) =>
       this.createTranslator(namespace, overrides);
+  }
+
+  get commonTranslator(): TranslationFunction {
+    return this.createTranslator('common');
   }
 
   getCurrentTranslations(): LangTranslations | null {

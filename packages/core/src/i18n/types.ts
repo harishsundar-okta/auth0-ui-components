@@ -44,3 +44,15 @@ export type TFactory = (
   namespace: string,
   overrides?: Record<string, unknown>,
 ) => TranslationFunction;
+
+/**
+ * Interface for the I18nService class.
+ */
+export interface I18nServiceInterface {
+  currentLanguage: string;
+  fallbackLanguage: string | undefined;
+  translator: TFactory;
+  commonTranslator: TranslationFunction;
+  getCurrentTranslations(): LangTranslations | null;
+  changeLanguage(language: string, fallbackLanguage?: string): Promise<void>;
+}

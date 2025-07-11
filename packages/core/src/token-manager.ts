@@ -12,7 +12,7 @@ class TokenManager {
     ignoreCache: boolean = false,
   ): Promise<string | undefined> {
     if (!this.coreClient.auth || !this.coreClient.auth.contextInterface) {
-      throw new Error(this.coreClient.t('errors.not_initialized_core_client'));
+      throw new Error('getToken: CoreClient is not initialized.');
     }
 
     if (this.coreClient.isProxyMode()) {
@@ -23,10 +23,10 @@ class TokenManager {
     const audience = domain ? `${domain}${audiencePath}/` : '';
 
     if (!domain) {
-      throw new Error(this.coreClient.t('errors.domain_not_configured'));
+      throw new Error('getToken: Auth0 domain is not configured');
     }
     if (!scope) {
-      throw new Error(this.coreClient.t('errors.scope_required'));
+      throw new Error('getToken: Scope is required');
     }
 
     // Create a unique key for this token request
@@ -67,7 +67,7 @@ class TokenManager {
       });
 
       if (!token) {
-        throw new Error(this.coreClient.t('errors.access_token_error'));
+        throw new Error('getAccessTokenSilently: Access token is not defined');
       }
 
       return token;
@@ -81,7 +81,7 @@ class TokenManager {
       });
 
       if (!token) {
-        throw new Error(this.coreClient.t('errors.popup_closed_or_failed'));
+        throw new Error('getAccessTokenWithPopup: Access token is not defined');
       }
 
       return token;

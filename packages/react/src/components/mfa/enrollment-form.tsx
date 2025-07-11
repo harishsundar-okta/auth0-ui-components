@@ -22,7 +22,7 @@ import {
   CONFIRM,
   EMAIL_PLACEHOLDER,
   PHONE_NUMBER_PLACEHOLDER,
-} from '@/lib/constants';
+} from '@/lib/mfa-constants';
 import {
   FACTOR_TYPE_EMAIL,
   FACTOR_TYPE_SMS,

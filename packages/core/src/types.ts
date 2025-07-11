@@ -54,10 +54,10 @@ export interface GetTokenSilentlyOptions {
  */
 export interface Auth0ContextInterface<TUser = User> {
   user?: TUser;
-  // getUser() in auth0-spa-js
+  // auth0-spa-js: getUser()
   isAuthenticated: boolean;
-  isLoading: boolean; // not existing in auth0-spa-js
-  error?: Error; // not existing in auth0-spa-js
+  isLoading: boolean; // auth0-spa-js: do not exists
+  error?: Error; // auth0-spa-js: do not exists
   loginWithRedirect: (options?: SafeAny) => Promise<void>;
   loginWithPopup: (options?: SafeAny) => Promise<void>;
   logout: (options?: SafeAny) => Promise<void>;
@@ -68,14 +68,14 @@ export interface Auth0ContextInterface<TUser = User> {
     (options?: GetTokenSilentlyOptions): Promise<string>;
     (options: GetTokenSilentlyOptions): Promise<GetTokenSilentlyVerboseResponse | string>;
   };
-  // getTokenSilently in auth0-spa-js
+  // auth0-spa-js: getTokenSilently
   getAccessTokenWithPopup: (options?: SafeAny) => Promise<string | undefined>;
-  // getTokenWithPopup in auth0-spa-js
+  // auth0-spa-js: getTokenWithPopup
   getIdTokenClaims: () => Promise<SafeAny>;
-  // react: getIdTokenClaims: (() => Promise<undefined | IdToken>);
   // auth0-spa-js: getIdTokenClaims(): Promise<undefined | IdToken>
-  // Vue: idTokenClaims: Ref<undefined | IdToken>;
-  // Angular: idTokenClaims$: Observable<undefined | null | IdToken>
+  // react: getIdTokenClaims: (() => Promise<undefined | IdToken>);
+  // vue: idTokenClaims: Ref<undefined | IdToken>;
+  // angular: idTokenClaims$: Observable<undefined | null | IdToken>
   handleRedirectCallback: () => Promise<SafeAny>;
 }
 

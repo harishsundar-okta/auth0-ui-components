@@ -1,10 +1,3 @@
-/**
- * MFA Factor Type Constants
- *
- * These constants define the supported MFA factor types that can be used
- * throughout the application for enrollment, confirmation, and validation.
- */
-
 export const FACTOR_TYPE_EMAIL = 'email';
 export const FACTOR_TYPE_SMS = 'sms';
 export const FACTOR_TYPE_OTP = 'otp';

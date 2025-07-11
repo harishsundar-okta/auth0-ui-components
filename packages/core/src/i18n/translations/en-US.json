@@ -1,24 +1,11 @@
 {
-  "common": {
-    "loading_auth_details": "Loading authentication details...",
-    "errors": {
-      "missing_access_token": "Access token is required.",
-      "missing_base_url": "Missing Auth0 API base URL",
-      "missing_domain": "Missing Auth0 domain",
-      "scope_required": "Scope is required",
-      "domain_not_configured": "Auth0 domain is not configured",
-      "access_token_error": "Access token is undefined",
-      "auth_details_error": "Authentication failed: ${message}"
-    }
-  },
+  "common": {},
   "mfa": {
     "title": "MFA Authenticators",
-    "loading": "Loading...",
     "description": "Manage the MFA enrollments for your account.",
     "no_active_mfa": "No active MFA factors enrolled.",
     "delete": "Delete",
     "enroll": "Enroll",
-    "enrolling": "Enrolling...",
     "enrolled": "Enrolled",
     "enrollment": "Enrollment",
     "confirmation": "Confirmation",
@@ -32,7 +19,6 @@
     "deleting": "Deleting...",
     "errors": {
       "factors_loading_error": "Error loading MFA factors!",
-      "access_token_error": "Access token error: ${error}",
       "unknown_error": "Unknown error occurred",
       "delete_factor": "Delete authenticator failed",
       "failed": "failed: ${message}",
@@ -42,7 +28,8 @@
       "invalid_phone_number": "Invalid phone number",
       "unsupported_mfa_type": "Unsupported MFA type: ${factorName}",
       "invalid_request": {
-        "totp": "Missing required parameter: otp"
+        "totp": "Missing required parameter: otp",
+        "push-notification": "Missing required parameter: oob_code"
       },
       "unsupported_challenge_type": {
         "sms": "SMS Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"SMS\" on Guardian MFA section.",

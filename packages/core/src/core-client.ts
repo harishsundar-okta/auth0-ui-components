@@ -7,6 +7,7 @@ export class CoreClient implements CoreClientInterface {
   public readonly auth: AuthDetailsCore;
   public readonly i18nService: I18nService;
   private readonly tokenManager: TokenManager;
+
   // API services
   public readonly authentication: AuthenticationAPIService;
 
@@ -77,7 +78,7 @@ export class CoreClient implements CoreClientInterface {
 
     const domain = this.auth.domain;
     if (!domain) {
-      throw new Error(this.i18nService.translator('common')('errors.domain_not_configured'));
+      throw new Error('getApiBaseUrl: Auth0 domain is not configured');
     }
     return domain.endsWith('/') ? domain : `${domain}/`;
   }

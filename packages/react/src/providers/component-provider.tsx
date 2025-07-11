@@ -51,8 +51,6 @@ export const Auth0ComponentProvider = ({
   loader,
   children,
 }: Auth0ComponentProviderProps & { children: React.ReactNode }) => {
-  // const isProxyMode = Boolean(authDetails.authProxyUrl); TODO:
-
   // Add default values if not provided
   const authDetailsCore: AuthDetailsCore = {
     clientId: authDetails.clientId,
@@ -88,9 +86,7 @@ export const Auth0ComponentProvider = ({
     <CoreClientContext.Provider value={coreClientValue}>
       <Auth0ComponentConfigContext.Provider value={{ config }}>
         <ThemeProvider theme={{ branding: themeSettings, customOverrides }}>
-          {/* <I18nContext.Provider value={i18nValue}> */}
           <React.Suspense fallback={loader || <Spinner />}>{children}</React.Suspense>
-          {/* </I18nContext.Provider> */}
         </ThemeProvider>
       </Auth0ComponentConfigContext.Provider>
     </CoreClientContext.Provider>

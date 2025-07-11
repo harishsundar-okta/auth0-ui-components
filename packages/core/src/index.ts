@@ -1,42 +1,27 @@
-export {
-  TranslationFunction,
-  TFactory,
-  I18nService,
-  I18nServiceInterface,
-  I18nInitOptions,
-  LangTranslations,
-} from './i18n';
+export { TranslationFunction, I18nInitOptions, I18nService } from './i18n';
 
-export { del, post, get, patch, ApiError, normalizeError, createApiError } from './api';
+export { normalizeError } from './api';
 
 export { CoreClient } from './core-client';
 
-export { AuthDetailsCore, CoreClientInterface, AuthenticationAPIServiceInterface } from './types';
-
-export { MFAControllerInterface, MFAMessages } from './services/mfa/mfa-types';
-
-export { AuthenticationAPIService } from './services/authentication-api-service';
+export { AuthDetailsCore, CoreClientInterface } from './types';
 
 export {
-  deleteMfaFactor,
-  fetchMfaFactors,
-  confirmMfaEnrollmentRequest,
-  enrollMfaRequest,
   EnrollMfaParams,
   EnrollMfaResponse,
   Authenticator,
   MFAType,
   AuthenticatorType,
   OobChannel,
-  ConfirmMfaEnrollmentParams,
-  buildEnrollParams,
-  buildConfirmParams,
   EnrollOptions,
   ConfirmEnrollmentOptions,
-  MFAController,
+  MFAMessages,
+} from './services/mfa/mfa-types';
+
+export {
   FACTOR_TYPE_EMAIL,
   FACTOR_TYPE_SMS,
   FACTOR_TYPE_OTP,
   FACTOR_TYPE_PUSH_NOTIFICATION,
   FACTOR_TYPE_TOPT,
-} from './services';
+} from './services/mfa/mfa-constants';
