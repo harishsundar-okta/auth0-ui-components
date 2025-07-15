@@ -60,10 +60,18 @@ export function useOtpEnrollment({
     setLoading(false);
   }, []);
 
+  const updateOtpData = useCallback(
+    (newData: { secret: string | null; barcodeUri: string | null; recoveryCodes: string[] }) => {
+      setOtpData(newData);
+    },
+    [],
+  );
+
   return {
     fetchOtpEnrollment,
     otpData,
     resetOtpData,
+    updateOtpData,
     loading,
   };
 }

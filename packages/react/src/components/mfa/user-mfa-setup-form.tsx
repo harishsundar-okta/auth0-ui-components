@@ -91,8 +91,8 @@ export function UserMFASetupForm({
   const handleOtpSuccess = React.useCallback(
     (otpData: { secret: string | null; barcodeUri: string | null; recoveryCodes: string[] }) => {
       otpEnrollment.resetOtpData();
-      // Set the data directly to the otp enrollment hook
-      Object.assign(otpEnrollment.otpData, otpData);
+      // Use the proper setter function instead of direct mutation
+      otpEnrollment.updateOtpData(otpData);
       setPhase(SHOW_OTP);
     },
     [otpEnrollment],
