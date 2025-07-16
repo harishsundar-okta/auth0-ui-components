@@ -8,7 +8,7 @@ import type {
 } from '@auth0-web-ui-components/core';
 
 export interface ManageMfaProps {
-  messages?: Partial<MFAMessages>;
+  customMessages?: Partial<MFAMessages>;
   hideHeader?: boolean;
   showActiveOnly?: boolean;
   disableEnroll?: boolean;
