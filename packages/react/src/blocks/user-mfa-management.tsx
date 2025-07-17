@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { useComponentConfig, useMFA, useTranslator } from '@/hooks';
-import type { ManageMfaProps } from '@/types';
+import type { UserMFAMgmtProps } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -9,15 +9,15 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
-import { EnrollmentForm } from '@/components/mfa/enrollment-form';
 import { ENROLL, CONFIRM } from '@/lib/mfa-constants';
+import { UserMFASetupForm } from '@/components/mfa/user-mfa-setup-form';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { withCoreClient } from '@/hoc';
 import { Authenticator, MFAType } from '@auth0-web-ui-components/core';
 
 /**
- * ManageMfa Component
+ * UserMFAMgmt Component
  *
  * A component responsible for managing Multi-Factor Authentication (MFA) factors for a user.
  * This component handles the mfa access token fetching ,fetching authenticators, enrolling, and deletion of MFA factors and manages the MFA access token.
@@ -41,8 +41,8 @@ import { Authenticator, MFAType } from '@auth0-web-ui-components/core';
  *
  * @returns {React.JSX.Element} The rendered component.
  */
-function ManageMfaComponent({
-  customMessages,
+function UserMFAMgmtComponent({
+  customMessages = {},
   hideHeader = false,
   showActiveOnly = false,
   disableEnroll = false,
@@ -54,9 +54,8 @@ function ManageMfaComponent({
   onFetch,
   onErrorAction,
   onBeforeAction,
-}: ManageMfaProps): React.JSX.Element {
+}: UserMFAMgmtProps): React.JSX.Element {
   const { t } = useTranslator('mfa', customMessages);
-
   const {
     config: { loader },
   } = useComponentConfig();
@@ -327,7 +326,7 @@ function ManageMfaComponent({
         </Card>
       )}
       {enrollFactor && (
-        <EnrollmentForm
+        <UserMFASetupForm
           open={dialogOpen}
           onClose={handleCloseDialog}
           factorType={enrollFactor}
@@ -373,4 +372,4 @@ function ManageMfaComponent({
   );
 }
 
-export const ManageMfa = withCoreClient(ManageMfaComponent);
+export const UserMFAMgmt = withCoreClient(UserMFAMgmtComponent);

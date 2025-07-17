@@ -6,6 +6,8 @@ export { createCoreClient } from './auth/core-client';
 
 export { AuthDetailsCore, CoreClientInterface } from './auth/auth-types';
 
+export * from './schemas';
+
 export {
   EnrollMfaParams,
   EnrollMfaResponse,

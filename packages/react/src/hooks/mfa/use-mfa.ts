@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useCoreClient } from './use-core-client';
+import { useCoreClient } from '../use-core-client';
 import type {
   MFAType,
   EnrollOptions,

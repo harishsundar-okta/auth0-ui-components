@@ -7,7 +7,7 @@ import type {
   MFAMessages,
 } from '@auth0-web-ui-components/core';
 
-export interface ManageMfaProps {
+export interface UserMFAMgmtProps {
   customMessages?: Partial<MFAMessages>;
   hideHeader?: boolean;
   showActiveOnly?: boolean;
