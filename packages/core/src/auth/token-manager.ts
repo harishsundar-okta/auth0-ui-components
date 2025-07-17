@@ -22,17 +22,23 @@ export const TokenUtils = {
   },
 
   /**
+   * Check if the core client is initialized
+   */
+  isCoreClientInitialized(auth: AuthDetailsCore): void {
+    if (!auth || !auth.contextInterface) {
+      throw new Error('TokenUtils: CoreClient is not initialized.');
+    }
+  },
+
+  /**
    * Validate token request parameters
    */
   validateTokenRequest(auth: AuthDetailsCore, scope: string): void {
-    if (!auth || !auth.contextInterface) {
-      throw new Error('getToken: CoreClient is not initialized.');
-    }
     if (!auth.domain) {
-      throw new Error('getToken: Auth0 domain is not configured');
+      throw new Error('TokenUtils: Auth0 domain is not configured');
     }
     if (!scope) {
-      throw new Error('getToken: Scope is required');
+      throw new Error('TokenUtils: Scope is required');
     }
   },
 
@@ -42,6 +48,7 @@ export const TokenUtils = {
   isProxyMode(auth: AuthDetailsCore): boolean {
     return !!auth.authProxyUrl;
   },
+
   /**
    * Fetch token silently with fallback to popup
    */
@@ -94,12 +101,15 @@ export function createTokenManager(auth: AuthDetailsCore) {
       audiencePath: string,
       ignoreCache: boolean = false,
     ): Promise<string | undefined> {
-      // Validate request
-      TokenUtils.validateTokenRequest(auth, scope);
+      // Ensure core client is initialized before getting a token
+      TokenUtils.isCoreClientInitialized(auth);
 
       if (TokenUtils.isProxyMode(auth)) {
         return Promise.resolve(undefined);
       }
+
+      // Validate request
+      TokenUtils.validateTokenRequest(auth, scope);
 
       // Build audience and request key
       const audience = TokenUtils.buildAudience(auth.domain!, audiencePath);

@@ -34,7 +34,7 @@ export const CoreUtils = {
    */
   async initializeAuthDetails(authDetails: AuthDetailsCore): Promise<AuthDetailsCore> {
     let auth = authDetails;
-    if (authDetails.contextInterface) {
+    if (!CoreUtils.isProxyMode(auth) && authDetails.contextInterface) {
       try {
         const tokenRes = await authDetails.contextInterface.getAccessTokenSilently({
           cacheMode: 'off',
@@ -52,6 +52,7 @@ export const CoreUtils = {
           domain: undefined,
           clientId: undefined,
           scopes: undefined,
+          contextInterface: undefined,
         };
       }
     }

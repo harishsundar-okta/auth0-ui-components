@@ -35,7 +35,6 @@ export const useCoreClientInitialization = ({
     initializeCoreClient();
   }, [
     authDetails.contextInterface?.getAccessTokenSilently,
-    authDetails.contextInterface?.getIdTokenClaims,
     i18nOptions?.currentLanguage,
     i18nOptions?.fallbackLanguage,
   ]);
