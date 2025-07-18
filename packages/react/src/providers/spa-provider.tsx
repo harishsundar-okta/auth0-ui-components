@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import type { InternalProviderProps } from './types';
+import type { InternalProviderProps } from '@/types/auth-types';
 import { CoreClientContext } from '@/hooks/use-core-client';
 import { useCoreClientInitialization } from '@/hooks/use-core-client-initialization';
 import { useAuth0 } from '@auth0/auth0-react';

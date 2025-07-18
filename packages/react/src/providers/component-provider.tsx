@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import type { Auth0ComponentProviderProps } from './types';
+import type { Auth0ComponentProviderProps } from '@/types/auth-types';
 import { Spinner } from '@/components/ui/spinner';
 import { Auth0ComponentConfigContext } from '@/hooks';
 import { ThemeProvider } from './theme-provider';

@@ -1,6 +1,3 @@
-import * as React from 'react';
-import { AuthDetailsCore } from '@auth0-web-ui-components/core';
-
 /**
  * Theme configuration
  * @property {('light'|'dark')} [mode] - Theme mode
@@ -11,43 +8,6 @@ export interface ThemeSettings {
   primaryColor?: string;
   [key: string]: unknown;
 }
-
-/**
- * Internationalization configuration for Auth0 components.
- */
-export interface I18nOptions {
-  currentLanguage: string;
-  fallbackLanguage?: string;
-}
-
-/**
- * Auth0 authentication details with optional React-specific properties.
- */
-export type AuthDetails = Omit<AuthDetailsCore, 'accessToken'>;
-
-/**
- * Props for the Auth0ComponentProvider component.
- */
-export interface Auth0ComponentProviderProps {
-  i18n?: I18nOptions;
-  themeSettings?: ThemeSettings;
-  authDetails?: AuthDetails;
-  customOverrides?: CustomOverrides;
-  loader?: React.ReactNode;
-}
-
-/**
- * Props for the InternalProvider component.
- */
-export interface InternalProviderProps {
-  i18n?: I18nOptions;
-  authDetails?: AuthDetails;
-}
-
-/**
- * Configuration for Auth0ComponentProvider excluding authentication details.
- */
-export type Auth0ComponentConfig = Omit<Auth0ComponentProviderProps, 'authDetails' | 'i18n'>;
 
 /**
  * BrandingTheme

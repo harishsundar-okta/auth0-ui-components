@@ -4,7 +4,7 @@ import {
   I18nInitOptions,
   TFactory,
   I18nServiceInterface,
-} from './types';
+} from './i18n-types';
 
 // Pure utility functions for i18n functionality
 export const I18nUtils = {

@@ -1,4 +1,4 @@
-import type { RequestOptions, HttpMethod, ErrorResponse } from './types';
+import type { RequestOptions, HttpMethod, ErrorResponse } from './api-types';
 import { createApiError, isApiError, normalizeError } from './api-error';
 
 const STATUS_MESSAGES: Readonly<Record<number, string>> = {

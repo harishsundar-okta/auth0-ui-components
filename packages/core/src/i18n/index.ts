@@ -5,4 +5,4 @@ export type {
   TranslationFunction,
   TFactory,
   I18nServiceInterface,
-} from './types';
+} from './i18n-types';
