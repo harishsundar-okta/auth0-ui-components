@@ -4,10 +4,16 @@ import { createAuthenticationAPIService } from '../services/authentication-api-s
 import { createTokenManager } from './token-manager';
 import { toURL } from './auth-utils';
 
-// Pure utility functions for core business logic
+/**
+ * Pure utility functions for core business logic.
+ */
 const CoreUtils = {
   /**
-   * Get the base URL for API calls
+   * Gets the base URL for API calls, supporting both direct Auth0 domain and proxy mode.
+   *
+   * @param auth - The authentication details containing domain or proxy URL configuration
+   * @returns The base API URL with trailing slash
+   * @throws {Error} When Auth0 domain is not configured and no proxy URL is provided
    */
   getApiBaseUrl(auth: AuthDetailsCore): string {
     // Use authProxyUrl if provided (proxy mode)
@@ -23,14 +29,20 @@ const CoreUtils = {
   },
 
   /**
-   * Check if running in proxy mode
+   * Determines if the client is running in proxy mode by checking for authProxyUrl.
+   *
+   * @param auth - The authentication details to check
+   * @returns True if running in proxy mode, false otherwise
    */
   isProxyMode(auth: AuthDetailsCore): boolean {
     return !!auth.authProxyUrl;
   },
 
   /**
-   * Initialize auth details from context interface
+   * Initializes authentication details by attempting to get an access token if a context interface is available and is not proxy mode.
+   *
+   * @param authDetails - The initial authentication details
+   * @returns Promise resolving to updated auth details with access token (if available)
    */
   async initializeAuthDetails(authDetails: AuthDetailsCore): Promise<AuthDetailsCore> {
     if (CoreUtils.isProxyMode(authDetails)) {
@@ -57,7 +69,32 @@ const CoreUtils = {
   },
 };
 
-// Main functional factory for creating core client
+/**
+ * Creates a core client instance that serves as the foundation for authentication and other main operations.
+ *
+ * This factory function initializes all core services including i18n, token management,
+ * and other API services. It handles both direct Auth0 integration and proxy mode.
+ *
+ * @param authDetails - Authentication configuration including domain, client ID, and optional proxy settings
+ * @param i18nOptions - Optional internationalization configuration for language support
+ * @returns Promise resolving to a fully initialized core client interface
+ *
+ * @example
+ * ```typescript
+ * // Direct Auth0 integration
+ * const coreClient = await createCoreClient({
+ *   domain: 'your-domain.auth0.com',
+ *   clientId: 'your-client-id',
+ *   contextInterface: auth0Client
+ * });
+ *
+ * // Proxy mode
+ * const coreClient = await createCoreClient({
+ *   authProxyUrl: 'https://your-proxy.com/api',
+ *   clientId: 'your-client-id'
+ * });
+ * ```
+ */
 export async function createCoreClient(
   authDetails: AuthDetailsCore,
   i18nOptions?: I18nInitOptions,
