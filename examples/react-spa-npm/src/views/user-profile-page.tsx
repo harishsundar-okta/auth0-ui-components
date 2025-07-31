@@ -1,15 +1,12 @@
 import { UserMFAMgmt } from '@auth0-web-ui-components/react';
-import { useTranslation } from 'react-i18next';
 
 const UserProfilePage = () => {
-  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <UserMFAMgmt
-        customMessages={{ title: t('user-profile.mfa.title') }}
         factorConfig={{
           duo: {
-            enabled: false,
+            visible: false,
           },
           'webauthn-platform': {
             visible: false,

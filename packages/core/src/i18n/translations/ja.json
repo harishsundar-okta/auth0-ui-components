@@ -1,21 +1,41 @@
 {
   "common": {},
   "mfa": {
-    "title": "多要素認証",
-    "description": "アカウントの多要素認証の登録を管理します。",
+    "title": "多要素認証方法",
+    "description": "あなたのアカウントと身元をさらに保護します",
     "no_active_mfa": "登録されている多要素認証はありません。",
+    "component_error_title": "多要素認証コンポーネントの読み込みエラー",
+    "component_error_description": "多要素認証方法の読み込みに問題が発生しました。ページを再読み込みして、もう一度お試しください",
+    "loading": "読み込み中...",
     "delete": "削除",
     "enroll": "登録",
+    "submit": "送信",
+    "update": "更新",
+    "remove": "削除",
+    "enrolling": "登録中...",
     "enrolled": "登録済み",
+    "enabled": "有効",
     "enrollment": "登録",
     "confirmation": "確認",
     "remove_factor": "登録を正常に削除しました。",
     "enroll_factor": "正常に登録されました。",
     "enroll_otp_mfa": "ワンタイムパスワードの登録",
     "delete_factor": "${factorName}の認証要素を削除",
-    "delete_mfa_title": "MFA要素の削除",
-    "delete_mfa_content": "このMFA要素を削除してもよろしいですか？この操作は元に戻せません。",
+    "delete_mfa_title": "既存の認証システムを削除",
+    "delete_mfa_sms_consent": "この電話番号をSMS MFAから削除してもよろしいですか？",
+    "delete_mfa_email_consent": "このEメールアドレスを削除してもよろしいですか？",
+    "delete_mfa_totp_consent": "この認証アプリを削除しますか？",
+    "delete_mfa_push-notification_consent": "プッシュ通知による認証を削除しますか？",
     "cancel": "キャンセル",
+    "next": "次へ",
+    "back": "戻る",
+    "yes-remove": "はい、削除します",
+    "app-store": "App Store",
+    "google-play": "Google Play",
+    "ok": "はい",
+    "confirm": "確認",
+    "continue": "続行",
+    "confirm_delete": "削除",
     "deleting": "削除中...",
     "errors": {
       "factors_loading_error": "多要素認証の読み込みエラー！",
@@ -27,40 +47,49 @@
       "invalid_email": "無効なメールアドレス",
       "invalid_phone_number": "無効な電話番号",
       "unsupported_mfa_type": "未対応のMFAタイプです: ${factorName}",
-      "invalid_request": {
-        "totp": "必須パラメーターがありません: otp"
+      "push-notification": {
+        "too_many_entities": "このユーザーのプッシュ通知エンティティの数には上限があります。",
+        "unsupported_challenge_type": "Auth0 Verifier がテナントで無効になっています。ダッシュボードの Guardian MFA セクションで「プッシュ通知」をオンにすると有効にできます。",
+        "invalid_request": "必須パラメーターがありません",
+        "authorization_pending": "承認保留中: 数秒後にリクエストを再試行してください。"
       },
-      "unsupported_challenge_type": {
-        "sms": "SMSの認証が無効になっています。ダッシュボードのGuardian MFAセクションで「SMS」をオンにしてください。",
-        "totp": "OTP認証が無効になっています。ダッシュボードのGuardian MFAセクションで「プッシュ通知」をオンにしてください（プッシュ通知にはOTPが含まれます）。",
-        "push-notification": "Auth0認証が無効になっています。ダッシュボードのGuardian MFAセクションで「プッシュ通知」をオンにしてください。"
+      "totp": {
+        "invalid_request": "必須パラメーターがありません",
+        "too_many_entities": "このユーザーのTOTPエンティティの数には上限があります。",
+        "unsupported_challenge_type": "OTP Verifier がテナントで無効になっています。ダッシュボードの Guardian MFA セクションで「プッシュ通知」をオンにすると有効にできます（プッシュ通知にはOTPが含まれます）。",
+        "invalid_grant": "OTPコードが無効です"
       },
-      "expired_token": {
-        "email": "認証コードの有効期限が切れました"
+      "sms": {
+        "unsupported_challenge_type": "SMS Verifier がテナントで無効になっています。ダッシュボードの Guardian MFA セクションで「SMS」をオンにすると有効にできます。",
+        "bad_gateway": "電話番号が無効です。",
+        "too_many_entities": "このユーザーのSMSエンティティの数には上限があります。"
       },
-      "invalid_grant": {
-        "email": "無効なコード",
-        "totp": "無効な認証コードです"
-      },
-      "access_denied": {
-        "email": "認証器が見つかりませんでした"
+      "email": {
+        "expired_token": "確認コードの有効期限が切れました",
+        "invalid_grant": "コードが無効です",
+        "access_denied": "要求された認証機能が見つかりませんでした",
+        "too_many_entities": "このユーザーのメールエンティティの数には上限があります。"
       }
     },
     "sms": {
-      "title": "SMSメッセージ",
-      "description": "確認コードがSMSで送信されます"
+      "title": "電話メッセージ ",
+      "description": "電話番号が追加されていません。",
+      "button-text": "SMS用電話番号を追加"
     },
     "push-notification": {
-      "title": "Auth0 Guardianによるプッシュ通知",
-      "description": "Auth0 Guardianを使用してプッシュ通知を送信します。"
+      "title": "Auth0 Guardian プッシュ通知",
+      "description": "プッシュ認証が追加されていません。",
+      "button-text": "プッシュ認証を追加"
     },
     "totp": {
       "title": "ワンタイムパスワード",
-      "description": "Google認証システムなどを使用してワンタイムパスワードを生成します。"
+      "description": "認証システムが追加されていません。",
+      "button-text": "認証アプリを追加"
     },
     "email": {
       "title": "メール",
-      "description": "確認コードがメールで送信されます。"
+      "description": "メールアドレスが追加されていません。",
+      "button-text": "メールアドレスを追加"
     },
     "duo": {
       "title": "Duoセキュリティ",
@@ -83,15 +112,22 @@
       "phone_number": "電話番号 (SMS)",
       "send_code": "コードを送信",
       "sending": "送信中...",
-      "enroll_email": "メールMFAを登録",
-      "enroll_sms": "SMS MFAを登録",
+      "enroll_title": "本人確認",
+      "enroll_email_placeholder": "メールアドレスを入力",
+      "enroll_email_description": "認証コードを受信するためにあなたのメールアドレスを入力してください",
+      "enroll_sms_placeholder": "電話番号を入力",
+      "enroll_sms_description": "認証コードを受信するためにあなたの電話番号を入力してください",
       "show_otp": {
-        "title": "認証アプリでバーコードをスキャンしてください",
+        "title": "この認証方法を登録するには、認証アプリでこのQRコードをスキャンしてください。",
         "save_recovery": "これらのリカバリーコードを保存してください！",
         "enter_code": "認証アプリのコードを入力してください",
+        "one_time_passcode": "ワンタイムパスコード",
         "verify_code": "コードを確認",
+        "copy_as_code": "コードとしてコピー",
         "verifying": "確認中...",
-        "enter_verify_code": "確認コードを入力してください"
+        "enter_verify_code": "${verifier}に送信された6桁のコードを入力してください",
+        "enter_opt_code": "認証アプリのコードを入力してください",
+        "install_guardian_description": "続行するには、お使いのモバイルデバイスからアプリストア経由でAuth0 Guardianアプリをインストールしてください。"
       }
     }
   }

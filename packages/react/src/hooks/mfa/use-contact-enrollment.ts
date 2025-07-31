@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import {
   FACTOR_TYPE_EMAIL,
   FACTOR_TYPE_SMS,
-  FACTOR_TYPE_OTP,
   normalizeError,
   type MFAType,
   type EnrollMfaResponse,
@@ -18,26 +17,26 @@ type UseContactEnrollmentProps = {
   factorType: MFAType;
   enrollMfa: (factor: MFAType, options: Record<string, string>) => Promise<EnrollMfaResponse>;
   onError: (error: Error, stage: typeof ENROLL) => void;
-  onContactSuccess: (oobCode?: string) => void;
-  onOtpSuccess: (otpData: {
-    secret: string | null;
-    barcodeUri: string | null;
-    recoveryCodes: string[];
-  }) => void;
 };
 
 export function useContactEnrollment({
   factorType,
   enrollMfa,
   onError,
-  onContactSuccess,
-  onOtpSuccess,
 }: UseContactEnrollmentProps) {
   const { t } = useTranslator('mfa');
   const [loading, setLoading] = useState(false);
+  const [contactData, setContactData] = useState<{
+    contact: string | null;
+    oobCode: string | null;
+  }>({
+    contact: null,
+    oobCode: null,
+  });
 
   const onSubmitContact = useCallback(
     async (data: ContactForm) => {
+      if (loading) return;
       setLoading(true);
       try {
         const options: Record<string, string> =
@@ -50,28 +49,27 @@ export function useContactEnrollment({
         const response = await enrollMfa(factorType, options);
 
         if (response?.oob_code) {
-          onContactSuccess(response.oob_code);
-        }
-
-        if (response?.authenticator_type === FACTOR_TYPE_OTP) {
-          onOtpSuccess({
-            secret: response.secret ?? null,
-            barcodeUri: response.barcode_uri ?? null,
-            recoveryCodes: response.recovery_codes || [],
+          setContactData({
+            contact: data.contact,
+            oobCode: response?.oob_code,
           });
         }
       } catch (error) {
         const normalizedError = normalizeError(error, {
-          resolver: (code) => t(`errors.${code}.${factorType}`),
-          fallbackMessage: 'An unexpected error occurred during MFA enrollment.',
+          resolver: (code) =>
+            t(
+              `errors.${factorType}.${code}`,
+              {},
+              'An unexpected error occurred during enrollment.',
+            ),
         });
         onError(normalizedError, ENROLL);
       } finally {
         setLoading(false);
       }
     },
-    [factorType, enrollMfa, onContactSuccess, onOtpSuccess, onError, t],
+    [loading, factorType, enrollMfa, onError, t],
   );
 
-  return { onSubmitContact, loading };
+  return { onSubmitContact, loading, contactData, setContactData };
 }

@@ -1,21 +1,40 @@
 {
   "common": {},
   "mfa": {
-    "title": "MFA Authenticators",
-    "description": "Manage the MFA enrollments for your account.",
+    "title": "Multi-Factor Authentication methods",
+    "description": "Extra protection for your account and your identity",
     "no_active_mfa": "No active MFA factors enrolled.",
+    "component_error_title": "Error loading Multi-Factor Authentication component",
+    "component_error_description": "We're having trouble loading your multi-factor authentication methods.\nPlease refresh the page and try again",
+    "loading": "Loading...",
     "delete": "Delete",
     "enroll": "Enroll",
+    "submit": "Submit",
+    "update": "Update",
+    "remove": "Remove",
+    "enrolling": "Enrolling...",
     "enrolled": "Enrolled",
+    "enabled": "ENABLED",
     "enrollment": "Enrollment",
     "confirmation": "Confirmation",
     "remove_factor": "Enrollment removed successfully.",
     "enroll_factor": "Enrolled successfully.",
     "enroll_otp_mfa": "Enroll OTP MFA",
     "delete_factor": "Delete authenticator ${factorName}",
-    "delete_mfa_title": "Delete MFA Factor",
-    "delete_mfa_content": "Are you sure you want to delete this MFA factor? This action cannot be undone.",
+    "delete_mfa_title": "Remove existing Authenticator",
+    "delete_mfa_sms_consent": "Are you sure you want to remove this Phone number for SMS?",
+    "delete_mfa_email_consent": "Are you sure you want to remove this Email?",
+    "delete_mfa_totp_consent": "Are you sure you want to remove this authenticator?",
+    "delete_mfa_push-notification_consent": "Are you sure you want to remove this push notification?",
     "cancel": "Cancel",
+    "next": "Next",
+    "back": "Back",
+    "yes-remove": "Yes, remove",
+    "ok": "Ok",
+    "app-store": "App Store",
+    "google-play": "Google Play",
+    "confirm": "Confirm",
+    "continue": "Continue",
     "deleting": "Deleting...",
     "errors": {
       "factors_loading_error": "Error loading MFA factors!",
@@ -27,41 +46,49 @@
       "invalid_email": "Invalid email address",
       "invalid_phone_number": "Invalid phone number",
       "unsupported_mfa_type": "Unsupported MFA type: ${factorName}",
-      "invalid_request": {
-        "totp": "Missing required parameter: otp",
-        "push-notification": "Missing required parameter: oob_code"
+      "push-notification": {
+        "too_many_entities": "You reached the limit of entities of the push notification type for this user.",
+        "unsupported_challenge_type": "Auth0 Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"Push notifications\" on Guardian MFA section.",
+        "invalid_request": "Missing required parameter",
+        "authorization_pending": "Authorization pending: please repeat the request in a few seconds."
       },
-      "unsupported_challenge_type": {
-        "sms": "SMS Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"SMS\" on Guardian MFA section.",
-        "totp": "OTP Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"Push notifications\" on Guardian MFA section (Push notications include OTP).",
-        "push-notification": "Auth0 Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"Push notifications\" on Guardian MFA section."
+      "totp": {
+        "invalid_request": "Missing required parameter",
+        "too_many_entities": "You reached the limit of entities of the totp type for this user.",
+        "unsupported_challenge_type": "OTP Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"Push notifications\" on Guardian MFA section (Push notications include OTP).",
+        "invalid_grant": "Invalid Otp Code"
       },
-      "expired_token": {
-        "email": "Verification code is expired"
+      "sms": {
+        "unsupported_challenge_type": "SMS Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"SMS\" on Guardian MFA section.",
+        "bad_gateway": "The phone number is invalid.",
+        "too_many_entities": "You reached the limit of entities of the sms type for this user."
       },
-      "invalid_grant": {
-        "email": "Invalid Code",
-        "totp": "Invalid Otp Code"
-      },
-      "access_denied": {
-        "email": "Could not find the requested authenticator"
+      "email": {
+        "expired_token": "Verification code is expired",
+        "invalid_grant": "Invalid Code",
+        "access_denied": "Could not find the requested authenticator",
+        "too_many_entities": "You reached the limit of entities of the email type for this user."
       }
     },
     "sms": {
       "title": "Phone Message",
-      "description": "Users will receive a phone message with a verification code"
+      "description": "No phone number has been added.",
+      "button-text": "Add Phone for SMS"
     },
     "push-notification": {
       "title": "Push Notification using Auth0 Guardian",
-      "description": "Provide a push notification using Auth0 Guardian."
+      "description": "No push authentication has been added.",
+      "button-text": "Add Push Authentication"
     },
     "totp": {
       "title": "One-time Password",
-      "description": "Provide a one-time password using Google Authenticator or similar."
+      "description": "No authenticator has been added.",
+      "button-text": "Add Authenticator App"
     },
     "email": {
       "title": "Email",
-      "description": "Users will receive an email message containing a verification code."
+      "description": "No email has been added.",
+      "button-text": "Add Email"
     },
     "duo": {
       "title": "Duo Security",
@@ -81,18 +108,25 @@
     },
     "enrollment_form": {
       "email_address": "Email Address",
-      "phone_number": "Phone Number (SMS)",
+      "phone_number": "Phone Number",
       "send_code": "Send Code",
       "sending": "Sending...",
-      "enroll_email": "Enroll Email MFA",
-      "enroll_sms": "Enroll SMS MFA",
+      "enroll_title": "Verify it’s you",
+      "enroll_email_placeholder": "Enter email address",
+      "enroll_email_description": "Enter your email to receive a verification code",
+      "enroll_sms_placeholder": "Enter phone number",
+      "enroll_sms_description": "Enter your phone number to receive a verification code",
       "show_otp": {
-        "title": "Scan the barcode with your authenticator app",
+        "title": "Scan this QR code with your Authenticator App to register this Authentication method",
         "save_recovery": "Save these recovery codes!",
         "enter_code": "Enter the code from your authenticator app",
+        "one_time_passcode": "One-Time Passcode",
         "verify_code": "Verify Code",
+        "copy_as_code": "Copy as Code",
         "verifying": "Verifying...",
-        "enter_verify_code": "Enter the verification code"
+        "enter_verify_code": "Enter the 6-digit code we sent to ${verifier}",
+        "enter_opt_code": "Enter the code from your authenticator",
+        "install_guardian_description": "In order to continue, install the Auth0 Guardian app via the app store from your mobile device"
       }
     }
   }

@@ -1,26 +1,35 @@
 import * as React from 'react';
+import { MoreVertical, Trash2, Mail, Smartphone } from 'lucide-react';
 
-import { useComponentConfig, useMFA, useTranslator } from '@/hooks';
+import {
+  Authenticator,
+  type MFAType,
+  FACTOR_TYPE_EMAIL,
+  FACTOR_TYPE_SMS,
+} from '@auth0-web-ui-components/core';
+
 import type { UserMFAMgmtProps } from '@/types';
+
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { ENROLL, CONFIRM } from '@/lib/mfa-constants';
 import { UserMFASetupForm } from '@/components/mfa/user-mfa-setup-form';
 import { Spinner } from '@/components/ui/spinner';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { List, ListItem } from '@/components/ui/list';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { DeleteFactorConfirmation } from '@/components/mfa/delete-factor-confirmation';
+
 import { withCoreClient } from '@/hoc';
-import { Authenticator, MFAType } from '@auth0-web-ui-components/core';
+import { useComponentConfig, useMFA, useTranslator } from '@/hooks';
 
 /**
  * UserMFAMgmt Component
  *
  * A component responsible for managing Multi-Factor Authentication (MFA) factors for a user.
- * This component handles the mfa access token fetching ,fetching authenticators, enrolling, and deletion of MFA factors and manages the MFA access token.
+ * This component handles fetching the MFA access token, fetching authenticators, enrolling, and deletion of MFA factors, and manages the MFA access token.
  * It operates in both ProxyMode (RWA) and SPA modes for authentication.
  *
  * - **ProxyMode (RWA)**: In this mode, the component interacts with a proxy service to manage MFA
@@ -38,6 +47,41 @@ import { Authenticator, MFAType } from '@auth0-web-ui-components/core';
  * @param {Function} [props.onFetch] - Callback fired when MFA factors are fetched.
  * @param {Function} [props.onErrorAction] - Callback fired when an error occurs during an action (enroll/delete).
  * @param {Function} [props.onBeforeAction] - Callback fired before performing an action (enroll/delete).
+ * @param {Object} [props.schemaValidation] - Optional validation schema for email and phone number fields.
+ *   @param {RegExp} [props.schemaValidation.email] - Regex for validating email input.
+ *   @param {RegExp} [props.schemaValidation.phone] - Regex for validating phone number input.
+ *
+ * @example
+ * <UserMFAMgmt
+ *   localization={{
+ *     title: 'Manage MFA Factors',
+ *     description: 'Here you can manage your Multi-Factor Authentication (MFA) factors.',
+ *     loading: 'Loading...',
+ *     errors: {
+ *       factorsLoadingError: 'An error occurred while loading MFA factors.',
+ *     },
+ *     no_active_mfa: 'No active MFA factors found.',
+ *     enroll_factor: 'Successfully enrolled the MFA factor.',
+ *     remove_factor: 'Successfully removed the MFA factor.',
+ *     delete: 'Delete',
+ *     enroll: 'Enroll',
+ *   }}
+ *   hideHeader={false}
+ *   showActiveOnly={false}
+ *   disableEnroll={false}
+ *   disableDelete={false}
+ *   readOnly={false}
+ *   factorConfig={{}}
+ *   onEnroll={() => {}}
+ *   onDelete={() => {}}
+ *   onFetch={() => {}}
+ *   onErrorAction={() => {}}
+ *   onBeforeAction={() => {}}
+ *   schemaValidation={{
+ *     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+ *     phone: /^\+?[1-9]\d{1,14}$/
+ *   }}
+ * />
  *
  * @returns {React.JSX.Element} The rendered component.
  */
@@ -54,6 +98,7 @@ function UserMFAMgmtComponent({
   onFetch,
   onErrorAction,
   onBeforeAction,
+  schemaValidation,
 }: UserMFAMgmtProps): React.JSX.Element {
   const { t } = useTranslator('mfa', customMessages);
   const {
@@ -114,7 +159,7 @@ function UserMFAMgmtComponent({
    *
    * @param {MFAType} factor - The MFA factor to be enrolled.
    */
-  const handleEnrollClick = (factor: MFAType) => {
+  const handleEnroll = (factor: MFAType) => {
     setEnrollFactor(factor);
     setDialogOpen(true);
   };
@@ -139,7 +184,7 @@ function UserMFAMgmtComponent({
    * @param {MFAType} factorType - The type of MFA factor being deleted (e.g., 'sms', 'email', 'totp')
    * @returns {Promise<void>}
    */
-  const handleDeleteClick = React.useCallback(
+  const handleDeleteFactor = React.useCallback(
     async (factorId: string, factorType: MFAType) => {
       if (readOnly || disableDelete) return;
 
@@ -248,79 +293,236 @@ function UserMFAMgmtComponent({
     <>
       <Toaster position="top-right" />
       {loading ? (
-        loader || <Spinner />
-      ) : error ? (
-        <div className="flex items-center justify-center p-4">
-          <Label className="text-center text-destructive">{error}</Label>
-        </div>
+        loader || <Spinner aria-label={t('loading')} />
       ) : (
-        <Card>
-          {!hideHeader && (
-            <CardHeader>
-              <CardTitle>{t('title')}</CardTitle>
-              <CardDescription>{t('description')}</CardDescription>
-            </CardHeader>
-          )}
-
-          <CardContent className="grid gap-6 p-4 pt-0 md:p-6 md:pt-0">
-            {showActiveOnly && visibleFactors.length === 0 ? (
-              <Label className="text-center text-muted-foreground">{t('no_active_mfa')}</Label>
+        <Card className="bg-white py-10 px-8 sm:py-8 sm:px-6">
+          <CardContent>
+            {error ? (
+              <div
+                className="flex flex-col items-center justify-center p-4 space-y-2"
+                role="alert"
+                aria-live="assertive"
+              >
+                <h1
+                  className="text-base font-medium text-center text-destructive"
+                  id="mfa-management-title"
+                >
+                  {t('component_error_title')}
+                </h1>
+                <p className="text-sm text-center text-destructive whitespace-pre-line">
+                  {t('component_error_description')}
+                </p>
+              </div>
             ) : (
-              visibleFactors.map((factor, idx) => {
-                const isEnabledFactor =
-                  factorConfig?.[factor.factorName as MFAType]?.enabled !== false;
-
-                return (
-                  <div
-                    key={`${factor.name}-${idx}`}
-                    className={`flex flex-col gap-6 ${!isEnabledFactor ? 'opacity-50 pointer-events-none' : ''}`}
-                    aria-disabled={!isEnabledFactor}
+              <>
+                {!hideHeader && (
+                  <>
+                    <CardTitle>
+                      <h1 className="text-2xl font-medium text-left" id="mfa-management-title">
+                        {t('title')}
+                      </h1>
+                    </CardTitle>
+                    <CardDescription id="mfa-management-desc">
+                      <p className="text-sm text-muted-foreground text-left">{t('description')}</p>
+                    </CardDescription>
+                  </>
+                )}
+                {showActiveOnly && visibleFactors.length === 0 ? (
+                  <p className="text-center text-muted-foreground" role="status">
+                    {t('no_active_mfa')}
+                  </p>
+                ) : (
+                  <List
+                    className="flex flex-col gap-0 w-full"
+                    aria-labelledby="mfa-management-title"
+                    aria-describedby="mfa-management-desc"
                   >
-                    {idx > 0 && <Separator />}
-                    <div className="flex flex-col items-center justify-between space-y-6 md:flex-row md:space-x-2 md:space-y-0">
-                      <Label className="flex flex-col items-start space-y-1">
-                        <span className="leading-6 text-left">
-                          {t(`${factor.factorName}.title`)}
-                          {factor.active && (
-                            <Badge variant="success" size="sm" className="ml-3">
-                              {t('enrolled')}
-                            </Badge>
-                          )}
-                        </span>
-                        <p className="font-normal leading-snug text-muted-foreground text-left">
-                          {t(`${factor.factorName}.description`)}
-                        </p>
-                      </Label>
-
-                      <div className="flex items-center justify-end space-x-24 md:min-w-72">
-                        {factor.active
-                          ? !readOnly && (
-                              <Button
-                                type="submit"
-                                size="sm"
-                                onClick={() =>
-                                  handleDeleteClick(factor.id, factor.factorName as MFAType)
-                                }
-                                disabled={disableDelete || isDeletingFactor || !isEnabledFactor}
-                                aria-label={t('delete_factor', { factorName: factor.factorName })}
-                              >
-                                {t('delete')}
-                              </Button>
-                            )
-                          : !readOnly && (
-                              <Button
-                                size="sm"
-                                onClick={() => handleEnrollClick(factor.factorName as MFAType)}
-                                disabled={disableEnroll || !isEnabledFactor}
-                              >
-                                {t('enroll')}
-                              </Button>
-                            )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
+                    {visibleFactors.map((factor, idx) => {
+                      const isEnabledFactor =
+                        factorConfig?.[factor.factorName as MFAType]?.enabled !== false;
+                      return (
+                        <React.Fragment key={`${factor.name}-${idx}`}>
+                          <ListItem
+                            className={`w-full p-0 m-0 ${!isEnabledFactor ? 'opacity-50 pointer-events-none' : ''}`}
+                            aria-disabled={!isEnabledFactor}
+                            tabIndex={0}
+                            aria-label={t(`${factor.factorName}.title`)}
+                          >
+                            <div className="flex w-full flex-col sm:flex-row items-start py-6 gap-2 sm:gap-4">
+                              <div className="flex flex-col min-w-0 gap-2 flex-grow w-full">
+                                <div className="grid grid-cols-4 gap-2 sm:gap-6 items-center w-full">
+                                  <div className="col-span-4 sm:col-span-3 text-left text-base font-medium flex flex-row flex-wrap items-center gap-2 sm:gap-3 break-words w-full">
+                                    <span
+                                      className="break-words whitespace-normal"
+                                      id={`factor-title-${idx}`}
+                                    >
+                                      {t(`${factor.factorName}.title`)}
+                                    </span>
+                                    {factor.active && (
+                                      <Badge
+                                        variant="success"
+                                        size="sm"
+                                        className="shrink-0"
+                                        aria-label={t('enabled')}
+                                      >
+                                        {t('enabled')}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  {!factor.active && !readOnly && (
+                                    <div className="col-span-4 sm:col-span-1 flex justify-end mt-2 sm:mt-0 w-full sm:w-auto">
+                                      <Button
+                                        size="default"
+                                        variant="outline"
+                                        className="text-sm"
+                                        onClick={() => handleEnroll(factor.factorName as MFAType)}
+                                        disabled={disableEnroll || !isEnabledFactor}
+                                        aria-label={t(`${factor.factorName}.button-text`)}
+                                        aria-describedby={`factor-title-${idx}`}
+                                      >
+                                        {t(`${factor.factorName}.button-text`)}
+                                      </Button>
+                                    </div>
+                                  )}
+                                  {factor.active &&
+                                    !(
+                                      factor.factorName === FACTOR_TYPE_SMS ||
+                                      factor.factorName === FACTOR_TYPE_EMAIL
+                                    ) &&
+                                    !readOnly && (
+                                      <div className="flex justify-end">
+                                        <Popover>
+                                          <PopoverTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              aria-label={t('actions')}
+                                              className="p-2"
+                                              tabIndex={0}
+                                            >
+                                              <MoreVertical
+                                                className="w-5 h-5"
+                                                aria-hidden="true"
+                                              />
+                                            </Button>
+                                          </PopoverTrigger>
+                                          <PopoverContent className="w-30 p-2" role="menu">
+                                            <Button
+                                              size="sm"
+                                              variant="ghost"
+                                              className="flex items-center justify-start px-4 py-2 gap-2 text-red-600 font-normal text-sm"
+                                              onClick={() =>
+                                                handleDeleteFactor(
+                                                  factor.id,
+                                                  factor.factorName as MFAType,
+                                                )
+                                              }
+                                              disabled={
+                                                disableDelete ||
+                                                isDeletingFactor ||
+                                                !isEnabledFactor
+                                              }
+                                              aria-label={t('remove')}
+                                              role="menuitem"
+                                            >
+                                              <Trash2
+                                                className="w-4 h-4 mr-1 color-red-10"
+                                                aria-hidden="true"
+                                              />
+                                              <span className="color-red-10">{t('remove')}</span>
+                                            </Button>
+                                          </PopoverContent>
+                                        </Popover>
+                                      </div>
+                                    )}
+                                </div>
+                                {factor.active &&
+                                (factor.factorName === FACTOR_TYPE_SMS ||
+                                  factor.factorName === FACTOR_TYPE_EMAIL) ? (
+                                  <Card
+                                    className="border rounded-lg shadow-none bg-transparent p-0 w-full mt-2"
+                                    aria-label={t(`${factor.factorName}.title`)}
+                                  >
+                                    <CardContent className="flex flex-row items-center justify-between gap-3 p-3 w-full">
+                                      <div className="flex items-center gap-3">
+                                        {factor.factorName === FACTOR_TYPE_SMS ? (
+                                          <Smartphone
+                                            className="w-5 h-5 text-muted-foreground"
+                                            aria-hidden="true"
+                                          />
+                                        ) : (
+                                          <Mail
+                                            className="w-5 h-5 text-muted-foreground"
+                                            aria-hidden="true"
+                                          />
+                                        )}
+                                        <span className="font-medium text-base text-foreground">
+                                          {factor.name}
+                                        </span>
+                                      </div>
+                                      {!readOnly && (
+                                        <Popover>
+                                          <PopoverTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              aria-label={t('actions')}
+                                              className="p-2"
+                                              tabIndex={0}
+                                            >
+                                              <MoreVertical
+                                                className="w-5 h-5"
+                                                aria-hidden="true"
+                                              />
+                                            </Button>
+                                          </PopoverTrigger>
+                                          <PopoverContent className="w-30 p-2" role="menu">
+                                            <Button
+                                              size="sm"
+                                              variant="ghost"
+                                              className="flex items-center justify-start px-4 py-2 gap-2 text-red-600 font-normal text-sm"
+                                              onClick={() =>
+                                                handleDeleteFactor(
+                                                  factor.id,
+                                                  factor.factorName as MFAType,
+                                                )
+                                              }
+                                              disabled={
+                                                disableDelete ||
+                                                isDeletingFactor ||
+                                                !isEnabledFactor
+                                              }
+                                              aria-label={t('remove')}
+                                              role="menuitem"
+                                            >
+                                              <Trash2
+                                                className="w-4 h-4 mr-1 color-red-10"
+                                                aria-hidden="true"
+                                              />
+                                              <span className="color-red-10">{t('remove')}</span>
+                                            </Button>
+                                          </PopoverContent>
+                                        </Popover>
+                                      )}
+                                    </CardContent>
+                                  </Card>
+                                ) : !factor.active ? (
+                                  <p
+                                    className="font-normal text-muted-foreground text-left break-words mt-1"
+                                    id={`factor-desc-${idx}`}
+                                  >
+                                    {t(`${factor.factorName}.description`)}
+                                  </p>
+                                ) : null}
+                              </div>
+                            </div>
+                          </ListItem>
+                        </React.Fragment>
+                      );
+                    })}
+                  </List>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
@@ -334,40 +536,17 @@ function UserMFAMgmtComponent({
           confirmEnrollment={confirmEnrollment}
           onSuccess={handleEnrollSuccess}
           onError={handleEnrollError}
+          schemaValidation={schemaValidation}
         />
       )}
-      <Dialog
+      <DeleteFactorConfirmation
         open={isDeleteDialogOpen}
         onOpenChange={(open) => !isDeletingFactor && setIsDeleteDialogOpen(open)}
-      >
-        <DialogContent aria-describedby="delete-mfa-description">
-          <DialogHeader>
-            <DialogTitle className="text-center">{t('delete_mfa_title')}</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p id="delete-mfa-description" className="text-center text-muted-foreground">
-              {t('delete_mfa_content')}
-            </p>
-          </div>
-          <div className="flex justify-end gap-4 pt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsDeleteDialogOpen(false)}
-              disabled={isDeletingFactor}
-            >
-              {t('cancel')}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => factorToDelete && handleConfirmDelete(factorToDelete.id)}
-              disabled={isDeletingFactor}
-            >
-              {isDeletingFactor ? t('deleting') : t('delete')}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        factorToDelete={factorToDelete}
+        isDeletingFactor={isDeletingFactor}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setIsDeleteDialogOpen(false)}
+      />
     </>
   );
 }
