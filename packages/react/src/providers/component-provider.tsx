@@ -21,12 +21,20 @@ const SpaProvider = React.lazy(() => import('./spa-provider'));
  *
  * @param {Object} props - Configuration props.
  * @param {React.ReactNode} props.children - Child components that require authentication context.
- * @param {Object} [props.i18n] - Internationalization configuration (language, fallback).
- * @param {Object} [props.themeSettings] - Theme and branding settings.
- * @param {Object} [props.customOverrides] - Optional CSS variable overrides for styling.
+ * @param {Object} [props.i18n] - Internationalization configuration (e.g., current language, fallback language).
+ * @param {Object} [props.theme] - Theme settings including mode and style overrides.
+ * @param {string} [props.theme.mode] - Theme mode, either "light" or "dark". Defaults to "light".
+ * @param {Object} [props.theme.styleOverrides] - CSS variable overrides for customizing the theme.
+ * @param {string} [props.theme.styleOverrides.--font-size-heading] - Font size for headings (e.g., `1.5rem`).
+ * @param {string} [props.theme.styleOverrides.--font-size-title] - Font size for titles (e.g., `1.25rem`).
+ * @param {string} [props.theme.styleOverrides.--font-size-subtitle] - Font size for subtitles (e.g., `1.125rem`).
+ * @param {string} [props.theme.styleOverrides.--font-size-body] - Font size for body text (e.g., `1rem`).
+ * @param {string} [props.theme.styleOverrides.--font-size-paragraph] - Font size for paragraphs (e.g., `0.875rem`).
+ * @param {string} [props.theme.styleOverrides.--font-size-label] - Font size for labels (e.g., `0.875rem`).
  * @param {React.ReactNode} [props.loader] - Custom loading component to show while
- *                                                    authentication is initializing.
- *                                                    Defaults to "Loading authentication...".
+ *                                           authentication is initializing.
+ *                                           Defaults to a spinner.
+ * @param {Object} [props.authDetails] - Authentication details, including `authProxyUrl`.
  *
  * @returns {JSX.Element} The provider component for Auth0 context.
  *
@@ -35,6 +43,17 @@ const SpaProvider = React.lazy(() => import('./spa-provider'));
  * <Auth0ComponentProvider
  *   authDetails={{ authProxyUrl: "/api/auth" }}
  *   i18n={{ currentLanguage: "en", fallbackLanguage: "en" }}
+ *   theme={{
+ *     mode: "dark",
+ *     styleOverrides: {
+ *       "--font-size-heading": "1.5rem",
+ *       "--font-size-title": "1.25rem",
+ *       "--font-size-subtitle": "1.125rem",
+ *       "--font-size-body": "1rem",
+ *       "--font-size-paragraph": "0.875rem",
+ *       "--font-size-label": "0.875rem",
+ *     },
+ *   }}
  *   loader={<div>Loading...</div>}
  * >
  *   <App />
@@ -44,11 +63,12 @@ const SpaProvider = React.lazy(() => import('./spa-provider'));
 export const Auth0ComponentProvider = ({
   i18n,
   authDetails,
+  theme = { mode: 'light', styleOverrides: {} },
   loader,
   children,
 }: Auth0ComponentProviderProps & { children: React.ReactNode }) => {
   return (
-    <ThemeProvider theme={{ loader }}>
+    <ThemeProvider theme={{ mode: theme.mode, styleOverrides: theme.styleOverrides, loader }}>
       <React.Suspense fallback={loader || <Spinner />}>
         {authDetails?.authProxyUrl ? (
           <ProxyProvider i18n={i18n} authDetails={authDetails}>

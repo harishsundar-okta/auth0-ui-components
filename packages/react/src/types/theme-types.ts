@@ -7,7 +7,7 @@ import React from 'react';
  */
 export interface ThemeSettings {
   mode?: 'light' | 'dark';
-  ulBrandingOverrides?: StyleOverrides;
+  styleOverrides?: StyleOverrides;
 }
 
 /**
@@ -24,7 +24,7 @@ export type StyleOverrides = Record<string, string>;
  */
 export type ThemeInput = {
   mode?: 'light' | 'dark';
-  ulBrandingOverrides?: StyleOverrides;
+  styleOverrides?: StyleOverrides;
   loader?: React.ReactNode;
 };
 
@@ -34,6 +34,6 @@ export type ThemeInput = {
  * The values made available through the ThemeContext.
  */
 export type ThemeContextValue = {
-  ulBrandingOverrides: StyleOverrides;
+  styleOverrides: StyleOverrides;
   loader: React.ReactNode | null;
 };

@@ -15,7 +15,7 @@ const defaultStyleOverrides: StyleOverrides = {};
  * Provides access to customer overrides and a merged theme object for convenience.
  */
 export const ThemeContext = React.createContext<ThemeContextValue>({
-  ulBrandingOverrides: defaultStyleOverrides,
+  styleOverrides: defaultStyleOverrides,
   loader: null,
 });
 
@@ -33,7 +33,7 @@ export const ThemeContext = React.createContext<ThemeContextValue>({
  * <ThemeProvider
  *   theme={{
  *     mode: 'dark',
- *     ulBrandingOverrides: { '--font-size-heading': '1rem' },
+ *     styleOverrides: { '--font-size-heading': '1rem' },
  *     loader: <CustomSpinner />
  *   }}
  * >
@@ -45,20 +45,18 @@ export const ThemeProvider: React.FC<{
   theme?: ThemeInput;
   children: React.ReactNode;
 }> = ({ theme, children }) => {
-  const ulBrandingOverrides = React.useMemo(
-    () => theme?.ulBrandingOverrides ?? defaultStyleOverrides,
-    [theme?.ulBrandingOverrides],
+  const styleOverrides = React.useMemo(
+    () => theme?.styleOverrides ?? defaultStyleOverrides,
+    [theme?.styleOverrides],
   );
 
   const loader = React.useMemo(() => theme?.loader ?? null, [theme?.loader]);
 
   React.useEffect(() => {
-    applyStyleOverrides(ulBrandingOverrides, theme?.mode);
-  }, [ulBrandingOverrides, theme?.mode]);
+    applyStyleOverrides(styleOverrides, theme?.mode);
+  }, [styleOverrides, theme?.mode]);
 
   return (
-    <ThemeContext.Provider value={{ ulBrandingOverrides, loader }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={{ styleOverrides, loader }}>{children}</ThemeContext.Provider>
   );
 };
