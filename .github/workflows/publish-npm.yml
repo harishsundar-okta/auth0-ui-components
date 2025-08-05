@@ -13,6 +13,11 @@ on:
         required: false
         default: 'all'
         type: string
+      dry_run:
+        description: 'Dry run (skip actual publishing)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   publish:
@@ -80,7 +85,12 @@ jobs:
         working-directory: ./packages/core
         run: |
           echo "Publishing @auth0-web-ui-components/core..."
-          npm publish --access public
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "DRY RUN: Would publish @auth0-web-ui-components/core"
+            npm publish --dry-run --access public
+          else
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ steps.setup-jfrog-cli.outputs.oidc-token }}
 
@@ -89,7 +99,12 @@ jobs:
         working-directory: ./packages/react
         run: |
           echo "Publishing @auth0-web-ui-components/react..."
-          npm publish --access public
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "DRY RUN: Would publish @auth0-web-ui-components/react"
+            npm publish --dry-run --access public
+          else
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ steps.setup-jfrog-cli.outputs.oidc-token }}
 
