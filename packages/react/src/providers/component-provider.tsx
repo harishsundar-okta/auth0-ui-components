@@ -24,10 +24,7 @@ const SpaProvider = React.lazy(() => import('./spa-provider'));
  * @param {Object} [props.i18n] - Internationalization configuration (e.g., current language, fallback language).
  * @param {Object} [props.theme] - Theme settings including mode and style overrides.
  * @param {string} [props.theme.mode] - Theme mode, either "light" or "dark". Defaults to "light".
- * @param {Object} [props.theme.styleOverrides] - CSS variable overrides for customizing the theme.
- * @param {Object} [props.theme.styleOverrides.common] - CSS variables common to all themes.
- * @param {Object} [props.theme.styleOverrides.light] - CSS variables specific to light mode.
- * @param {Object} [props.theme.styleOverrides.dark] - CSS variables specific to dark mode.
+ * @param {Auth0ComponentProviderProps.theme.styling} [props.theme.styling] - CSS variable overrides for customizing the theme.
  * @param {React.ReactNode} [props.loader] - Custom loading component to show while
  *                                           authentication is initializing.
  *                                           Defaults to a spinner.
