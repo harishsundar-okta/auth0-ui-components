@@ -24,15 +24,16 @@ export const ThemeContext = React.createContext<ThemeContextValue>({
  * ThemeProvider
  *
  * Provides theme configuration via React Context to all components in the tree.
- * It merges optional customer overrides (CSS variables).
+ * It merges optional styling overrides (CSS variables).
  *
- * @param theme - Optional customerOverrides
+ * @param themeSettings - Optional styling overrides
  * @param children - The components that will have access to the theme
  *
  * @example
  * ```tsx
  * <ThemeProvider
- *   theme={{
+ *   themeSettings={{
+ *     theme: "default" | "minimal" | "rounded";
  *     mode: 'dark',
  *     styling: {
  *       common: {
@@ -54,19 +55,25 @@ export const ThemeContext = React.createContext<ThemeContextValue>({
  * ```
  */
 export const ThemeProvider: React.FC<{
-  theme?: ThemeInput;
+  themeSettings?: ThemeInput;
   children: React.ReactNode;
-}> = ({ theme, children }) => {
-  const styling = React.useMemo(() => theme?.styling ?? defaultStyleOverrides, [theme?.styling]);
-
-  const loader = React.useMemo(() => theme?.loader ?? null, [theme?.loader]);
+}> = ({ themeSettings, children }) => {
+  const { styling, loader, mode, theme } = React.useMemo(
+    () => ({
+      styling: themeSettings?.styling ?? defaultStyleOverrides,
+      loader: themeSettings?.loader ?? null,
+      mode: themeSettings?.mode,
+      theme: themeSettings?.theme,
+    }),
+    [themeSettings],
+  );
 
   React.useEffect(() => {
-    applyStyleOverrides(styling, theme?.mode);
-  }, [styling, theme?.mode]);
+    applyStyleOverrides(styling, mode, theme);
+  }, [styling, mode, theme]);
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode: theme?.mode === 'dark', styling, loader }}>
+    <ThemeContext.Provider value={{ isDarkMode: mode === 'dark', styling, loader }}>
       {children}
     </ThemeContext.Provider>
   );

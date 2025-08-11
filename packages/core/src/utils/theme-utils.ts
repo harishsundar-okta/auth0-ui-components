@@ -46,21 +46,38 @@ export const getCurrentStyles = (
 /**
  * Apply style overrides to the :root element or .dark class based on the theme mode.
  *
- * Uses getCurrentStyles to merge the common and theme-specific variables,
- * then applies them to the appropriate DOM elements.
+ * Dynamically applies the appropriate theme class to the `html` element.
  *
  * @param styling - An object containing CSS variable overrides.
  * @param mode - The current theme mode ('dark' or 'light'). Defaults to 'light'.
+ * @param theme - The selected theme ('default', 'minimal', 'rounded'). Defaults to 'default'.
  */
-export function applyStyleOverrides(styling: Styling, mode: 'dark' | 'light' = 'light'): void {
+export function applyStyleOverrides(
+  styling: Styling,
+  mode: 'dark' | 'light' = 'light',
+  theme: 'default' | 'minimal' | 'rounded' = 'default',
+): void {
   const isDarkMode = mode === 'dark';
-  const mergedStyles = getCurrentStyles(styling, isDarkMode);
-  const target = isDarkMode ? '.dark' : ':root';
-  const elements = document.querySelectorAll<HTMLElement>(target);
+  const htmlElement = document.documentElement;
 
-  elements.forEach((element) => {
-    Object.entries(mergedStyles).forEach(([key, value]) => {
-      element.style.setProperty(key, value);
-    });
+  // Remove existing theme classes if not default
+  if (theme !== 'default') {
+    htmlElement.classList.remove(
+      'theme-minimal',
+      'theme-rounded',
+      'theme-minimal-dark',
+      'theme-rounded-dark',
+    );
+
+    // Add the new theme class
+    const themeClass = `theme-${theme}${isDarkMode ? '-dark' : ''}`;
+    console.log('i am here', themeClass);
+    htmlElement.classList.add(themeClass);
+  }
+
+  // Apply CSS variable overrides (if any)
+  const mergedStyles = getCurrentStyles(styling, isDarkMode);
+  Object.entries(mergedStyles).forEach(([key, value]) => {
+    htmlElement.style.setProperty(key, value);
   });
 }

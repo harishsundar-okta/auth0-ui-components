@@ -7,6 +7,7 @@ import type { Styling } from '@auth0-web-ui-components/core';
  * @property {string} [primaryColor] - Primary color for theming
  */
 export interface ThemeSettings {
+  theme?: 'default' | 'minimal' | 'rounded';
   mode?: 'light' | 'dark';
   styling?: Styling;
 }
@@ -17,6 +18,7 @@ export interface ThemeSettings {
  * Optional props passed into the ThemeProvider.
  */
 export type ThemeInput = {
+  theme?: 'default' | 'minimal' | 'rounded';
   mode?: 'light' | 'dark';
   styling?: Styling;
   loader?: React.ReactNode;
@@ -28,6 +30,7 @@ export type ThemeInput = {
  * The values made available through the ThemeContext.
  */
 export type ThemeContextValue = {
+  theme?: 'default' | 'minimal' | 'rounded';
   isDarkMode?: boolean;
   styling: Styling;
   loader: React.ReactNode | null;

@@ -13,7 +13,7 @@ export type AuthDetails = Omit<AuthDetailsCore, 'accessToken'>;
  */
 export interface Auth0ComponentProviderProps {
   i18n?: I18nOptions;
-  theme?: ThemeSettings;
+  themeSettings?: ThemeSettings;
   authDetails?: AuthDetails;
   loader?: React.ReactNode;
 }

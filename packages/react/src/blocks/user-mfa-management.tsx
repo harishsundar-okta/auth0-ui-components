@@ -303,7 +303,7 @@ function UserMFAMgmtComponent({
       {loading ? (
         loader || <Spinner aria-label={t('loading')} />
       ) : (
-        <Card className="bg-white py-10 px-8 sm:py-8 sm:px-6">
+        <Card className="py-10 px-8 sm:py-8 sm:px-6">
           <CardContent>
             {error ? (
               <div
