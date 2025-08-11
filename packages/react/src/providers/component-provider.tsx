@@ -1,13 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import type { Auth0ComponentContextType, Auth0ComponentConfig, AuthDetails } from './types';
-import { initializeI18n } from '@auth0-web-ui-components/core';
-import { Auth0ComponentContext } from './context';
-import { ThemeProvider } from './theme-provider';
+import type { Auth0ComponentProviderProps } from '@/types/auth-types';
 import { Spinner } from '@/components/ui/spinner';
-
-const SpaModeProvider = React.lazy(() => import('./spa-mode-provider'));
+import { Auth0ComponentConfigContext } from '@/hooks';
+import { ThemeProvider } from './theme-provider';
+import { ProxyProvider } from './proxy-provider';
+const SpaProvider = React.lazy(() => import('./spa-provider'));
 
 /**
  * Auth0ComponentProvider
@@ -22,8 +21,6 @@ const SpaModeProvider = React.lazy(() => import('./spa-mode-provider'));
  * This component abstracts the complexity of choosing the correct mode from the end user.
  *
  * @param {Object} props - Configuration props.
- * @param {string} [props.authProxyUrl] - Optional URL for proxy mode. When provided,
- *                                       enables proxy mode; otherwise, SPA mode is used.
  * @param {React.ReactNode} props.children - Child components that require authentication context.
  * @param {Object} [props.i18n] - Internationalization configuration (language, fallback).
  * @param {Object} [props.themeSettings] - Theme and branding settings.
@@ -46,71 +43,37 @@ const SpaModeProvider = React.lazy(() => import('./spa-mode-provider'));
  * ```
  */
 export const Auth0ComponentProvider = ({
-  authProxyUrl,
   i18n,
+  authDetails,
   themeSettings = { mode: 'light' },
   customOverrides = {},
   loader,
   children,
-}: Auth0ComponentConfig & { children: React.ReactNode }) => {
-  const isProxyMode = Boolean(authProxyUrl);
-  const [authDetails, setAuthDetails] = React.useState<AuthDetails | undefined>(undefined);
-  const [apiBaseUrl, setApiBaseUrl] = React.useState<string | undefined>(authProxyUrl);
-  const [isI18nInitialized, setIsI18nInitialized] = React.useState(false);
-
-  const initI18n = React.useCallback(async () => {
-    setIsI18nInitialized(false); // Reset initialization state
-    await initializeI18n({
-      currentLanguage: i18n?.currentLanguage,
-      fallbackLanguage: i18n?.fallbackLanguage,
-    });
-    setIsI18nInitialized(true);
-  }, [i18n?.currentLanguage, i18n?.fallbackLanguage]);
-
-  // Initialize i18n when language changes
-  React.useEffect(() => {
-    initI18n();
-  }, [initI18n]);
-
-  const contextValue = React.useMemo<Auth0ComponentContextType>(
+}: Auth0ComponentProviderProps & { children: React.ReactNode }) => {
+  const config = React.useMemo(
     () => ({
-      authProxyUrl,
-      i18nConfig: i18n,
       themeSettings,
       customOverrides,
       loader,
-
-      // Mode-specific properties
-      isProxyMode,
-      apiBaseUrl: apiBaseUrl || (isProxyMode && authProxyUrl ? authProxyUrl : undefined),
-      authDetails,
     }),
-    [
-      authProxyUrl,
-      i18n,
-      themeSettings,
-      customOverrides,
-      loader,
-      isProxyMode,
-      apiBaseUrl,
-      authDetails,
-      isI18nInitialized,
-    ],
+    [themeSettings, customOverrides, loader],
   );
 
   return (
-    <Auth0ComponentContext.Provider value={contextValue}>
+    <Auth0ComponentConfigContext.Provider value={{ config }}>
       <ThemeProvider theme={{ branding: themeSettings, customOverrides }}>
-        {isProxyMode ? (
-          children
-        ) : (
-          <React.Suspense fallback={loader || <Spinner />}>
-            <SpaModeProvider setAuthDetails={setAuthDetails} setApiBaseUrl={setApiBaseUrl}>
+        <React.Suspense fallback={loader || <Spinner />}>
+          {authDetails?.authProxyUrl ? (
+            <ProxyProvider i18n={i18n} authDetails={authDetails}>
               {children}
-            </SpaModeProvider>
-          </React.Suspense>
-        )}
+            </ProxyProvider>
+          ) : (
+            <SpaProvider i18n={i18n} authDetails={authDetails}>
+              {children}
+            </SpaProvider>
+          )}
+        </React.Suspense>
       </ThemeProvider>
-    </Auth0ComponentContext.Provider>
+    </Auth0ComponentConfigContext.Provider>
   );
 };

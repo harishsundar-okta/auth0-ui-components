@@ -1,8 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { mergeThemes } from '@/lib/utils';
-import type { BrandingTheme, CustomOverrides, ThemeContextValue, ThemeInput } from './types';
+import { mergeThemes } from '@/lib/theme-utils';
+import type {
+  BrandingTheme,
+  CustomOverrides,
+  ThemeContextValue,
+  ThemeInput,
+} from '../types/theme-types';
 
 /**
  * Default branding theme if none is provided.

@@ -1,0 +1,123 @@
+name: Preview Deployment
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        type: string
+
+concurrency:
+  group: preview-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
+  VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
+
+jobs:
+  deploy-preview:
+    runs-on:
+      labels: ubuntu-22.04-2cpu-8ram-75ssd
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@36de12bed180fa130ed56a35e7344f2fa7a820ab # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6 # v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Clear pnpm cache and reinstall (to ensure React version consistency)
+        run: |
+          pnpm store prune
+          pnpm install --force
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Deploy to Vercel
+        id: vercel-deploy
+        run: |
+          echo "Deploying docs-site to Vercel..."
+          echo "Project ID: $VERCEL_PROJECT_ID"
+          echo "Org ID: $VERCEL_ORG_ID"
+          echo "Contents of docs-site dist folder:"
+          ls -la examples/docs-site/dist/
+
+          # Create a completely isolated deployment directory
+          mkdir -p /tmp/static-deploy
+
+          # Copy only the built static files
+          cp -r examples/docs-site/dist/* /tmp/static-deploy/
+
+          # Create a vercel.json that forces static deployment
+          echo '{"builds":[{"src":"**/*","use":"@vercel/static"}],"rewrites":[{"source":"/(.*)","destination":"/index.html"}]}' > /tmp/static-deploy/vercel.json
+
+          echo "Contents of deployment directory:"
+          ls -la /tmp/static-deploy/
+          echo "Vercel config:"
+          cat /tmp/static-deploy/vercel.json
+
+          vercel --version
+          DEPLOYMENT_URL=$(vercel deploy /tmp/static-deploy --token=${{ secrets.VERCEL_TOKEN }} --yes --scope=$VERCEL_ORG_ID)
+          echo "Deployment URL: $DEPLOYMENT_URL"
+          echo "preview-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+
+      - name: Comment PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Preview deployment')
+            );
+
+            const body = `## 🚀 Preview deployment
+
+            **Branch:** \`${context.ref.replace('refs/heads/', '')}\`
+            **Commit:** ${context.sha.substring(0, 7)}
+
+            📝 **Preview URL:** ${{ steps.vercel-deploy.outputs.preview-url }}
+
+            ---
+            *Updated at ${new Date().toISOString()}*`;
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }

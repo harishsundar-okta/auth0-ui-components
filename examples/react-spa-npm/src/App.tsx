@@ -6,12 +6,21 @@ import { Navbar } from './components/nav-bar';
 import { Auth0ComponentProvider } from '@auth0-web-ui-components/react';
 import '@auth0-web-ui-components/react/dist/index.css';
 import { useTranslation } from 'react-i18next';
+import { config } from './config/env';
 
 function App() {
   const { i18n } = useTranslation();
+
+  const defaultAuthDetails = {
+    clientId: config.auth0.clientId,
+    domain: config.auth0.domain,
+  };
   return (
     <div>
-      <Auth0ComponentProvider i18n={{ currentLanguage: i18n.language }}>
+      <Auth0ComponentProvider
+        authDetails={defaultAuthDetails}
+        i18n={{ currentLanguage: i18n.language }}
+      >
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />

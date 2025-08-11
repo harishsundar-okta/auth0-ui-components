@@ -1,5 +1,6 @@
-export { useAccessToken } from './use-access-token';
-export { useComponentConfig } from './use-config';
+export { useComponentConfig, Auth0ComponentConfigContext } from './use-config';
+export { useCoreClient, CoreClientContext } from './use-core-client';
+export { useTranslator } from './use-translator';
 export { useContactEnrollment, useOtpConfirmation, useOtpEnrollment, useMFA } from './mfa';
 export { useTheme } from './use-theme';
-export { useTranslator } from './use-translator';
+export { useCoreClientInitialization } from './use-core-client-initialization';

@@ -1,2 +1,2 @@
-export * from './mfa-service';
-export * from './types';
+export * from './mfa';
+export * from './authentication-api-service';

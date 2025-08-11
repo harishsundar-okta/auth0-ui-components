@@ -1,0 +1,46 @@
+name: Vercel Production Deployment
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+on:
+  push:
+    branches:
+      - main
+      - production
+  workflow_dispatch:
+jobs:
+  Deploy-Production:
+    runs-on:
+      labels: ubuntu-22.04-2cpu-8ram-75ssd
+    steps:
+      - name: Checkout the Codebase
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@36de12bed180fa130ed56a35e7344f2fa7a820ab # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6 # v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Deploy entire monorepo to Vercel
+        id: deploy
+        run: |
+          echo "Deploying monorepo to Vercel (Production)..."
+          echo "Project ID: $VERCEL_PROJECT_ID"
+          echo "Org ID: $VERCEL_ORG_ID"
+          echo "Contents of docs-site dist folder:"
+          ls -la examples/docs-site/dist/
+          vercel --version
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --scope=$VERCEL_ORG_ID

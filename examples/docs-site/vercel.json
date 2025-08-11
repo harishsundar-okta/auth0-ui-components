@@ -1,0 +1,12 @@
+{
+  "buildCommand": "echo 'Already built in CI'",
+  "installCommand": "echo 'Dependencies already installed'",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

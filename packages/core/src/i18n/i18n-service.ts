@@ -1,165 +1,261 @@
-import { LangTranslations, TranslationFunction, I18nInitOptions } from './types';
-
-// These variables manage the singleton i18n instance.
-let _translations: LangTranslations | null = null;
-let _cache: Map<string, LangTranslations | null> = new Map(); // Initialize cache directly
-let _currentLanguage: string = 'en-US'; // Track current language
-let _fallbackLanguage: string | undefined; // Track fallback language
-
-const VAR_REGEX = /\${(\w+)}/g;
+import {
+  LangTranslations,
+  TranslationFunction,
+  I18nInitOptions,
+  TFactory,
+  I18nServiceInterface,
+} from './i18n-types';
 
 /**
- * Recursively gets a nested value from an object using dot notation.
- * Optimized with early returns and reduced type checks.
+ * Pure utility functions for internationalization (i18n) functionality.
+ * These functions handle translation loading, variable substitution, and namespace-based translation.
  */
-const getNestedValue = (obj: Record<string, unknown>, path: string): unknown => {
-  let current: unknown = obj;
-  const keys = path.split('.');
+const I18nUtils = {
+  /**
+   * Regular expression for matching variable placeholders in translation strings.
+   * Matches patterns like ${variableName} for dynamic content substitution.
+   */
+  VAR_REGEX: /\${(\w+)}/g,
 
-  for (const key of keys) {
-    if (current == null || typeof current !== 'object' || Array.isArray(current)) {
-      return undefined;
-    }
-    current = (current as Record<string, unknown>)[key];
-  }
+  /**
+   * Retrieves a nested value from an object using dot notation path traversal.
+   *
+   * @param obj - The object to traverse
+   * @param path - Dot-separated path to the desired value (e.g., 'common.errors.required')
+   * @returns The value at the specified path, or undefined if not found
+   *
+   * @example
+   * ```typescript
+   * const obj = { common: { errors: { required: 'Field is required' } } };
+   * getNestedValue(obj, 'common.errors.required') // Returns: 'Field is required'
+   * ```
+   */
+  getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+    let current: unknown = obj;
+    const keys = path.split('.');
 
-  return current;
-};
-
-/**
- * Efficiently substitutes variables in a string.
- * Optimized with early variable detection and regex reuse.
- */
-const substitute = (str: string, vars?: Record<string, unknown>): string => {
-  if (!vars) return str;
-
-  // Quick check for variables before expensive regex operation
-  if (!str.includes('${')) return str;
-
-  VAR_REGEX.lastIndex = 0;
-  return str.replace(VAR_REGEX, (_, key) => String(vars[key] ?? ''));
-};
-
-/**
- * Loads translation data for a specific language with optimized caching.
- */
-const loadTranslations = async (lang: string): Promise<LangTranslations | null> => {
-  if (_cache.has(lang)) {
-    return _cache.get(lang)!;
-  }
-
-  try {
-    const mod = await import(`./translations/${lang}.json`);
-    const data = mod.default ?? mod;
-    _cache.set(lang, data);
-    return data;
-  } catch {
-    _cache.set(lang, null);
-    return null;
-  }
-};
-
-/**
- * Optimized fallback loading with early returns.
- */
-const loadTranslationsWithFallback = async (
-  currentLang: string,
-  fallbackLang?: string,
-): Promise<LangTranslations | null> => {
-  // 1. Try current language
-  let result = await loadTranslations(currentLang);
-  if (result) return result;
-
-  // 2. Try fallback if different from current
-  if (fallbackLang && fallbackLang !== currentLang) {
-    result = await loadTranslations(fallbackLang);
-    if (result) return result;
-  }
-
-  // 3. Try 'en-US' as a last resort if not already tried
-  if (currentLang !== 'en-US' && fallbackLang !== 'en-US') {
-    return loadTranslations('en-US');
-  }
-
-  return null;
-};
-
-// --- Public API Functions ---
-
-/**
- * Initializes or changes the language of the global i18n instance.
- */
-export async function initializeI18n(options: I18nInitOptions = {}): Promise<void> {
-  const currentLanguage = options?.currentLanguage ?? 'en-US';
-  const { fallbackLanguage } = options;
-
-  // Update current settings
-  _currentLanguage = currentLanguage;
-  _fallbackLanguage = fallbackLanguage;
-
-  // Load translations
-  const result = await loadTranslationsWithFallback(currentLanguage, fallbackLanguage);
-  _translations = result;
-}
-
-/**
- * Gets the current language being used.
- */
-export function getCurrentLanguage(): string {
-  return _currentLanguage;
-}
-
-/**
- * Gets the current fallback language being used.
- */
-export function getFallbackLanguage(): string | undefined {
-  return _fallbackLanguage;
-}
-
-/**
- * Gets the current translations object.
- */
-export function getCurrentTranslations(): LangTranslations | null {
-  return _translations;
-}
-
-/**
- * Creates a namespace-scoped translation function with optimized performance.
- */
-export function createTranslator(
-  namespace: string,
-  overrides?: Record<string, unknown>,
-): TranslationFunction {
-  const prefix = `${namespace}.`;
-  const hasOverrides = overrides && Object.keys(overrides).length > 0;
-
-  return (
-    key: string,
-    vars?: Record<string, unknown>,
-    localOverrides?: Record<string, unknown>,
-  ): string => {
-    // Optimize override handling
-    let mergedOverrides: Record<string, unknown> | undefined;
-
-    if (localOverrides || hasOverrides) {
-      mergedOverrides = hasOverrides ? { ...overrides, ...localOverrides } : localOverrides;
-
-      const overrideValue = getNestedValue(mergedOverrides!, key);
-      if (overrideValue !== undefined) {
-        return substitute(String(overrideValue), vars);
+    for (const key of keys) {
+      if (current == null || typeof current !== 'object' || Array.isArray(current)) {
+        return undefined;
       }
+      current = (current as Record<string, unknown>)[key];
     }
 
-    // Early return if translations not loaded
-    if (!_translations) {
-      return `${prefix}${key}`;
+    return current;
+  },
+
+  /**
+   * Performs variable substitution in a template string using provided variables.
+   *
+   * @param template - The template string containing ${variable} placeholders
+   * @param vars - Object containing variable values for substitution
+   * @returns The template string with variables substituted
+   *
+   * @example
+   * ```typescript
+   * substitute('Hello ${name}!', { name: 'World' }) // Returns: 'Hello World!'
+   * substitute('No variables here', { name: 'World' }) // Returns: 'No variables here'
+   * ```
+   */
+  substitute(template: string, vars?: Record<string, unknown>): string {
+    if (!vars) return template;
+
+    if (!template.includes('${')) return template;
+
+    I18nUtils.VAR_REGEX.lastIndex = 0;
+    return template.replace(I18nUtils.VAR_REGEX, (_, key) => String(vars[key] ?? ''));
+  },
+
+  /**
+   * Creates a translation function for a specific namespace with optional overrides.
+   *
+   * @param namespace - The namespace prefix for translations (e.g., 'mfa', 'common')
+   * @param translations - The loaded translation data
+   * @param overrides - Optional override translations that take precedence
+   * @returns A translation function scoped to the specified namespace
+   */
+  createTranslator(
+    namespace: string,
+    translations: LangTranslations | null,
+    overrides?: Record<string, unknown>,
+  ): TranslationFunction {
+    const prefix = `${namespace}.`;
+    const hasOverrides = overrides && Object.keys(overrides).length > 0;
+
+    return (key: string, vars?: Record<string, unknown>, fallback?: string): string => {
+      const fullKey = prefix + key;
+
+      if (hasOverrides) {
+        const overrideValue = I18nUtils.getNestedValue(overrides!, key);
+        if (overrideValue !== undefined) {
+          return I18nUtils.substitute(String(overrideValue), vars);
+        }
+      }
+
+      if (!translations) {
+        return fallback || `${prefix}${key}`;
+      }
+
+      const translationValue = translations
+        ? I18nUtils.getNestedValue(translations, fullKey)
+        : undefined;
+
+      if (translationValue !== undefined) {
+        return I18nUtils.substitute(String(translationValue), vars);
+      }
+
+      // Return fallback if provided, otherwise return the full key or just the key
+      return fallback || (translations ? key : `${prefix}${key}`);
+    };
+  },
+
+  /**
+   * Loads translation data for a specific language from the translations directory.
+   *
+   * @param language - The language code to load (e.g., 'en-US', 'es-ES')
+   * @param cache - Optional cache map to store loaded translations
+   * @returns Promise resolving to translation data or null if not found
+   */
+  async loadTranslations(
+    language: string,
+    cache?: Map<string, LangTranslations | null>,
+  ): Promise<LangTranslations | null> {
+    if (cache?.has(language)) {
+      return cache.get(language)!;
     }
 
-    // Get translation value
-    const fullKey = prefix + key;
-    const translationValue = getNestedValue(_translations, fullKey);
-    const finalValue = translationValue !== undefined ? String(translationValue) : key;
+    try {
+      const mod = await import(`./translations/${language}.json`);
+      const data = mod.default ?? mod;
+      if (cache) {
+        cache.set(language, data);
+      }
+      return data;
+    } catch {
+      if (cache) {
+        cache.set(language, null);
+      }
+      return null;
+    }
+  },
 
-    return substitute(finalValue, vars);
+  /**
+   * Loads translations with automatic fallback support for missing languages.
+   *
+   * @param currentLanguage - The primary language to load
+   * @param fallbackLanguage - Optional fallback language if primary fails
+   * @param cache - Optional cache map to store loaded translations
+   * @returns Promise resolving to translation data with fallback support
+   */
+  async loadTranslationsWithFallback(
+    currentLanguage: string,
+    fallbackLanguage?: string,
+    cache?: Map<string, LangTranslations | null>,
+  ): Promise<LangTranslations | null> {
+    // Try to load current language first
+    let result = await I18nUtils.loadTranslations(currentLanguage, cache);
+    if (result) return result;
+
+    // Fallback to fallback language if available
+    if (fallbackLanguage && fallbackLanguage !== currentLanguage) {
+      result = await I18nUtils.loadTranslations(fallbackLanguage, cache);
+      if (result) return result;
+    }
+
+    // Final fallback to en-US if not already tried
+    if (currentLanguage !== 'en-US' && fallbackLanguage !== 'en-US') {
+      return I18nUtils.loadTranslations('en-US', cache);
+    }
+
+    return null;
+  },
+};
+
+/**
+ * Creates an internationalization (i18n) service with translation loading and management capabilities.
+ *
+ * This factory function initializes the i18n service with language support, translation loading,
+ * and runtime language switching. It supports namespace-based translations and variable substitution.
+ *
+ * @param options - Optional configuration for i18n initialization
+ * @param options.currentLanguage - The current language code (defaults to 'en-US')
+ * @param options.fallbackLanguage - The fallback language code (defaults to 'en-US')
+ * @returns Promise resolving to a fully configured i18n service interface
+ *
+ * @example
+ * ```typescript
+ * // Basic initialization
+ * const i18nService = await createI18nService();
+ *
+ * // With custom language
+ * const i18nService = await createI18nService({
+ *   currentLanguage: 'es-ES',
+ *   fallbackLanguage: 'en-US'
+ * });
+ *
+ * // Use translations
+ * const t = i18nService.translator('mfa');
+ * const message = t('enrollment.success'); // Gets 'mfa.enrollment.success'
+ * ```
+ */
+export async function createI18nService(
+  options: I18nInitOptions = {},
+): Promise<I18nServiceInterface> {
+  const currentLanguage = options.currentLanguage ?? 'en-US';
+  const fallbackLanguage = options.fallbackLanguage ?? 'en-US';
+  const cache = new Map<string, LangTranslations | null>();
+
+  // Load initial translations
+  const translations = await I18nUtils.loadTranslationsWithFallback(
+    currentLanguage,
+    fallbackLanguage,
+    cache,
+  );
+
+  // State management through closure
+  let _currentLanguage = currentLanguage;
+  let _fallbackLanguage = fallbackLanguage;
+  let _translations = translations;
+
+  const service: I18nServiceInterface = {
+    get currentLanguage(): string {
+      return _currentLanguage;
+    },
+
+    get fallbackLanguage(): string | undefined {
+      return _fallbackLanguage;
+    },
+
+    get translator(): TFactory {
+      return (namespace: string, overrides?: Record<string, unknown>) =>
+        I18nUtils.createTranslator(namespace, translations, overrides);
+    },
+
+    get commonTranslator(): TranslationFunction {
+      return I18nUtils.createTranslator('common', translations);
+    },
+
+    getCurrentTranslations(): LangTranslations | null {
+      return _translations;
+    },
+
+    async changeLanguage(language: string, newFallbackLanguage?: string): Promise<void> {
+      try {
+        _currentLanguage = language;
+        _fallbackLanguage = newFallbackLanguage ?? _fallbackLanguage;
+
+        _translations = await I18nUtils.loadTranslationsWithFallback(
+          _currentLanguage,
+          _fallbackLanguage,
+          cache,
+        );
+      } catch (error) {
+        throw new Error(
+          `Failed to change language to '${language}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
+      }
+    },
   };
+
+  return service;
 }

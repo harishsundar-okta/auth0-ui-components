@@ -1,0 +1,6 @@
+{
+  "sub": "auth0|mock-user-123",
+  "email": "user@example.com",
+  "name": "Mock User",
+  "picture": "https://via.placeholder.com/50x50?text=MU"
+}

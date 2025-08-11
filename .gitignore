@@ -37,3 +37,4 @@ coverage/
 .cache/
 *.tgz
 .turbo
+.vercel

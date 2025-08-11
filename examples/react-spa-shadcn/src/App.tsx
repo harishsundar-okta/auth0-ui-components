@@ -13,7 +13,7 @@ import ComponentsOverview from './pages/docs/ComponentsOverview';
 import SignInDocs from './pages/docs/SignInDocs';
 import Playground from './pages/Playground';
 import { Auth0Provider } from '@auth0/auth0-react';
-// import { useTranslation } from 'react-i18next';
+import { config } from './config/env';
 
 const queryClient = new QueryClient();
 
@@ -24,8 +24,8 @@ const App = () => {
       <TooltipProvider>
         <BrowserRouter>
           <Auth0Provider
-            domain={import.meta.env.VITE_AUTH0_DOMAIN}
-            clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+            domain={config.auth0.domain}
+            clientId={config.auth0.clientId}
             authorizationParams={{ redirect_uri: window.location.origin }}
           >
             <Routes>

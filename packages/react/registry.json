@@ -4,15 +4,15 @@
   "homepage": "https://github.com/auth0/auth0-ui-components",
   "items": [
     {
-      "name": "manage-mfa",
+      "name": "user-mfa-management",
       "type": "registry:block",
-      "title": "Manage MFA",
+      "title": "User MFA Management",
       "description": "A block for managing Multi-Factor Authentication (MFA) factors, including enrollment and deletion.",
       "files": [
         {
-          "path": "src/blocks/manage-mfa.tsx",
+          "path": "src/blocks/user-mfa-management.tsx",
           "type": "registry:block",
-          "target": "blocks/manage-mfa.tsx"
+          "target": "blocks/user-mfa-management.tsx"
         },
         {
           "path": "src/blocks/index.ts",
@@ -20,9 +20,24 @@
           "target": "blocks/index.ts"
         },
         {
-          "path": "src/components/mfa/enrollment-form.tsx",
+          "path": "src/components/mfa/user-mfa-setup-form.tsx",
           "type": "registry:component",
-          "target": "components/mfa/enrollment-form.tsx"
+          "target": "components/mfa/user-mfa-setup-form.tsx"
+        },
+        {
+          "path": "src/components/mfa/qr-code-enrollment-form.tsx",
+          "type": "registry:component",
+          "target": "components/mfa/qr-code-enrollment-form.tsx"
+        },
+        {
+          "path": "src/components/mfa/otp-verification-form.tsx",
+          "type": "registry:component",
+          "target": "components/mfa/otp-verification-form.tsx"
+        },
+        {
+          "path": "src/components/mfa/contact-input-form.tsx",
+          "type": "registry:component",
+          "target": "components/mfa/contact-input-form.tsx"
         },
         {
           "path": "src/components/ui/badge.tsx",
@@ -50,14 +65,14 @@
           "target": "components/ui/form.tsx"
         },
         {
-          "path": "src/components/ui/input.tsx",
+          "path": "src/components/ui/text-field.tsx",
           "type": "registry:component",
-          "target": "components/ui/input.tsx"
+          "target": "components/ui/text-field.tsx"
         },
         {
-          "path": "src/components/ui/input-otp.tsx",
+          "path": "src/components/ui/otp-field.tsx",
           "type": "registry:component",
-          "target": "components/ui/input-otp.tsx"
+          "target": "components/ui/otp-field.tsx"
         },
         {
           "path": "src/components/ui/label.tsx",
@@ -75,14 +90,24 @@
           "target": "components/ui/sonner.tsx"
         },
         {
-          "path": "src/hooks/use-i18n.ts",
-          "type": "registry:hook",
-          "target": "hooks/use-i18n.ts"
+          "path": "src/components/ui/spinner.tsx",
+          "type": "registry:component",
+          "target": "components/ui/spinner.tsx"
         },
         {
-          "path": "src/hooks/use-mfa.ts",
+          "path": "src/hooks/use-translator.ts",
           "type": "registry:hook",
-          "target": "hooks/use-mfa.ts"
+          "target": "hooks/use-translator.ts"
+        },
+        {
+          "path": "src/hooks/use-core-client.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-core-client.ts"
+        },
+        {
+          "path": "src/hooks/use-core-client-initialization.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-core-client-initialization.ts"
         },
         {
           "path": "src/hooks/use-config.ts",
@@ -90,14 +115,34 @@
           "target": "hooks/use-config.ts"
         },
         {
-          "path": "src/hooks/use-access-token.ts",
-          "type": "registry:hook",
-          "target": "hooks/use-access-token.ts"
-        },
-        {
           "path": "src/hooks/use-theme.ts",
           "type": "registry:hook",
           "target": "hooks/use-theme.ts"
+        },
+        {
+          "path": "src/hooks/mfa/use-mfa.ts",
+          "type": "registry:hook",
+          "target": "hooks/mfa/use-mfa.ts"
+        },
+        {
+          "path": "src/hooks/mfa/use-otp-enrollment.ts",
+          "type": "registry:hook",
+          "target": "hooks/mfa/use-otp-enrollment.ts"
+        },
+        {
+          "path": "src/hooks/mfa/use-otp-confirmation.ts",
+          "type": "registry:hook",
+          "target": "hooks/mfa/use-otp-confirmation.ts"
+        },
+        {
+          "path": "src/hooks/mfa/use-contact-enrollment.ts",
+          "type": "registry:hook",
+          "target": "hooks/mfa/use-contact-enrollment.ts"
+        },
+        {
+          "path": "src/hooks/mfa/index.ts",
+          "type": "registry:file",
+          "target": "hooks/mfa/index.ts"
         },
         {
           "path": "src/hooks/index.ts",
@@ -105,34 +150,19 @@
           "target": "hooks/index.ts"
         },
         {
-          "path": "src/providers/context.ts",
-          "type": "registry:file",
-          "target": "providers/context.ts"
-        },
-        {
-          "path": "src/providers/types.ts",
-          "type": "registry:file",
-          "target": "providers/types.ts"
-        },
-        {
           "path": "src/providers/component-provider.tsx",
           "type": "registry:file",
           "target": "providers/component-provider.tsx"
         },
         {
-          "path": "src/providers/i18n-provider.tsx",
+          "path": "src/providers/proxy-provider.tsx",
           "type": "registry:file",
-          "target": "providers/i18n-provider.tsx"
+          "target": "providers/proxy-provider.tsx"
         },
         {
-          "path": "src/providers/proxy-mode-provider.tsx",
+          "path": "src/providers/spa-provider.tsx",
           "type": "registry:file",
-          "target": "providers/proxy-mode-provider.tsx"
-        },
-        {
-          "path": "src/providers/spa-mode-provider.tsx",
-          "type": "registry:file",
-          "target": "providers/spa-mode-provider.tsx"
+          "target": "providers/spa-provider.tsx"
         },
         {
           "path": "src/providers/theme-provider.tsx",
@@ -150,19 +180,44 @@
           "target": "types/mfa-types.ts"
         },
         {
+          "path": "src/types/auth-types.ts",
+          "type": "registry:file",
+          "target": "types/auth-types.ts"
+        },
+        {
+          "path": "src/types/theme-types.ts",
+          "type": "registry:file",
+          "target": "types/theme-types.ts"
+        },
+        {
+          "path": "src/types/i18n-types.ts",
+          "type": "registry:file",
+          "target": "types/i18n-types.ts"
+        },
+        {
           "path": "src/types/index.ts",
           "type": "registry:file",
           "target": "types/index.ts"
         },
         {
-          "path": "src/lib/utils.ts",
+          "path": "src/lib/theme-utils.ts",
           "type": "registry:file",
-          "target": "lib/utils.ts"
+          "target": "lib/theme-utils.ts"
         },
         {
-          "path": "src/lib/constants.ts",
+          "path": "src/lib/mfa-constants.ts",
           "type": "registry:file",
-          "target": "lib/constants.ts"
+          "target": "lib/mfa-constants.ts"
+        },
+        {
+          "path": "src/hoc/with-core-client.tsx",
+          "type": "registry:file",
+          "target": "hoc/with-core-client.tsx"
+        },
+        {
+          "path": "src/hoc/index.ts",
+          "type": "registry:file",
+          "target": "hoc/index.ts"
         },
         {
           "path": "src/styles/globals.css",
@@ -174,7 +229,6 @@
         "sonner",
         "react-hook-form",
         "@hookform/resolvers",
-        "zod",
         "react-qr-code",
         "@auth0/auth0-react",
         "clsx",
@@ -193,8 +247,9 @@
         "sonner",
         "dialog",
         "form",
-        "input",
-        "input-otp"
+        "otp-field",
+        "text-field",
+        "spinner"
       ]
     }
   ]

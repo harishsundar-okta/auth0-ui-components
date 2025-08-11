@@ -18,6 +18,8 @@ const browserGlobals = {
   Request: 'readonly',
   Response: 'readonly',
   Headers: 'readonly',
+  localStorage: 'readonly',
+  sessionStorage: 'readonly',
 };
 
 /**

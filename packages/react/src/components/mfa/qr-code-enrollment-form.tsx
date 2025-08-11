@@ -1,132 +1,147 @@
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
 import QRCode from 'react-qr-code';
+import { Copy } from 'lucide-react';
 
+import { type MFAType, type EnrollMfaResponse } from '@auth0-web-ui-components/core';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from '@/components/ui/form';
-import { OTPField } from '@/components/ui/otp-field';
-import { useTranslator } from '@/hooks';
-import { useOtpConfirmation } from '@/hooks/mfa';
-import { type MFAType } from '@auth0-web-ui-components/core';
-import { CONFIRM } from '@/lib/constants';
+import { Spinner } from '@/components/ui/spinner';
 
-type OtpForm = {
-  userOtp: string;
-};
+import { CONFIRM, QR_PHASE_ENTER_OTP, QR_PHASE_SCAN, ENROLL } from '@/lib/mfa-constants';
+
+import { useTranslator } from '@/hooks';
+import { useOtpEnrollment } from '@/hooks/mfa';
+
+import { OTPVerificationForm } from './otp-verification-form';
 
 type QRCodeEnrollmentFormProps = {
   factorType: MFAType;
-  barcodeUri: string;
-  recoveryCodes: string[];
+  enrollMfa: (factor: MFAType, options: Record<string, string>) => Promise<EnrollMfaResponse>;
   confirmEnrollment: (
     factor: MFAType,
-    options: { oobCode?: string; userOtpCode?: string; userEmailOtpCode?: string },
+    options: { oobCode?: string; userOtpCode?: string },
   ) => Promise<unknown | null>;
-  onError: (error: Error, stage: typeof CONFIRM) => void;
+  onError: (error: Error, stage: typeof ENROLL | typeof CONFIRM) => void;
   onSuccess: () => void;
   onClose: () => void;
-  oobCode?: string;
 };
+
+const PHASES = {
+  SCAN: QR_PHASE_SCAN,
+  ENTER_OTP: QR_PHASE_ENTER_OTP,
+} as const;
+
+type Phase = (typeof PHASES)[keyof typeof PHASES];
 
 export function QRCodeEnrollmentForm({
   factorType,
-  barcodeUri,
-  recoveryCodes,
+  enrollMfa,
   confirmEnrollment,
   onError,
   onSuccess,
   onClose,
-  oobCode,
 }: QRCodeEnrollmentFormProps) {
-  const t = useTranslator('mfa');
+  const [phase, setPhase] = React.useState<Phase>(QR_PHASE_SCAN);
+  const { t } = useTranslator('mfa');
 
-  const { onSubmitOtp, loading } = useOtpConfirmation({
+  const { fetchOtpEnrollment, otpData, resetOtpData, loading } = useOtpEnrollment({
     factorType,
-    confirmEnrollment,
+    enrollMfa,
     onError,
-    onSuccess,
     onClose,
   });
 
-  const form = useForm<OtpForm>({
-    mode: 'onChange',
-  });
+  React.useEffect(() => {
+    fetchOtpEnrollment();
+  }, [phase]);
 
-  const handleSubmit = React.useCallback(
-    (data: OtpForm) => {
-      onSubmitOtp(data, oobCode);
-    },
-    [onSubmitOtp, oobCode],
-  );
+  const handleContinue = React.useCallback(() => {
+    setPhase(QR_PHASE_ENTER_OTP);
+  }, []);
 
-  return (
-    <div className="text-center">
-      <p>{t('enrollment_form.show_otp.title')}</p>
-      <div className="flex justify-center items-center mt-6">
-        <div className="border border-gray-300 p-4 rounded-lg shadow-lg bg-white inline-block">
-          <QRCode
-            size={150}
-            style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-            value={barcodeUri || ''}
-            viewBox={`0 0 150 150`}
-          />
-        </div>
-      </div>
-      <div className="mt-6">
-        {recoveryCodes.length > 0 && (
-          <div className="mb-6">
-            <p>
-              <strong>{t('enrollment_form.show_otp.save_recovery')}</strong>
-            </p>
-            <ul className="list-none inline-block bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mt-2">
-              {recoveryCodes.map((code, index) => (
-                <li key={index} className="font-mono tracking-widest">
-                  {code}
-                </li>
-              ))}
-            </ul>
+  const handleBack = React.useCallback(() => {
+    setPhase(QR_PHASE_SCAN);
+    resetOtpData();
+  }, []);
+
+  const handleCopySecret = React.useCallback(async () => {
+    await navigator.clipboard.writeText(otpData?.secret || '');
+  }, [otpData.secret]);
+
+  const renderQrScreen = () => {
+    return (
+      <>
+        {loading ? (
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            role="status"
+            aria-live="polite"
+          >
+            <Spinner aria-label={t('loading')} />
+          </div>
+        ) : (
+          <div className="w-full max-w-sm mx-auto text-center">
+            <div className="mb-6">
+              <div className="flex justify-center items-center mb-6">
+                <QRCode
+                  size={150}
+                  value={otpData.barcodeUri || ''}
+                  aria-label={t('enrollment_form.show_otp.qr_code_description')}
+                />
+              </div>
+              <p id="qr-description" className="font-normal text-center block text-sm">
+                {t('enrollment_form.show_otp.title')}
+              </p>
+            </div>
+            <div className="flex flex-col space-y-3" aria-describedby="qr-description">
+              <Button
+                type="button"
+                className="text-sm"
+                variant="outline"
+                size="lg"
+                onClick={handleCopySecret}
+                aria-label={t('enrollment_form.show_otp.copy_as_code')}
+              >
+                <Copy className="h-4 w-4" aria-hidden="true" />
+                {t('enrollment_form.show_otp.copy_as_code')}
+              </Button>
+              <div className="mt-3" />
+              <Button
+                type="button"
+                className="text-sm"
+                size="lg"
+                onClick={handleContinue}
+                aria-label={t('continue')}
+              >
+                {t('continue')}
+              </Button>
+              <Button
+                type="button"
+                className="text-sm"
+                variant="ghost"
+                size="lg"
+                onClick={onClose}
+                aria-label={t('cancel')}
+              >
+                {t('cancel')}
+              </Button>
+            </div>
           </div>
         )}
-        <div className="w-full max-w-sm mx-auto text-center">
-          <Form {...form}>
-            <form
-              autoComplete="off"
-              onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-6 mt-4"
-            >
-              <FormField
-                control={form.control}
-                name="userOtp"
-                render={({ field }) => (
-                  <FormItem className="text-center">
-                    <FormLabel className="block w-full text-sm font-medium text-center">
-                      {t('enrollment_form.show_otp.enter_code')}
-                    </FormLabel>
-                    <FormControl>
-                      <div className="flex justify-center">
-                        <OTPField length={6} onChange={field.onChange} className="max-w-xs" />
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-left" />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" size="sm" disabled={loading}>
-                {loading
-                  ? t('enrollment_form.show_otp.verifying')
-                  : t('enrollment_form.show_otp.verify_code')}
-              </Button>
-            </form>
-          </Form>
-        </div>
-      </div>
-    </div>
+      </>
+    );
+  };
+
+  const renderOtpScreen = () => (
+    <OTPVerificationForm
+      factorType={factorType}
+      confirmEnrollment={confirmEnrollment}
+      onError={onError}
+      onSuccess={onSuccess}
+      onClose={onClose}
+      oobCode={otpData?.oobCode || ''}
+      onBack={handleBack}
+    />
   );
+
+  return phase === QR_PHASE_SCAN ? renderQrScreen() : renderOtpScreen();
 }

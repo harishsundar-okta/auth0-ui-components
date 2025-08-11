@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { Fragment } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/theme-utils';
 
 const badgeVariants = cva(
   'theme-default:shadow-xs box-border inline-flex items-center overflow-clip rounded-2xl border border-transparent font-medium',

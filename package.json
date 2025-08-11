@@ -22,6 +22,8 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "build:docs": "turbo run build --filter=auth0-ui-components-docs",
+    "dev:docs": "turbo run dev --filter=auth0-ui-components-docs",
     "test": "echo \"No tests configured yet.\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",

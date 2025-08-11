@@ -13,7 +13,7 @@ import {
   type FieldValues,
 } from 'react-hook-form';
 import * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/theme-utils';
 
 const Form: typeof FormProvider = FormProvider;
 
@@ -34,7 +34,25 @@ const FormField = <
 }: ControllerProps<TFieldValues, TName>) => {
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
+      <Controller
+        {...props}
+        render={({ field, fieldState, formState }) => {
+          const { onChange, onBlur, ...rest } = field;
+          return props.render({
+            field: {
+              ...rest,
+              onChange: (...args: unknown[]) => {
+                onChange(...(args as Parameters<typeof onChange>));
+              },
+              onBlur: (...args: unknown[]) => {
+                onBlur(...(args as Parameters<typeof onBlur>));
+              },
+            },
+            fieldState,
+            formState,
+          });
+        }}
+      />
     </FormFieldContext.Provider>
   );
 };

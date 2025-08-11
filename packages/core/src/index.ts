@@ -1,26 +1,29 @@
-export {
-  createTranslator,
-  initializeI18n,
-  getCurrentLanguage,
-  getFallbackLanguage,
-  getCurrentTranslations,
-  TranslationFunction,
-} from './i18n';
+export { TranslationFunction, I18nInitOptions } from './i18n';
 
-export { del, post, get, patch, ApiError, normalizeError, createApiError } from './api';
+export { normalizeError } from './api';
+
+export { createCoreClient } from './auth/core-client';
+
+export { AuthDetailsCore, CoreClientInterface } from './auth/auth-types';
 
 export * from './schemas';
 
 export {
-  deleteMfaFactor,
-  fetchMfaFactors,
-  confirmMfaEnrollmentRequest,
-  enrollMfaRequest,
   EnrollMfaParams,
   EnrollMfaResponse,
   Authenticator,
   MFAType,
   AuthenticatorType,
   OobChannel,
-  ConfirmMfaEnrollmentParams,
-} from './services';
+  EnrollOptions,
+  ConfirmEnrollmentOptions,
+  MFAMessages,
+} from './services/mfa/mfa-types';
+
+export {
+  FACTOR_TYPE_EMAIL,
+  FACTOR_TYPE_SMS,
+  FACTOR_TYPE_OTP,
+  FACTOR_TYPE_PUSH_NOTIFICATION,
+  FACTOR_TYPE_TOPT,
+} from './services/mfa/mfa-constants';
