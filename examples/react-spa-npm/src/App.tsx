@@ -20,9 +20,6 @@ function App() {
       <Auth0ComponentProvider
         authDetails={defaultAuthDetails}
         i18n={{ currentLanguage: i18n.language }}
-        theme={{
-          mode: 'light',
-        }}
       >
         <Navbar />
         <Routes>
