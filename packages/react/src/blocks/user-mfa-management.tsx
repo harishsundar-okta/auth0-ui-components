@@ -437,7 +437,7 @@ function UserMFAMgmtComponent({
                                             <Button
                                               size="sm"
                                               variant="ghost"
-                                              className="flex items-center justify-start px-4 py-2 gap-2 text-red-600 font-normal text-sm"
+                                              className="flex items-center justify-center px-4 py-2 gap-2 text-red-600 font-normal text-sm w-full"
                                               onClick={() =>
                                                 handleDeleteFactor(
                                                   factor.id,
@@ -453,7 +453,7 @@ function UserMFAMgmtComponent({
                                               role="menuitem"
                                             >
                                               <Trash2
-                                                className="w-4 h-4 mr-1 color-red-10"
+                                                className="w-4 h-4 color-red-10"
                                                 aria-hidden="true"
                                               />
                                               <span className="color-red-10">{t('remove')}</span>
@@ -511,7 +511,7 @@ function UserMFAMgmtComponent({
                                             <Button
                                               size="sm"
                                               variant="ghost"
-                                              className="flex items-center justify-start px-4 py-2 gap-2 text-red-600 font-normal text-sm"
+                                              className="flex items-center justify-center px-4 py-2 gap-2 text-red-600 font-normal text-sm w-full"
                                               onClick={() =>
                                                 handleDeleteFactor(
                                                   factor.id,
@@ -527,7 +527,7 @@ function UserMFAMgmtComponent({
                                               role="menuitem"
                                             >
                                               <Trash2
-                                                className="w-4 h-4 mr-1 color-red-10"
+                                                className="w-4 h-4 color-red-10"
                                                 aria-hidden="true"
                                               />
                                               <span className="color-red-10">{t('remove')}</span>
