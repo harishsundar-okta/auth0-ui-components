@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import { useTranslation } from 'react-i18next';
+import { UserMFAMgmt } from '@/blocks/user-mfa-management';
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -12,14 +13,24 @@ const Profile = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-medium text-gray-900 mb-4">{t('user-profile.mfa.title')}</h2>
           <p className="text-gray-600 mb-4">{t('user-profile.mfa.description')}</p>
-          {/* Replace the below section with UserMfaMgmt Component */}
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-            <p className="text-gray-500">{t('user-profile.mfa.placeholder.title')}</p>
-            <p className="text-sm text-gray-400 mt-2">
-              {t('user-profile.mfa.placeholder.description')}
-            </p>
+          <div style={{ all: 'initial', fontFamily: 'inherit' }}>
+            <UserMFAMgmt
+              factorConfig={{
+                duo: {
+                  visible: false,
+                },
+                'webauthn-platform': {
+                  visible: false,
+                },
+                'recovery-code': {
+                  visible: false,
+                },
+                'webauthn-roaming': {
+                  visible: false,
+                },
+              }}
+            />
           </div>
-          {/* End of Section */}
         </div>
       </div>
     </div>
