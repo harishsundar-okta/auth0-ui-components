@@ -31,5 +31,3 @@ export {
 } from './services/mfa/mfa-constants';
 
 export * from './types';
-
-export * from './services/my-org/my-org-types';
