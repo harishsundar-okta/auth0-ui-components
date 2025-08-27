@@ -1,6 +1,6 @@
 import { cva, VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/theme-utils';
 
 const spinnerVariants = cva(
   'text-surface inline-block h-8 w-8 rounded-full duration-[5000] ease-linear',
@@ -24,16 +24,14 @@ const spinnerVariants = cva(
   },
 );
 
-interface SpinnerProps
+export interface SpinnerProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof spinnerVariants> {}
 
-function Spinner({ variant, size, className, ...props }: SpinnerProps) {
+export function Spinner({ variant, size, className, ...props }: SpinnerProps) {
   return (
     <div className={cn(spinnerVariants({ variant, size }), className)} {...props}>
       <span className="sr-only">Loading...</span>
     </div>
   );
 }
-
-export { Spinner };

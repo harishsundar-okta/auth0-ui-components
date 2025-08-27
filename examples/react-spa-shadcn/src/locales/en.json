@@ -13,16 +13,21 @@
     "sign-out": "Sign Out"
   },
   "profile-drop-down": {
-    "settings": "Settings",
+    "profile": "Profile",
     "sign-out": "Sign out"
   },
   "language-drop-down": {
     "change-language-button": "Change Language"
   },
   "user-profile": {
+    "title": "User Profile",
     "mfa": {
       "title": "Multi-Factor Authentication",
-      "description": "Manage your security methods for logging in."
+      "description": "Manage your security methods for logging in.",
+      "placeholder": {
+        "title": "UserMFAMgmt Component Placeholder",
+        "description": "This is where the UserMFAMgmt component will be placed"
+      }
     }
   }
 }

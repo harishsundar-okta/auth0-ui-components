@@ -64,12 +64,12 @@ export const ProfileDropdown: React.FC = () => {
           >
             <div className="py-1 border-t border-gray-200 dark:border-gray-600">
               <Link
-                to="/accounts"
+                to="/profile"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                 role="menuitem"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t('profile-drop-down.settings')}
+                {t('profile-drop-down.profile')}
               </Link>
             </div>
             <div className="py-1 border-t border-gray-200 dark:border-gray-600">

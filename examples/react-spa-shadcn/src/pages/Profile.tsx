@@ -1,8 +1,38 @@
+import Header from '@/components/Header';
+import { useTranslation } from 'react-i18next';
+import { UserMFAMgmt } from '@/blocks/user-mfa-management';
+
 const Profile = () => {
+  const { t } = useTranslation();
+
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-semibold text-gray-900 mb-6">Profile</h1>
-      <p className="text-gray-600">Profile settings will be displayed here.</p>
+    <div className="min-h-screen">
+      <Header />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-6">{t('user-profile.title')}</h1>
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-medium text-gray-900 mb-4">{t('user-profile.mfa.title')}</h2>
+          <p className="text-gray-600 mb-4">{t('user-profile.mfa.description')}</p>
+          <div style={{ all: 'initial', fontFamily: 'inherit' }}>
+            <UserMFAMgmt
+              factorConfig={{
+                duo: {
+                  visible: false,
+                },
+                'webauthn-platform': {
+                  visible: false,
+                },
+                'recovery-code': {
+                  visible: false,
+                },
+                'webauthn-roaming': {
+                  visible: false,
+                },
+              }}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

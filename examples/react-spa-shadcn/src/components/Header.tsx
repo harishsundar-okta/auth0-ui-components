@@ -8,22 +8,16 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo and Navigation - Left aligned */}
           <div className="flex items-center space-x-8">
-            <Link to="/" className="text-xl font-semibold text-gray-900">
-              Auth0 UI Components
+            <Link to="/" className="-m-1.5 p-1.5">
+              <img
+                className="h-8 w-auto"
+                src="https://cdn.auth0.com/quantum-assets/dist/2.0.2/logos/auth0/auth0-lockup-en-onlight.svg"
+                alt="Auth0 Logo"
+              />
             </Link>
 
             {/* Navigation */}
-            <nav className="hidden md:flex space-x-8">
-              {/* <Link to="/docs" className="text-gray-700 hover:text-gray-900 transition-colors">
-                Docs
-              </Link> */}
-              {/* <Link
-                to="/playground"
-                className="text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                Playground
-              </Link> */}
-            </nav>
+            <nav className="hidden md:flex space-x-8"></nav>
           </div>
 
           {/* Auth Button */}

@@ -1,9 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const LandingPage = () => {
   const { t } = useTranslation();
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+
+  const handleGetStarted = () => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -19,9 +27,19 @@ const LandingPage = () => {
                 {t('hero-section.description')}
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Button asChild size="lg" className="bg-gray-900 hover:bg-gray-800 text-white">
-                  <Link to="/profile">{t('hero-section.get-started-button')}</Link>
-                </Button>
+                {isAuthenticated ? (
+                  <Button asChild size="lg" className="bg-gray-900 hover:bg-gray-800 text-white">
+                    <Link to="/profile">{t('hero-section.get-started-button')}</Link>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleGetStarted}
+                    size="lg"
+                    className="bg-gray-900 hover:bg-gray-800 text-white"
+                  >
+                    {t('hero-section.get-started-button')}
+                  </Button>
+                )}
                 <a
                   href="https://auth0.com/docs"
                   className="text-sm font-semibold leading-6 text-gray-900"
