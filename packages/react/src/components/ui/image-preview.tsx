@@ -72,11 +72,7 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
           >
             {value ? (
               <div className="relative">
-                <img
-                  src={value}
-                  alt="Preview"
-                  className="h-20 w-20 object-contain rounded-lg p-2"
-                />
+                <img src={value} alt="Preview" className="h-20 w-20 object-cover rounded-lg" />
                 {!disabled && (
                   <Button
                     variant="destructive"
@@ -89,7 +85,10 @@ export const ImagePreview = React.forwardRef<HTMLDivElement, ImagePreviewProps>(
                 )}
               </div>
             ) : (
-              <div className="h-20 w-20 bg-muted rounded-lg border-2 border-dashed border-border" />
+              <div
+                className="h-20 w-20 bg-muted rounded-lg border-2 border-dashed border-border cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => !disabled && !disableFileUpload && fileInputRef.current?.click()}
+              />
             )}
 
             {!disableFileUpload && (

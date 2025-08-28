@@ -5,7 +5,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/theme-utils';
 
 export interface FormActionsProps {
-  hasUnsavedChanges: boolean;
+  hasUnsavedChanges?: boolean;
   isLoading?: boolean;
   saveAction?: Partial<ActionButton>;
   cancelAction?: Partial<ActionButton>;
@@ -17,7 +17,7 @@ export interface FormActionsProps {
 }
 
 export const FormActions: React.FC<FormActionsProps> = ({
-  hasUnsavedChanges,
+  hasUnsavedChanges = false,
   isLoading = false,
   saveAction,
   cancelAction,
@@ -69,7 +69,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
           variant={defaultCancelAction.variant}
           size={defaultCancelAction.size}
           onClick={handleClick(defaultCancelAction)}
-          disabled={defaultCancelAction.disabled}
+          disabled={defaultCancelAction.disabled || isLoading}
         >
           {defaultCancelAction.label}
         </Button>
@@ -79,7 +79,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
         type="submit"
         variant={defaultSaveAction.variant}
         size={defaultSaveAction.size}
-        disabled={defaultSaveAction.disabled}
+        disabled={defaultSaveAction.disabled || isLoading}
         onClick={handleClick(defaultSaveAction)}
       >
         {isLoading ? <Spinner size="sm" aria-hidden="true" /> : defaultSaveAction.label}

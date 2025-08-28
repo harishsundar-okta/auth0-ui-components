@@ -4,8 +4,9 @@ import { cn } from '@/lib/theme-utils';
 import { TextField, textFieldVariants } from '@/components/ui/text-field';
 import { Label } from '@/components/ui/label';
 
-const isValidHexColor = (color: string): boolean =>
-  /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+const regex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+
+const isValidHexColor = (color: string): boolean => regex.test(color);
 
 const formatHexColor = (input: string): string => {
   const cleaned = input.replace(/^#+/, '');
@@ -117,7 +118,7 @@ export const ColorPicker = React.forwardRef<HTMLInputElement, ColorPickerProps>(
           id={inputId}
           type="text"
           inputMode="text"
-          pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+          pattern={regex.source}
           value={value.toUpperCase()}
           onChange={handleTextChange}
           disabled={disabled}

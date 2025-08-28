@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActionButton as CoreActionButton } from '@auth0-web-ui-components/core';
-import { LucideIcon, ArrowLeft, Plus } from 'lucide-react';
+import { LucideIcon, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/theme-utils';
 
@@ -74,7 +74,7 @@ export const Header = React.forwardRef<
         {actions && actions.length > 0 && (
           <div className="flex-shrink-0 flex items-center gap-2">
             {actions.map((action, index) => {
-              const ActionIcon = action.icon || Plus;
+              const ActionIcon = action.icon;
               return (
                 <Button
                   key={index}
