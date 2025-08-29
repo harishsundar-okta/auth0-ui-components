@@ -1,6 +1,11 @@
 import * as React from 'react';
 
-import { Authenticator, type MFAType, getComponentStyles } from '@auth0-web-ui-components/core';
+import {
+  Authenticator,
+  FACTOR_TYPE_PUSH_NOTIFICATION,
+  type MFAType,
+  getComponentStyles,
+} from '@auth0-web-ui-components/core';
 
 import type { UserMFAMgmtProps } from '@/types';
 
@@ -191,8 +196,14 @@ function UserMFAMgmtComponent({
 
   const handleCloseDialog = React.useCallback(() => {
     setDialogOpen(false);
+
+    // Reload factors if closing push notification enrollment
+    if (enrollFactor === FACTOR_TYPE_PUSH_NOTIFICATION) {
+      loadFactors();
+    }
+
     setEnrollFactor(null);
-  }, []);
+  }, [enrollFactor, loadFactors]);
 
   /**
    * Handles the initial click on the delete button for an MFA factor.
