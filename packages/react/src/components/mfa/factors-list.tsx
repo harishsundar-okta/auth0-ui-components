@@ -62,7 +62,7 @@ export function FactorsList({
       {factors.map((factor) => (
         <Card
           key={factor.id}
-          className="border rounded-lg shadow-none bg-transparent p-0 w-full"
+          className="border border-slate-300 rounded-lg shadow-none bg-transparent p-0 w-full"
           aria-label={t(`${factorType}.title`)}
         >
           <CardContent className="flex flex-row items-center justify-between gap-3 p-3">

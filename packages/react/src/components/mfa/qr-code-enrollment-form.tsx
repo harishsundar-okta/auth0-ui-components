@@ -1,6 +1,5 @@
 import * as React from 'react';
 import QRCode from 'react-qr-code';
-import { Copy } from 'lucide-react';
 
 import {
   type MFAType,
@@ -11,8 +10,7 @@ import {
 } from '@auth0-web-ui-components/core';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import { TextField } from '@/components/ui/text-field';
+import { CopyableTextField } from '@/components/ui/copyable-text-field';
 
 import { CONFIRM, QR_PHASE_ENTER_OTP, QR_PHASE_SCAN, ENROLL } from '@/lib/mfa-constants';
 
@@ -66,8 +64,6 @@ export function QRCodeEnrollmentForm({
     () => getComponentStyles(styling, isDarkMode),
     [styling, isDarkMode],
   );
-  const [tooltipOpen, setTooltipOpen] = React.useState(false);
-  const [tooltipText, setTooltipText] = React.useState(t('copy'));
 
   const { fetchOtpEnrollment, otpData, resetOtpData, loading } = useOtpEnrollment({
     factorType,
@@ -92,17 +88,6 @@ export function QRCodeEnrollmentForm({
     setPhase(QR_PHASE_SCAN);
     resetOtpData();
   }, []);
-
-  const handleCopySecret = React.useCallback(async () => {
-    try {
-      const textToCopy = otpData?.secret || otpData?.barcodeUri || '';
-      await navigator.clipboard.writeText(textToCopy);
-      setTooltipOpen(true);
-      setTooltipText(t('copied'));
-    } catch (err) {
-      console.error('Failed to copy text:', err);
-    }
-  }, [otpData?.secret, otpData?.barcodeUri, t]);
 
   const renderQrScreen = () => {
     return (
@@ -138,31 +123,23 @@ export function QRCodeEnrollmentForm({
             </div>
 
             <div className="flex flex-col gap-3 justify-center" aria-describedby="qr-description">
-              <TextField
-                readOnly
+              <CopyableTextField
                 value={otpData?.secret || otpData?.barcodeUri || ''}
-                aria-label={t('enrollment_form.show_otp.secret_code')}
-                className="text-sm"
-                endAdornment={
-                  <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={handleCopySecret}
-                        aria-label={t('enrollment_form.show_otp.copy_as_code')}
-                      >
-                        <Copy className="h-4 w-4" aria-hidden="true" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" align="end" sideOffset={5} className="z-[1000]">
-                      {tooltipText}
-                    </TooltipContent>
-                  </Tooltip>
-                }
+                label={t('enrollment_form.show_otp.secret_code')}
               />
+
+              {otpData?.recoveryCodes && otpData.recoveryCodes.length > 0 && (
+                <div>
+                  <p
+                    className={cn(
+                      'font-normal block text-sm text-center text-(length:--font-size-paragraph) mb-2',
+                    )}
+                  >
+                    {t('enrollment_form.recovery_code_description')}
+                  </p>
+                  <CopyableTextField value={otpData.recoveryCodes[0]} />
+                </div>
+              )}
               <div className="mt-3" />
               <Button
                 type="button"
