@@ -20,32 +20,39 @@ import {
 import { OTPField } from '@/components/ui/otp-field';
 
 import { useTheme, useTranslator, useOtpConfirmation } from '@/hooks';
-import { CONFIRM } from '@/lib/mfa-constants';
 import { cn } from '@/lib/theme-utils';
-import { Styling } from '@/types';
 import { ShowRecoveryCode } from './show-recovery-code';
+import { OTPVerificationFormProps } from '@/types';
 
 type OtpForm = {
   userOtp: string;
 };
 
-type OTPVerificationFormProps = {
-  factorType: MFAType;
-  confirmEnrollment: (
-    factor: MFAType,
-    options: { oobCode?: string; userOtpCode?: string },
-  ) => Promise<unknown | null>;
-  onError: (error: Error, stage: typeof CONFIRM) => void;
-  onSuccess: () => void;
-  onClose: () => void;
-  oobCode?: string;
-  contact?: string;
-  recoveryCodes?: string[];
-  onBack?: () => void;
-  styling?: Styling;
-};
-
 // Mask contact info (email or phone)
+/**
+ * Masks sensitive contact information for display purposes.
+ *
+ * For email addresses:
+ * - Shows the first 2 characters of the local part
+ * - Masks the remaining characters with asterisks
+ * - Preserves the @ symbol and domain unchanged
+ *
+ * For phone numbers:
+ * - Shows the first 3 and last 3 characters
+ * - Masks the middle characters with asterisks
+ *
+ * @param {string} contact - The contact information to mask (email or phone number)
+ * @param {MFAType} factorType - The type of MFA factor to determine masking strategy
+ * @returns {string} The masked contact information
+ *
+ * @example
+ * // Email masking
+ * maskContact('john.doe@example.com', 'email') // Returns 'jo******@example.com'
+ *
+ * @example
+ * // Phone number masking
+ * maskContact('1234567890', 'sms') // Returns '123****890'
+ */
 const maskContact = (contact: string, factorType: MFAType): string => {
   if (!contact) return '';
 

@@ -1,33 +1,12 @@
 import * as React from 'react';
-import {
-  getComponentStyles,
-  type MFAType,
-  FACTOR_TYPE_PUSH_NOTIFICATION,
-} from '@auth0-web-ui-components/core';
+import { getComponentStyles, FACTOR_TYPE_PUSH_NOTIFICATION } from '@auth0-web-ui-components/core';
 
 import { Button } from '@/components/ui/button';
 import { CopyableTextField } from '@/components/ui/copyable-text-field';
 
 import { useTheme, useTranslator, useOtpConfirmation } from '@/hooks';
 import { cn } from '@/lib/theme-utils';
-import { Styling } from '@/types';
-import { CONFIRM } from '@/lib/mfa-constants';
-
-type ShowRecoveryCodeProps = {
-  recoveryCodes: string[];
-  onSuccess: () => void;
-  styling?: Styling;
-  factorType?: MFAType;
-  confirmEnrollment?: (
-    factor: MFAType,
-    options: { oobCode?: string; userOtpCode?: string },
-  ) => Promise<unknown | null>;
-  onError?: (error: Error, stage: typeof CONFIRM) => void;
-  onClose?: () => void;
-  oobCode?: string;
-  userOtp?: string;
-  onBack?: () => void;
-};
+import { ShowRecoveryCodeProps } from '@/types';
 
 export function ShowRecoveryCode({
   factorType,

@@ -4,32 +4,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { cn } from '@/lib/theme-utils';
-import {
-  FACTOR_TYPE_SMS,
-  FACTOR_TYPE_EMAIL,
-  type MFAType,
-  type Authenticator,
-} from '@auth0-web-ui-components/core';
+import { FACTOR_TYPE_SMS, FACTOR_TYPE_EMAIL } from '@auth0-web-ui-components/core';
 import { useTranslator } from '@/hooks';
 import { useTheme } from '@/hooks';
-import { Styling } from '@/types';
+import { FactorsListProps } from '@/types';
 import { getComponentStyles } from '@auth0-web-ui-components/core';
 
 const FACTOR_ICONS = {
   [FACTOR_TYPE_SMS]: Smartphone,
   [FACTOR_TYPE_EMAIL]: Mail,
 } as const;
-
-interface FactorsListProps {
-  factors: Authenticator[];
-  factorType: MFAType;
-  readOnly: boolean;
-  isEnabledFactor: boolean;
-  onDeleteFactor: (factorId: string, factorType: MFAType) => void;
-  isDeletingFactor: boolean;
-  disableDelete: boolean;
-  styling?: Styling;
-}
 
 export function FactorsList({
   factors,

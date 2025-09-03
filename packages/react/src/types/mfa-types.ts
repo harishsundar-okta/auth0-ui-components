@@ -5,20 +5,22 @@ import type {
   EnrollOptions,
   ConfirmEnrollmentOptions,
   MFAMessages,
-  StylingVariables as CoreStylingVariables,
+  SharedComponentProps,
 } from '@auth0-web-ui-components/core';
+import { ENROLL, CONFIRM } from '@/lib/mfa-constants';
 
-export interface Styling {
-  variables?: CoreStylingVariables;
-  classes?: {
-    'UserMFAMgmt-card'?: string;
-    'UserMFASetupForm-dialogContent'?: string;
-    'DeleteFactorConfirmation-dialogContent'?: string;
-  };
+export interface UserMFAMgmtClasses {
+  'UserMFAMgmt-card'?: string;
+  'UserMFASetupForm-dialogContent'?: string;
+  'DeleteFactorConfirmation-dialogContent'?: string;
 }
 
-export interface UserMFAMgmtProps {
-  customMessages?: Partial<MFAMessages>;
+export interface UserMFAMgmtProps
+  extends SharedComponentProps<
+    MFAMessages,
+    UserMFAMgmtClasses,
+    { email?: RegExp; phone?: RegExp }
+  > {
   hideHeader?: boolean;
   showActiveOnly?: boolean;
   disableEnroll?: boolean;
@@ -38,8 +40,105 @@ export interface UserMFAMgmtProps {
     action: 'enroll' | 'delete' | 'confirm',
     factorType: MFAType,
   ) => boolean | Promise<boolean>;
-  schemaValidation?: { email?: RegExp; phone?: RegExp };
-  styling?: Styling;
+}
+
+export interface ContactInputFormProps
+  extends SharedComponentProps<
+    MFAMessages,
+    UserMFAMgmtClasses,
+    { email?: RegExp; phone?: RegExp }
+  > {
+  factorType: MFAType;
+  enrollMfa: (factor: MFAType, options: Record<string, string>) => Promise<EnrollMfaResponse>;
+  confirmEnrollment: (
+    factor: MFAType,
+    options: { oobCode?: string; userOtpCode?: string },
+  ) => Promise<unknown | null>;
+  onError: (error: Error, stage: typeof ENROLL | typeof CONFIRM) => void;
+  onSuccess: () => void;
+  onClose: () => void;
+}
+
+export interface DeleteFactorConfirmationProps
+  extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  factorToDelete: {
+    id: string;
+    type: MFAType;
+  } | null;
+  isDeletingFactor: boolean;
+  onConfirm: (factorId: string) => void;
+  onCancel: () => void;
+}
+
+export interface OTPVerificationFormProps
+  extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+  factorType: MFAType;
+  confirmEnrollment: (
+    factor: MFAType,
+    options: { oobCode?: string; userOtpCode?: string },
+  ) => Promise<unknown | null>;
+  onError: (error: Error, stage: typeof CONFIRM) => void;
+  onSuccess: () => void;
+  onClose: () => void;
+  oobCode?: string;
+  contact?: string;
+  recoveryCodes?: string[];
+  onBack?: () => void;
+}
+
+export interface QRCodeEnrollmentFormProps
+  extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+  factorType: MFAType;
+  enrollMfa: (factor: MFAType, options: Record<string, string>) => Promise<EnrollMfaResponse>;
+  confirmEnrollment: (
+    factor: MFAType,
+    options: { oobCode?: string; userOtpCode?: string },
+  ) => Promise<unknown | null>;
+  onError: (error: Error, stage: typeof ENROLL | typeof CONFIRM) => void;
+  onSuccess: () => void;
+  onClose: () => void;
+}
+
+export interface UserMFASetupFormProps
+  extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+  open: boolean;
+  onClose: () => void;
+  factorType: MFAType;
+  enrollMfa: (factor: MFAType, options: Record<string, string>) => Promise<EnrollMfaResponse>;
+  confirmEnrollment: (
+    factor: MFAType,
+    options: { oobCode?: string; userOtpCode?: string },
+  ) => Promise<unknown | null>;
+  onSuccess: () => void;
+  onError: (error: Error, stage: typeof ENROLL | typeof CONFIRM) => void;
+}
+
+export interface ShowRecoveryCodeProps
+  extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+  recoveryCodes: string[];
+  onSuccess: () => void;
+  factorType?: MFAType;
+  confirmEnrollment?: (
+    factor: MFAType,
+    options: { oobCode?: string; userOtpCode?: string },
+  ) => Promise<unknown | null>;
+  onError?: (error: Error, stage: typeof CONFIRM) => void;
+  onClose?: () => void;
+  oobCode?: string;
+  userOtp?: string;
+  onBack?: () => void;
+}
+
+export interface FactorsListProps extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+  factors: Authenticator[];
+  factorType: MFAType;
+  readOnly: boolean;
+  isEnabledFactor: boolean;
+  onDeleteFactor: (factorId: string, factorType: MFAType) => void;
+  isDeletingFactor: boolean;
+  disableDelete: boolean;
 }
 
 /**
