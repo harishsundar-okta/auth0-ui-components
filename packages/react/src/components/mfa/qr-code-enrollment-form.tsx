@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { CopyableTextField } from '@/components/ui/copyable-text-field';
 
-import { QR_PHASE_ENTER_OTP, QR_PHASE_SCAN } from '@/lib/mfa-constants';
+import { QR_PHASE_ENTER_OTP, QR_PHASE_SCAN, SHOW_RECOVERY_CODE } from '@/lib/mfa-constants';
 
 import { useTheme, useTranslator } from '@/hooks';
 import { useOtpEnrollment } from '@/hooks/mfa';
@@ -23,7 +23,7 @@ import { cn } from '@/lib/theme-utils';
 const PHASES = {
   SCAN: QR_PHASE_SCAN,
   ENTER_OTP: QR_PHASE_ENTER_OTP,
-  SHOW_RECOVERY: 'show_recovery',
+  SHOW_RECOVERY: SHOW_RECOVERY_CODE,
 } as const;
 
 type Phase = (typeof PHASES)[keyof typeof PHASES];
