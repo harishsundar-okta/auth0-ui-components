@@ -15,7 +15,12 @@ export interface UserMFAMgmtClasses {
   'DeleteFactorConfirmation-dialogContent'?: string;
 }
 
-export interface UserMFAMgmtProps extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+export interface UserMFAMgmtProps
+  extends SharedComponentProps<
+    MFAMessages,
+    UserMFAMgmtClasses,
+    { email?: RegExp; phone?: RegExp }
+  > {
   hideHeader?: boolean;
   showActiveOnly?: boolean;
   disableEnroll?: boolean;
@@ -35,11 +40,14 @@ export interface UserMFAMgmtProps extends SharedComponentProps<MFAMessages, User
     action: 'enroll' | 'delete' | 'confirm',
     factorType: MFAType,
   ) => boolean | Promise<boolean>;
-  schemaValidation?: { email?: RegExp; phone?: RegExp };
 }
 
 export interface ContactInputFormProps
-  extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+  extends SharedComponentProps<
+    MFAMessages,
+    UserMFAMgmtClasses,
+    { email?: RegExp; phone?: RegExp }
+  > {
   factorType: MFAType;
   enrollMfa: (factor: MFAType, options: Record<string, string>) => Promise<EnrollMfaResponse>;
   confirmEnrollment: (
@@ -49,7 +57,6 @@ export interface ContactInputFormProps
   onError: (error: Error, stage: typeof ENROLL | typeof CONFIRM) => void;
   onSuccess: () => void;
   onClose: () => void;
-  schemaValidation?: { email?: RegExp; phone?: RegExp };
 }
 
 export interface DeleteFactorConfirmationProps
@@ -94,7 +101,11 @@ export interface QRCodeEnrollmentFormProps
 }
 
 export interface UserMFASetupFormProps
-  extends SharedComponentProps<MFAMessages, UserMFAMgmtClasses> {
+  extends SharedComponentProps<
+    MFAMessages,
+    UserMFAMgmtClasses,
+    { email?: RegExp; phone?: RegExp }
+  > {
   open: boolean;
   onClose: () => void;
   factorType: MFAType;
@@ -105,7 +116,6 @@ export interface UserMFASetupFormProps
   ) => Promise<unknown | null>;
   onSuccess: () => void;
   onError: (error: Error, stage: typeof ENROLL | typeof CONFIRM) => void;
-  schemaValidation?: { email?: RegExp; phone?: RegExp };
 }
 
 /**
