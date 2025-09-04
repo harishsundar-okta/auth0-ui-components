@@ -60,8 +60,11 @@ export function QRCodeEnrollmentForm({
   });
 
   React.useEffect(() => {
-    fetchOtpEnrollment();
-  }, [phase]);
+    // Only fetch if we don't have data and we're in scan phase
+    if (!otpData?.barcodeUri) {
+      fetchOtpEnrollment();
+    }
+  }, [otpData?.barcodeUri, fetchOtpEnrollment]);
 
   const handleContinue = React.useCallback(() => {
     if (factorType === FACTOR_TYPE_PUSH_NOTIFICATION) {
@@ -69,6 +72,7 @@ export function QRCodeEnrollmentForm({
       if (otpData?.recoveryCodes && otpData.recoveryCodes.length > 0) {
         setPhase(PHASES.SHOW_RECOVERY);
       } else {
+        resetOtpData();
         onClose();
       }
     } else {
@@ -78,8 +82,7 @@ export function QRCodeEnrollmentForm({
 
   const handleBack = React.useCallback(() => {
     setPhase(QR_PHASE_SCAN);
-    resetOtpData();
-  }, [resetOtpData]);
+  }, []);
 
   const renderQrScreen = () => {
     return (
