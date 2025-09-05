@@ -1,1 +1,1 @@
-export * from './my-org-types';
+export * from './org-management';

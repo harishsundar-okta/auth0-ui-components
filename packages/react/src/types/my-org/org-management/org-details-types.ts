@@ -3,10 +3,10 @@ import type {
   OrgDetailsCustomMessages,
   SharedComponentProps,
   ActionButton,
-  OrgDeletesCustomMessages,
-  organizationDetailSchema,
+  OrganizationDetailSchemaValidation,
 } from '@auth0-web-ui-components/core';
 import { FormActionsProps } from '@/components/ui/form-actions';
+import { UseFormReturn } from 'react-hook-form';
 
 export interface OrgDetailsClasses {
   'OrgDetails-card'?: string;
@@ -22,28 +22,19 @@ export interface OrgDetailsProps
   extends SharedComponentProps<
     OrgDetailsCustomMessages,
     OrgDetailsClasses,
-    {
-      name?: RegExp;
-      displayName?: RegExp;
-      color?: RegExp;
-      logoURL?: RegExp;
-    }
+    OrganizationDetailSchemaValidation
   > {
   organization?: Partial<OrganizationDetailFormValues>;
   isLoading?: boolean;
   formActions: OrgDetailsFormActions;
 }
 
-export interface OrgDeleteClasses {
-  'OrgDelete-card'?: string;
-  'OrgDelete-button'?: string;
-  'OrgDelete-modal'?: string;
+export interface BrandingDetailsProps
+  extends SharedComponentProps<OrgDetailsCustomMessages, OrgDetailsClasses> {
+  form: UseFormReturn<OrganizationDetailFormValues>;
 }
 
-export interface OrgDeleteProps
-  extends SharedComponentProps<OrgDeletesCustomMessages, OrgDeleteClasses> {
-  onDelete: (id: string) => void | Promise<void>;
-  isLoading?: boolean;
-  organization: Partial<OrganizationDetailFormValues> & { id: string };
-  schema?: typeof organizationDetailSchema;
+export interface SettingsDetailsProps
+  extends SharedComponentProps<OrgDetailsCustomMessages, OrgDetailsClasses> {
+  form: UseFormReturn<OrganizationDetailFormValues>;
 }

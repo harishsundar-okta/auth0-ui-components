@@ -1,4 +1,15 @@
 import { z } from 'zod';
+import { createStringSchema, createLogoSchema } from '@core/schemas/common';
+
+/**
+ * Simplified validation options for organization detail schema
+ */
+export interface OrganizationDetailSchemaValidation {
+  name?: RegExp;
+  displayName?: RegExp;
+  color?: RegExp;
+  logoURL?: RegExp;
+}
 
 /**
  * Configuration options for organization detail schema validation
@@ -21,63 +32,6 @@ export interface OrganizationDetailSchemaOptions {
     errorMessage?: string;
   };
 }
-
-/**
- * Creates a conditional string schema with optional regex validation
- */
-const createStringSchema = (
-  required: boolean,
-  regex?: RegExp,
-  errorMessage?: string,
-  maxLength = 100,
-) => {
-  if (regex) {
-    return required
-      ? z.string().min(1, errorMessage).regex(regex, { message: errorMessage })
-      : z
-          .string()
-          .optional()
-          .refine((val) => !val || regex.test(val), { message: errorMessage });
-  }
-
-  const lengthMsg = `Must be less than ${maxLength} characters`;
-  return required
-    ? z.string().min(1, errorMessage).max(maxLength, lengthMsg)
-    : z
-        .string()
-        .optional()
-        .refine((val) => !val || val.length <= maxLength, { message: lengthMsg });
-};
-
-/**
- * Creates logo URL schema with HTTPS validation and optional regex
- */
-const createLogoSchema = (required: boolean, regex?: RegExp, errorMessage?: string) => {
-  const defaultErrorMsg = errorMessage || 'Please enter a valid HTTPS URL';
-
-  if (regex) {
-    // If custom regex is provided, use it instead of HTTPS validation
-    return required
-      ? z.string().min(1, defaultErrorMsg).regex(regex, { message: defaultErrorMsg })
-      : z
-          .string()
-          .optional()
-          .refine((val) => !val || regex.test(val), { message: defaultErrorMsg });
-  }
-
-  // Default HTTPS validation
-  const httpsUrlSchema = z.string().url(defaultErrorMsg).startsWith('https://', defaultErrorMsg);
-
-  return required
-    ? httpsUrlSchema
-    : z
-        .string()
-        .optional()
-        .refine(
-          (val) => !val || (val.startsWith('https://') && z.string().url().safeParse(val).success),
-          { message: defaultErrorMsg },
-        );
-};
 
 /**
  * Creates a schema for organization detail form validation

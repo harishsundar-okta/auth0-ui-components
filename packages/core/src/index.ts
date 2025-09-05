@@ -32,4 +32,4 @@ export {
 
 export * from './types';
 
-export * from './services/my-org/my-org-types';
+export * from './services/my-org';
