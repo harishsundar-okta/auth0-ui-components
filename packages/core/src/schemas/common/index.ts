@@ -1,58 +1,90 @@
 import { z } from 'zod';
 
-/**
- * Creates a conditional string schema with optional regex validation
- */
-export const createStringSchema = (
-  required: boolean,
-  regex?: RegExp,
-  errorMessage?: string,
-  maxLength = 100,
-) => {
-  if (regex) {
-    return required
-      ? z.string().min(1, errorMessage).regex(regex, { message: errorMessage })
-      : z
-          .string()
-          .optional()
-          .refine((val) => !val || regex.test(val), { message: errorMessage });
+interface StringValidationOptions {
+  required?: boolean;
+  regex?: RegExp;
+  minLength?: number;
+  maxLength?: number;
+  errorMessage?: string;
+}
+
+interface LogoValidationOptions {
+  required?: boolean;
+  regex?: RegExp;
+  errorMessage?: string;
+}
+
+export const createStringSchema = (options: StringValidationOptions = {}) => {
+  const { required = true, regex, minLength, maxLength, errorMessage } = options;
+
+  // Start with base schema
+  let schema = z.string();
+
+  // Add validations for required fields
+  if (required) {
+    const requiredLength = minLength && minLength > 0 ? minLength : 1;
+    schema = schema.min(
+      requiredLength,
+      errorMessage || `Minimum ${requiredLength} characters required`,
+    );
+
+    if (maxLength) {
+      schema = schema.max(maxLength, `Maximum ${maxLength} characters allowed`);
+    }
+
+    if (regex) {
+      schema = schema.regex(regex, errorMessage || 'Invalid format');
+    }
+
+    return schema;
   }
 
-  const lengthMsg = `Must be less than ${maxLength} characters`;
-  return required
-    ? z.string().min(1, errorMessage).max(maxLength, lengthMsg)
-    : z
-        .string()
-        .optional()
-        .refine((val) => !val || val.length <= maxLength, { message: lengthMsg });
+  // Handle optional fields
+  return z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+
+        if (minLength && val.length < minLength) return false;
+        if (maxLength && val.length > maxLength) return false;
+        if (regex && !regex.test(val)) return false;
+
+        return true;
+      },
+      {
+        message: errorMessage || 'Invalid format',
+      },
+    );
 };
 
-/**
- * Creates logo URL schema with HTTP validation and optional regex
- */
-export const createLogoSchema = (required: boolean, regex?: RegExp, errorMessage?: string) => {
-  const defaultErrorMsg = errorMessage || 'Please enter a valid HTTP URL';
+export const createLogoSchema = (options: LogoValidationOptions = {}) => {
+  const { required = false, regex, errorMessage } = options;
 
+  const message = errorMessage || 'Please enter a valid HTTP';
+
+  // Custom regex validation
   if (regex) {
-    // If custom regex is provided, use it instead of HTTP validation
     return required
-      ? z.string().min(1, defaultErrorMsg).regex(regex, { message: defaultErrorMsg })
+      ? z.string().min(1, message).regex(regex, message)
       : z
           .string()
           .optional()
-          .refine((val) => !val || regex.test(val), { message: defaultErrorMsg });
+          .refine((val) => !val || regex.test(val), { message });
   }
 
-  // Default HTTP validation
-  const httpUrlSchema = z.string().url(defaultErrorMsg).startsWith('http://', defaultErrorMsg);
+  // Default URL validation
+  const urlValidator = (val: string) => {
+    const isValidUrl = z.string().url().safeParse(val).success;
+    const isHttpProtocol = val.startsWith('http://') || val.startsWith('https://');
+    return isValidUrl && isHttpProtocol;
+  };
 
   return required
-    ? httpUrlSchema
+    ? z.string().min(1, message).refine(urlValidator, { message })
     : z
         .string()
         .optional()
-        .refine(
-          (val) => !val || (val.startsWith('http://') && z.string().url().safeParse(val).success),
-          { message: defaultErrorMsg },
-        );
+        .refine((val) => !val || urlValidator(val), { message });
 };

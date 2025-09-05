@@ -15,6 +15,7 @@ import {
   OrganizationDetailFormValues,
   getComponentStyles,
   createOrganizationDetailSchema,
+  OrganizationDetailSchemaValidation,
 } from '@auth0-web-ui-components/core';
 import { withCoreClient } from '@/hoc';
 
@@ -36,27 +37,42 @@ import { withCoreClient } from '@/hoc';
  * </>
  * ```
  *
- * @param {Partial<OrganizationDetailFormValues>} [organization={}] - Initial organization data for form fields
- * @param {boolean} [isLoading=false] - Whether the form is in a loading state
- * @param {object} [schemaValidation] - Custom validation rules for form fields
- * @param {RegExp} [schemaValidation.name] - Regex pattern for organization name validation
- * @param {RegExp} [schemaValidation.displayName] - Regex pattern for display name validation
- * @param {RegExp} [schemaValidation.color] - Regex pattern for color field validation
- * @param {RegExp} [schemaValidation.logoURL] - Regex pattern for logo URL validation
- * @param {object} [customMessages={}] - Custom messages for internationalization
- * @param {object} [styling] - Styling configuration for customizing component appearance
- * @param {object} [styling.variables] - CSS custom properties for theming
- * @param {object} [styling.classes] - CSS class overrides
- * @param {boolean} [readOnly=false] - Whether the form should be in read-only mode
- * @param {object} formActions - Configuration for form action buttons
- * @param {object} [formActions.nextAction] - Primary action button configuration
- * @param {Function} [formActions.nextAction.onClick] - Callback when form is submitted with valid data
- * @param {object} [formActions.previousAction] - Secondary action button configuration
- * @param {boolean} [formActions.showPrevious] - Whether to show the previous/cancel button
- * @param {boolean} [formActions.showUnsavedChanges] - Whether to show unsaved changes indicator
- * @param {string} [formActions.align] - Alignment of action buttons ('left' | 'right')
- * @param {string} [formActions.className] - Additional CSS classes for form actions
- * @param {string} [formActions.unsavedChangesText] - Custom text for unsaved changes message
+ * @param {OrgDetailsProps} props - Component props
+ * @param {Partial<OrganizationDetailFormValues>} [props.organization={}] - Initial organization data for form fields
+ * @param {boolean} [props.isLoading=false] - Whether the form is in a loading state
+ * @param {OrganizationDetailSchemaValidation} [props.schema] - Custom validation rules for form fields
+ * @param {object} [props.schema.name] - Validation configuration for organization name field
+ * @param {RegExp} [props.schema.name.regex] - Regex pattern for name validation
+ * @param {string} [props.schema.name.errorMessage] - Custom error message for name validation
+ * @param {number} [props.schema.name.minLength] - Minimum length for name field
+ * @param {number} [props.schema.name.maxLength] - Maximum length for name field
+ * @param {boolean} [props.schema.name.required] - Whether name field is required
+ * @param {object} [props.schema.displayName] - Validation configuration for display name field
+ * @param {RegExp} [props.schema.displayName.regex] - Regex pattern for display name validation
+ * @param {string} [props.schema.displayName.errorMessage] - Custom error message for display name validation
+ * @param {number} [props.schema.displayName.minLength] - Minimum length for display name field
+ * @param {number} [props.schema.displayName.maxLength] - Maximum length for display name field
+ * @param {boolean} [props.schema.displayName.required] - Whether display name field is required
+ * @param {object} [props.schema.color] - Validation configuration for color fields
+ * @param {RegExp} [props.schema.color.regex] - Regex pattern for color validation
+ * @param {string} [props.schema.color.errorMessage] - Custom error message for color validation
+ * @param {object} [props.schema.logoURL] - Validation configuration for logo URL field
+ * @param {RegExp} [props.schema.logoURL.regex] - Regex pattern for logo URL validation
+ * @param {string} [props.schema.logoURL.errorMessage] - Custom error message for logo URL validation
+ * @param {object} [props.customMessages={}] - Custom messages for internationalization
+ * @param {object} [props.styling] - Styling configuration for customizing component appearance
+ * @param {object} [props.styling.variables] - CSS custom properties for theming
+ * @param {object} [props.styling.classes] - CSS class overrides
+ * @param {boolean} [props.readOnly=false] - Whether the form should be in read-only mode
+ * @param {object} props.formActions - Configuration for form action buttons
+ * @param {object} [props.formActions.nextAction] - Primary action button configuration
+ * @param {Function} [props.formActions.nextAction.onClick] - Callback when form is submitted with valid data
+ * @param {object} [props.formActions.previousAction] - Secondary action button configuration
+ * @param {boolean} [props.formActions.showPrevious] - Whether to show the previous/cancel button
+ * @param {boolean} [props.formActions.showUnsavedChanges] - Whether to show unsaved changes indicator
+ * @param {string} [props.formActions.align] - Alignment of action buttons ('left' | 'right')
+ * @param {string} [props.formActions.className] - Additional CSS classes for form actions
+ * @param {string} [props.formActions.unsavedChangesText] - Custom text for unsaved changes message
  *
  * @example
  * ```tsx
@@ -69,10 +85,26 @@ import { withCoreClient } from '@/hoc';
  *       colors: { primary: '#007bff', page_background: '#ffffff' }
  *     }
  *   }}
- *   schemaValidation={{
- *     name: /^[a-zA-Z0-9_-]{1,50}$/,
- *     displayName: /^[a-zA-Z0-9\s_-]{1,100}$/,
- *     color: /^#[A-Fa-f0-9]{6}$/
+ *   schema={{
+ *     name: {
+ *       regex: /^[a-zA-Z0-9_-]{1,50}$/,
+ *       minLength: 3,
+ *       maxLength: 50,
+ *       errorMessage: 'Name must be 3-50 characters with alphanumeric, underscore, or dash only'
+ *     },
+ *     displayName: {
+ *       minLength: 1,
+ *       maxLength: 100,
+ *       required: true
+ *     },
+ *     color: {
+ *       regex: /^#[A-Fa-f0-9]{6}$/,
+ *       errorMessage: 'Must be a valid 6-digit hex color'
+ *     },
+ *     logoURL: {
+ *       regex: /^https:\/\/.+\.(png|jpg|svg)$/i,
+ *       errorMessage: 'Must be HTTPS URL ending with .png, .jpg, or .svg'
+ *     }
  *   }}
  *   formActions={{
  *     nextAction: {
@@ -100,13 +132,12 @@ import { withCoreClient } from '@/hoc';
  *   readOnly={false}
  * />
  * ```
- *
  * @returns {React.JSX.Element} The rendered organization details form component
  */
 function OrgDetailsComponent({
   organization = {},
   isLoading = false,
-  schemaValidation,
+  schema,
   customMessages = {},
   styling = {
     variables: { common: {}, light: {}, dark: {} },
@@ -124,25 +155,34 @@ function OrgDetailsComponent({
   );
 
   const organizationDetailSchema = React.useMemo(() => {
+    const mergeFieldConfig = (
+      field: keyof OrganizationDetailSchemaValidation,
+      defaultError: string,
+    ) => {
+      const fieldConfig = schema?.[field];
+      return fieldConfig
+        ? {
+            ...fieldConfig,
+            errorMessage: fieldConfig.errorMessage || defaultError,
+          }
+        : {
+            errorMessage: defaultError,
+          };
+    };
+
     return createOrganizationDetailSchema({
-      name: {
-        regex: schemaValidation?.name,
-        errorMessage: t('org_details.sections.settings.fields.name.error'),
-      },
-      displayName: {
-        regex: schemaValidation?.displayName,
-        errorMessage: t('org_details.sections.settings.fields.display_name.error'),
-      },
-      color: {
-        regex: schemaValidation?.color,
-        errorMessage: t('org_details.sections.branding.fields.primary_color.error'),
-      },
-      logoURL: {
-        regex: schemaValidation?.logoURL,
-        errorMessage: t('org_details.sections.branding.fields.logo.error'),
-      },
+      name: mergeFieldConfig('name', t('org_details.sections.settings.fields.name.error')),
+      displayName: mergeFieldConfig(
+        'displayName',
+        t('org_details.sections.settings.fields.display_name.error'),
+      ),
+      color: mergeFieldConfig(
+        'color',
+        t('org_details.sections.branding.fields.primary_color.error'),
+      ),
+      logoURL: mergeFieldConfig('logoURL', t('org_details.sections.branding.fields.logo.error')),
     });
-  }, [t, schemaValidation]);
+  }, [t, schema]);
 
   const form = useForm<OrganizationDetailFormValues>({
     resolver: zodResolver(organizationDetailSchema),
