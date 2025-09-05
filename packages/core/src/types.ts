@@ -23,6 +23,6 @@ export interface SharedComponentProps<
     classes?: Partial<Classes>;
   };
   customMessages?: Partial<Messages>;
-  schema?: Partial<Schema>;
+  schemaValidation?: Partial<Schema>;
   readOnly?: boolean;
 }

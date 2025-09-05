@@ -40,25 +40,25 @@ import { withCoreClient } from '@/hoc';
  * @param {OrgDetailsProps} props - Component props
  * @param {Partial<OrganizationDetailFormValues>} [props.organization={}] - Initial organization data for form fields
  * @param {boolean} [props.isLoading=false] - Whether the form is in a loading state
- * @param {OrganizationDetailSchemaValidation} [props.schema] - Custom validation rules for form fields
- * @param {object} [props.schema.name] - Validation configuration for organization name field
- * @param {RegExp} [props.schema.name.regex] - Regex pattern for name validation
- * @param {string} [props.schema.name.errorMessage] - Custom error message for name validation
- * @param {number} [props.schema.name.minLength] - Minimum length for name field
- * @param {number} [props.schema.name.maxLength] - Maximum length for name field
- * @param {boolean} [props.schema.name.required] - Whether name field is required
- * @param {object} [props.schema.displayName] - Validation configuration for display name field
- * @param {RegExp} [props.schema.displayName.regex] - Regex pattern for display name validation
- * @param {string} [props.schema.displayName.errorMessage] - Custom error message for display name validation
- * @param {number} [props.schema.displayName.minLength] - Minimum length for display name field
- * @param {number} [props.schema.displayName.maxLength] - Maximum length for display name field
- * @param {boolean} [props.schema.displayName.required] - Whether display name field is required
- * @param {object} [props.schema.color] - Validation configuration for color fields
- * @param {RegExp} [props.schema.color.regex] - Regex pattern for color validation
- * @param {string} [props.schema.color.errorMessage] - Custom error message for color validation
- * @param {object} [props.schema.logoURL] - Validation configuration for logo URL field
- * @param {RegExp} [props.schema.logoURL.regex] - Regex pattern for logo URL validation
- * @param {string} [props.schema.logoURL.errorMessage] - Custom error message for logo URL validation
+ * @param {OrganizationDetailSchemaValidation} [props.schemaValidation] - Custom validation rules for form fields
+ * @param {object} [props.schemaValidation.name] - Validation configuration for organization name field
+ * @param {RegExp} [props.schemaValidation.name.regex] - Regex pattern for name validation
+ * @param {string} [props.schemaValidation.name.errorMessage] - Custom error message for name validation
+ * @param {number} [props.schemaValidation.name.minLength] - Minimum length for name field
+ * @param {number} [props.schemaValidation.name.maxLength] - Maximum length for name field
+ * @param {boolean} [props.schemaValidation.name.required] - Whether name field is required
+ * @param {object} [props.schemaValidation.displayName] - Validation configuration for display name field
+ * @param {RegExp} [props.schemaValidation.displayName.regex] - Regex pattern for display name validation
+ * @param {string} [props.schemaValidation.displayName.errorMessage] - Custom error message for display name validation
+ * @param {number} [props.schemaValidation.displayName.minLength] - Minimum length for display name field
+ * @param {number} [props.schemaValidation.displayName.maxLength] - Maximum length for display name field
+ * @param {boolean} [props.schemaValidation.displayName.required] - Whether display name field is required
+ * @param {object} [props.schemaValidation.color] - Validation configuration for color fields
+ * @param {RegExp} [props.schemaValidation.color.regex] - Regex pattern for color validation
+ * @param {string} [props.schemaValidation.color.errorMessage] - Custom error message for color validation
+ * @param {object} [props.schemaValidation.logoURL] - Validation configuration for logo URL field
+ * @param {RegExp} [props.schemaValidation.logoURL.regex] - Regex pattern for logo URL validation
+ * @param {string} [props.schemaValidation.logoURL.errorMessage] - Custom error message for logo URL validation
  * @param {object} [props.customMessages={}] - Custom messages for internationalization
  * @param {object} [props.styling] - Styling configuration for customizing component appearance
  * @param {object} [props.styling.variables] - CSS custom properties for theming
@@ -85,7 +85,7 @@ import { withCoreClient } from '@/hoc';
  *       colors: { primary: '#007bff', page_background: '#ffffff' }
  *     }
  *   }}
- *   schema={{
+ *   schemaValidation={{
  *     name: {
  *       regex: /^[a-zA-Z0-9_-]{1,50}$/,
  *       minLength: 3,
@@ -137,7 +137,7 @@ import { withCoreClient } from '@/hoc';
 function OrgDetailsComponent({
   organization = {},
   isLoading = false,
-  schema,
+  schemaValidation,
   customMessages = {},
   styling = {
     variables: { common: {}, light: {}, dark: {} },
@@ -159,7 +159,7 @@ function OrgDetailsComponent({
       field: keyof OrganizationDetailSchemaValidation,
       defaultError: string,
     ) => {
-      const fieldConfig = schema?.[field];
+      const fieldConfig = schemaValidation?.[field];
       return fieldConfig
         ? {
             ...fieldConfig,
@@ -182,7 +182,7 @@ function OrgDetailsComponent({
       ),
       logoURL: mergeFieldConfig('logoURL', t('org_details.sections.branding.fields.logo.error')),
     });
-  }, [t, schema]);
+  }, [t, schemaValidation]);
 
   const form = useForm<OrganizationDetailFormValues>({
     resolver: zodResolver(organizationDetailSchema),
