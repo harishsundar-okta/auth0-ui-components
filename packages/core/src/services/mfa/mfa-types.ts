@@ -20,15 +20,7 @@ export interface Authenticator {
 /**
  * Represents the type of an MFA authenticator.
  */
-export type MFAType =
-  | 'sms'
-  | 'push-notification'
-  | 'totp'
-  | 'email'
-  | 'duo'
-  | 'webauthn-roaming'
-  | 'webauthn-platform'
-  | 'recovery-code';
+export type MFAType = 'sms' | 'push-notification' | 'otp' | 'email';
 
 export type AuthenticatorType = 'otp' | 'oob';
 export type OobChannel = 'auth0' | 'sms' | 'voice' | 'email';
@@ -98,7 +90,10 @@ export interface ConfirmEnrollmentOptions {
  * Interface for MFA controller.
  */
 export interface MFAControllerInterface {
-  fetchFactors(onlyActive?: boolean, ignoreCache?: boolean): Promise<Authenticator[]>;
+  fetchFactors(
+    onlyActive?: boolean,
+    ignoreCache?: boolean,
+  ): Promise<Record<MFAType, Authenticator[]>>;
   enrollFactor(
     factorName: string,
     options?: SafeAny,
@@ -128,7 +123,7 @@ export interface MFAMessages {
   confirmation?: string;
   sms?: MFAFactorContent;
   'push-notification'?: MFAFactorContent;
-  totp?: MFAFactorContent;
+  otp?: MFAFactorContent;
   email?: MFAFactorContent;
   duo?: MFAFactorContent;
   'webauthn-roaming'?: MFAFactorContent;

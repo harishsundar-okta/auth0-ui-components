@@ -5,7 +5,6 @@ import {
   FACTOR_TYPE_EMAIL,
   FACTOR_TYPE_OTP,
   FACTOR_TYPE_PUSH_NOTIFICATION,
-  FACTOR_TYPE_TOPT,
 } from '@auth0-web-ui-components/core';
 
 import { Button } from '@/components/ui/button';
@@ -139,7 +138,7 @@ export function OTPVerificationForm({
           aria-describedby="otp-description"
         >
           <p id="otp-description" className="font-normal text-center block mx-auto text-sm">
-            {[FACTOR_TYPE_PUSH_NOTIFICATION, FACTOR_TYPE_TOPT, FACTOR_TYPE_OTP].includes(factorType)
+            {[FACTOR_TYPE_PUSH_NOTIFICATION, FACTOR_TYPE_OTP].includes(factorType)
               ? t('enrollment_form.show_otp.enter_opt_code')
               : t('enrollment_form.show_otp.enter_verify_code', { verifier: maskedContact })}
           </p>

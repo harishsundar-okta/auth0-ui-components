@@ -4,8 +4,8 @@ import {
   type EnrollMfaResponse,
   FACTOR_TYPE_EMAIL,
   FACTOR_TYPE_SMS,
-  FACTOR_TYPE_TOPT,
   FACTOR_TYPE_PUSH_NOTIFICATION,
+  FACTOR_TYPE_OTP,
 } from '@auth0-web-ui-components/core';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -77,7 +77,7 @@ export function UserMFASetupForm({
       [FACTOR_TYPE_EMAIL]: ENTER_CONTACT,
       [FACTOR_TYPE_SMS]: ENTER_CONTACT,
       [FACTOR_TYPE_PUSH_NOTIFICATION]: QR_PHASE_INSTALLATION,
-      [FACTOR_TYPE_TOPT]: ENTER_QR,
+      [FACTOR_TYPE_OTP]: ENTER_QR,
     };
 
     setPhase(phaseMap[factorType] ?? null);

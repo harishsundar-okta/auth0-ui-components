@@ -43,13 +43,13 @@ const MFAUtils = {
    * @param coreClient - The core client interface for API operations
    * @param onlyActive - Whether to return only active factors or all factors
    * @param ignoreCache - Whether to bypass token cache for fresh authentication
-   * @returns Promise resolving to array of authenticator factors
+   * @returns Promise resolving to factors grouped by type
    */
   async fetchFactors(
     coreClient: CoreClientInterface,
     onlyActive: boolean = false,
     ignoreCache: boolean = false,
-  ): Promise<Authenticator[]> {
+  ): Promise<Record<MFAType, Authenticator[]>> {
     const baseUrl = coreClient.getApiBaseUrl();
     const accessToken = await MFAUtils.getToken(coreClient, ignoreCache);
     return fetchMfaFactors(baseUrl, accessToken, onlyActive);
@@ -136,7 +136,7 @@ export function createMFAController(coreClient: CoreClientInterface): MFAControl
     async fetchFactors(
       onlyActive: boolean = false,
       ignoreCache: boolean = false,
-    ): Promise<Authenticator[]> {
+    ): Promise<Record<MFAType, Authenticator[]>> {
       return MFAUtils.fetchFactors(coreClient, onlyActive, ignoreCache);
     },
 

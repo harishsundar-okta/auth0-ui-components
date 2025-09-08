@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { MoreVertical, Trash2, Mail, Smartphone } from 'lucide-react';
 
 import {
   Authenticator,
+  FACTOR_TYPE_PUSH_NOTIFICATION,
   type MFAType,
-  FACTOR_TYPE_EMAIL,
-  FACTOR_TYPE_SMS,
   getComponentStyles,
 } from '@auth0-web-ui-components/core';
 
@@ -20,8 +18,10 @@ import { ENROLL, CONFIRM } from '@/lib/mfa-constants';
 import { UserMFASetupForm } from '@/components/mfa/user-mfa-setup-form';
 import { Spinner } from '@/components/ui/spinner';
 import { List, ListItem } from '@/components/ui/list';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { DeleteFactorConfirmation } from '@/components/mfa/delete-factor-confirmation';
+import { FactorsList } from '@/components/mfa/factors-list';
+import { MFAErrorState } from '@/components/mfa/error-state';
+import { MFAEmptyState } from '@/components/mfa/empty-state';
 
 import { withCoreClient } from '@/hoc';
 import { useTheme, useMFA, useTranslator } from '@/hooks';
@@ -131,7 +131,9 @@ function UserMFAMgmtComponent({
   );
   const { fetchFactors, enrollMfa, deleteMfa, confirmEnrollment } = useMFA();
 
-  const [factors, setFactors] = React.useState<Authenticator[]>([]);
+  const [factorsByType, setFactorsByType] = React.useState<Record<MFAType, Authenticator[]>>(
+    {} as Record<MFAType, Authenticator[]>,
+  );
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [isDeletingFactor, setIsDeletingFactor] = React.useState(false);
@@ -152,7 +154,7 @@ function UserMFAMgmtComponent({
     setError(null);
     try {
       const factors = await fetchFactors(showActiveOnly);
-      setFactors(factors);
+      setFactorsByType(factors);
       onFetch?.();
     } catch (err) {
       setError(t('errors.factors_loading_error'));
@@ -166,17 +168,20 @@ function UserMFAMgmtComponent({
   }, [loadFactors]);
 
   /**
-   * Filters visible MFA factors based on the provided factor configuration.
-   * Each factor's visibility is determined by the configuration settings.
-   *
-   * @returns {Authenticator[]} Filtered MFA factors.
+   * Get visible factor types based on configuration
    */
-  const visibleFactors = React.useMemo(() => {
-    return factors.filter((factor) => {
-      const config = factorConfig[factor.factorName as keyof typeof factorConfig];
-      return config?.visible !== false;
-    });
-  }, [factors, factorConfig]);
+  const visibleFactorTypes = React.useMemo(() => {
+    return (Object.keys(factorsByType) as MFAType[]).filter(
+      (factorType) => factorConfig[factorType]?.visible !== false,
+    );
+  }, [factorsByType, factorConfig]);
+
+  /**
+   * Check if there are no active factors across all visible factor types
+   */
+  const hasNoActiveFactors = React.useMemo(() => {
+    return visibleFactorTypes.every((type) => !factorsByType[type]?.some((f) => f.active));
+  }, [visibleFactorTypes, factorsByType]);
 
   /**
    * Handles the enrollment button click for a specific MFA factor.
@@ -191,8 +196,14 @@ function UserMFAMgmtComponent({
 
   const handleCloseDialog = React.useCallback(() => {
     setDialogOpen(false);
+
+    // Reload factors if closing push notification enrollment
+    if (enrollFactor === FACTOR_TYPE_PUSH_NOTIFICATION) {
+      loadFactors();
+    }
+
     setEnrollFactor(null);
-  }, []);
+  }, [enrollFactor, loadFactors]);
 
   /**
    * Handles the initial click on the delete button for an MFA factor.
@@ -206,7 +217,7 @@ function UserMFAMgmtComponent({
    * - onBeforeAction returns false
    *
    * @param {string} factorId - The unique identifier of the MFA factor to delete
-   * @param {MFAType} factorType - The type of MFA factor being deleted (e.g., 'sms', 'email', 'totp')
+   * @param {MFAType} factorType - The type of MFA factor being deleted (e.g., 'sms', 'email', 'otp')
    * @returns {Promise<void>}
    */
   const handleDeleteFactor = React.useCallback(
@@ -318,34 +329,19 @@ function UserMFAMgmtComponent({
     <div style={currentStyles.variables}>
       <Toaster position="top-right" />
       {loading ? (
-        loader || <Spinner aria-label={t('loading')} />
+        <div className="flex items-center justify-center py-16">
+          {loader || <Spinner aria-label={t('loading')} />}
+        </div>
       ) : (
         <Card
           className={cn('py-10 px-8 sm:py-8 sm:px-6', currentStyles.classes?.['UserMFAMgmt-card'])}
         >
           <CardContent>
             {error ? (
-              <div
-                className="flex flex-col items-center justify-center p-4 space-y-2"
-                role="alert"
-                aria-live="assertive"
-              >
-                <h1
-                  className={cn(
-                    'text-base text-(length:--font-size-body) font-medium text-center text-destructive',
-                  )}
-                  id="mfa-management-title"
-                >
-                  {t('component_error_title')}
-                </h1>
-                <p
-                  className={cn(
-                    'text-sm text-(length:--font-size-paragraph) text-center text-destructive whitespace-pre-line',
-                  )}
-                >
-                  {t('component_error_description')}
-                </p>
-              </div>
+              <MFAErrorState
+                title={t('component_error_title')}
+                description={t('component_error_description')}
+              />
             ) : (
               <>
                 {!hideHeader && (
@@ -364,212 +360,93 @@ function UserMFAMgmtComponent({
                     </CardDescription>
                   </>
                 )}
-                {showActiveOnly && visibleFactors.length === 0 ? (
-                  <p
-                    className={cn(
-                      'text-sm text-(length:--font-size-paragraph) text-center text-muted-foreground',
-                    )}
-                    role="status"
-                  >
-                    {t('no_active_mfa')}
-                  </p>
+                {showActiveOnly && hasNoActiveFactors ? (
+                  <MFAEmptyState message={t('no_active_mfa')} />
                 ) : (
                   <List
                     className="flex flex-col gap-0 w-full"
                     aria-labelledby="mfa-management-title"
                     aria-describedby="mfa-management-desc"
                   >
-                    {visibleFactors.map((factor, idx) => {
-                      const isEnabledFactor =
-                        factorConfig?.[factor.factorName as MFAType]?.enabled !== false;
+                    {visibleFactorTypes.map((factorType) => {
+                      const factors = factorsByType[factorType] || [];
+                      const activeFactors = factors.filter((f) => f.active);
+                      const isEnabledFactor = factorConfig?.[factorType]?.enabled !== false;
+                      const hasActiveFactors = activeFactors.length > 0;
+
                       return (
-                        <React.Fragment key={`${factor.name}-${idx}`}>
-                          <ListItem
-                            className={`w-full p-0 m-0 ${!isEnabledFactor ? 'opacity-50 pointer-events-none' : ''}`}
-                            aria-disabled={!isEnabledFactor}
-                            tabIndex={0}
-                            aria-label={t(`${factor.factorName}.title`)}
-                          >
-                            <div className="flex w-full flex-col sm:flex-row items-start py-6 gap-2 sm:gap-4">
-                              <div className="flex flex-col min-w-0 gap-2 flex-grow w-full">
-                                <div className="grid grid-cols-4 gap-2 sm:gap-6 items-center w-full">
-                                  <div
-                                    className={cn(
-                                      'col-span-4 sm:col-span-3 text-left text-base text-(length:--font-size-body) font-medium flex flex-row flex-wrap items-center gap-2 sm:gap-3 break-words w-full',
-                                    )}
-                                  >
-                                    <span
-                                      className="break-words text-card-foreground whitespace-normal"
-                                      id={`factor-title-${idx}`}
-                                    >
-                                      {t(`${factor.factorName}.title`)}
-                                    </span>
-                                    {factor.active && (
-                                      <Badge
-                                        variant="success"
-                                        size="sm"
-                                        className="shrink-0"
-                                        aria-label={t('enabled')}
-                                      >
-                                        {t('enabled')}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  {!factor.active && !readOnly && (
-                                    <div className="col-span-4 sm:col-span-1 flex justify-end mt-2 sm:mt-0 w-full sm:w-auto">
-                                      <Button
-                                        size="default"
-                                        variant="outline"
-                                        className="text-sm"
-                                        onClick={() => handleEnroll(factor.factorName as MFAType)}
-                                        disabled={disableEnroll || !isEnabledFactor}
-                                        aria-label={t(`${factor.factorName}.button-text`)}
-                                        aria-describedby={`factor-title-${idx}`}
-                                      >
-                                        {t(`${factor.factorName}.button-text`)}
-                                      </Button>
-                                    </div>
-                                  )}
-                                  {factor.active &&
-                                    !(
-                                      factor.factorName === FACTOR_TYPE_SMS ||
-                                      factor.factorName === FACTOR_TYPE_EMAIL
-                                    ) &&
-                                    !readOnly && (
-                                      <div className="flex justify-end">
-                                        <Popover>
-                                          <PopoverTrigger asChild>
-                                            <Button
-                                              variant="ghost"
-                                              size="icon"
-                                              aria-label={t('actions')}
-                                              className="p-2"
-                                              tabIndex={0}
-                                            >
-                                              <MoreVertical
-                                                className="w-5 h-5"
-                                                aria-hidden="true"
-                                              />
-                                            </Button>
-                                          </PopoverTrigger>
-                                          <PopoverContent className="w-30 p-2" role="menu">
-                                            <Button
-                                              size="sm"
-                                              variant="ghost"
-                                              className="flex items-center justify-center px-4 py-2 gap-2 text-red-600 font-normal text-sm w-full"
-                                              onClick={() =>
-                                                handleDeleteFactor(
-                                                  factor.id,
-                                                  factor.factorName as MFAType,
-                                                )
-                                              }
-                                              disabled={
-                                                disableDelete ||
-                                                isDeletingFactor ||
-                                                !isEnabledFactor
-                                              }
-                                              aria-label={t('remove')}
-                                              role="menuitem"
-                                            >
-                                              <Trash2
-                                                className="w-4 h-4 color-red-10"
-                                                aria-hidden="true"
-                                              />
-                                              <span className="color-red-10">{t('remove')}</span>
-                                            </Button>
-                                          </PopoverContent>
-                                        </Popover>
-                                      </div>
-                                    )}
-                                </div>
-                                {factor.active &&
-                                (factor.factorName === FACTOR_TYPE_SMS ||
-                                  factor.factorName === FACTOR_TYPE_EMAIL) ? (
-                                  <Card
-                                    className="border rounded-lg shadow-none bg-transparent p-0 w-full mt-2"
-                                    aria-label={t(`${factor.factorName}.title`)}
-                                  >
-                                    <CardContent className="flex flex-row items-center justify-between gap-3 p-3 w-full">
-                                      <div className="flex items-center gap-3">
-                                        {factor.factorName === FACTOR_TYPE_SMS ? (
-                                          <Smartphone
-                                            className="w-5 h-5 text-muted-foreground"
-                                            aria-hidden="true"
-                                          />
-                                        ) : (
-                                          <Mail
-                                            className="w-5 h-5 text-muted-foreground"
-                                            aria-hidden="true"
-                                          />
-                                        )}
-                                        <span
-                                          className={cn(
-                                            'font-medium text-base text-(length:--font-size-body) text-foreground',
-                                          )}
-                                        >
-                                          {factor.name}
-                                        </span>
-                                      </div>
-                                      {!readOnly && (
-                                        <Popover>
-                                          <PopoverTrigger asChild>
-                                            <Button
-                                              variant="ghost"
-                                              size="icon"
-                                              aria-label={t('actions')}
-                                              className="p-2"
-                                              tabIndex={0}
-                                            >
-                                              <MoreVertical
-                                                className="w-5 h-5"
-                                                aria-hidden="true"
-                                              />
-                                            </Button>
-                                          </PopoverTrigger>
-                                          <PopoverContent className="w-30 p-2" role="menu">
-                                            <Button
-                                              size="sm"
-                                              variant="ghost"
-                                              className="flex items-center justify-center px-4 py-2 gap-2 text-red-600 font-normal text-sm w-full"
-                                              onClick={() =>
-                                                handleDeleteFactor(
-                                                  factor.id,
-                                                  factor.factorName as MFAType,
-                                                )
-                                              }
-                                              disabled={
-                                                disableDelete ||
-                                                isDeletingFactor ||
-                                                !isEnabledFactor
-                                              }
-                                              aria-label={t('remove')}
-                                              role="menuitem"
-                                            >
-                                              <Trash2
-                                                className="w-4 h-4 color-red-10"
-                                                aria-hidden="true"
-                                              />
-                                              <span className="color-red-10">{t('remove')}</span>
-                                            </Button>
-                                          </PopoverContent>
-                                        </Popover>
-                                      )}
-                                    </CardContent>
-                                  </Card>
-                                ) : !factor.active ? (
-                                  <p
-                                    className={cn(
-                                      'font-normal text-sm text-(length:--font-size-paragraph) text-muted-foreground text-left break-words mt-1',
-                                    )}
-                                    id={`factor-desc-${idx}`}
-                                  >
-                                    {t(`${factor.factorName}.description`)}
-                                  </p>
-                                ) : null}
-                              </div>
+                        <ListItem
+                          key={factorType}
+                          className={cn(
+                            'w-full p-0 m-0 py-6 gap-3',
+                            !isEnabledFactor && 'opacity-50 pointer-events-none',
+                          )}
+                          aria-disabled={!isEnabledFactor}
+                          tabIndex={0}
+                          aria-label={t(`${factorType}.title`)}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                              <span
+                                className={cn(
+                                  'break-words text-card-foreground whitespace-normal text-base text-(length:--font-size-body) font-medium',
+                                )}
+                                id={`factor-title-${factorType}`}
+                              >
+                                {t(`${factorType}.title`)}
+                              </span>
+
+                              {hasActiveFactors && (
+                                <Badge
+                                  variant="success"
+                                  size="sm"
+                                  className="shrink-0"
+                                  aria-label={t('enabled')}
+                                >
+                                  {t('enabled')}
+                                </Badge>
+                              )}
                             </div>
-                          </ListItem>
-                        </React.Fragment>
+
+                            {!readOnly && (
+                              <Button
+                                size="default"
+                                variant="outline"
+                                className="text-sm w-full sm:w-auto shrink-0"
+                                onClick={() => handleEnroll(factorType)}
+                                disabled={disableEnroll || !isEnabledFactor}
+                                aria-label={t(`${factorType}.button-text`)}
+                                aria-describedby={`factor-title-${factorType}`}
+                              >
+                                {t(`${factorType}.button-text`)}
+                              </Button>
+                            )}
+                          </div>
+
+                          {!hasActiveFactors && (
+                            <p
+                              className={cn(
+                                'font-normal text-sm text-(length:--font-size-paragraph) text-muted-foreground text-left break-words',
+                              )}
+                              id={`factor-desc-${factorType}`}
+                            >
+                              {t(`${factorType}.description`)}
+                            </p>
+                          )}
+
+                          {hasActiveFactors && (
+                            <FactorsList
+                              factors={activeFactors}
+                              factorType={factorType}
+                              readOnly={readOnly}
+                              isEnabledFactor={isEnabledFactor}
+                              onDeleteFactor={handleDeleteFactor}
+                              isDeletingFactor={isDeletingFactor}
+                              disableDelete={disableDelete}
+                              styling={styling}
+                            />
+                          )}
+                        </ListItem>
                       );
                     })}
                   </List>

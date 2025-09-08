@@ -1,5 +1,8 @@
 {
-  "common": {},
+  "common": {
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
   "org_management": {
     "org_details": {
       "sections": {
@@ -64,8 +67,6 @@
     "component_error_title": "Error loading Multi-Factor Authentication component",
     "component_error_description": "We're having trouble loading your multi-factor authentication methods.\nPlease refresh the page and try again",
     "loading": "Loading...",
-    "copy": "Copy",
-    "copied": "Copied!",
     "delete": "Delete",
     "enroll": "Enroll",
     "submit": "Submit",
@@ -83,7 +84,7 @@
     "delete_mfa_title": "Remove existing Authenticator",
     "delete_mfa_sms_consent": "Are you sure you want to remove this Phone number for SMS?",
     "delete_mfa_email_consent": "Are you sure you want to remove this Email?",
-    "delete_mfa_totp_consent": "Are you sure you want to remove this authenticator?",
+    "delete_mfa_otp_consent": "Are you sure you want to remove this authenticator?",
     "delete_mfa_push-notification_consent": "Are you sure you want to remove this push notification?",
     "cancel": "Cancel",
     "next": "Next",
@@ -111,7 +112,7 @@
         "invalid_request": "Missing required parameter",
         "authorization_pending": "Authorization pending: please repeat the request in a few seconds."
       },
-      "totp": {
+      "otp": {
         "invalid_request": "Missing required parameter",
         "too_many_entities": "You reached the limit of entities of the totp type for this user.",
         "unsupported_challenge_type": "OTP Verifier is disabled for your tenant. You can turn it on from dashboard turning on \"Push notifications\" on Guardian MFA section (Push notications include OTP).",
@@ -139,7 +140,7 @@
       "description": "No push authentication has been added.",
       "button-text": "Add Push Authentication"
     },
-    "totp": {
+    "otp": {
       "title": "One-time Password",
       "description": "No authenticator has been added.",
       "button-text": "Add Authenticator App"
@@ -176,6 +177,7 @@
       "enroll_sms_placeholder": "Enter phone number",
       "enroll_sms_description": "Enter your phone number to receive a verification code",
       "show_auth0_guardian_title": "Scan this QR code with your Auth0 Guardian App to register this Authentication method or copy the url.",
+      "recovery_code_description": "Copy this recovery code and keep it somewhere safe. You'll need it if you ever need to log in without your device.",
       "show_otp": {
         "title": "Scan this QR code with your Authenticator App to register this Authentication method or copy the code.",
         "save_recovery": "Save these recovery codes!",

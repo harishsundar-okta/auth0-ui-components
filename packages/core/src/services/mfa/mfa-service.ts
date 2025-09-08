@@ -6,68 +6,98 @@ import type {
   AuthenticatorType,
   MFAType,
 } from './mfa-types';
+import { FACTOR_TYPE_PUSH_NOTIFICATION, FACTOR_TYPE_OTP } from './mfa-constants';
 
-export const factorsMetaKeys = new Set([
-  'totp',
-  'push-notification',
-  'sms',
-  'email',
-  'duo',
-  'webauthn-roaming',
-  'webauthn-platform',
-  'recovery-code',
-]);
+export const factorsMetaKeys = new Set(['otp', 'push-notification', 'sms', 'email']);
 
 /**
  * fetchMfaFactors
  *
- * Fetch MFA authenticators from Auth0 API and enrich them with metadata.
+ * Fetch MFA authenticators from the Auth0 API and group them by factor type.
  *
- * @param baseUrl - The base API URL (e.g. Auth0 domain or proxy).
- * @param accessToken Optional access token for authorization (ignored if proxy URL used)
- * @param onlyActive Whether to filter only active authenticators
+ * @param baseUrl - The base API URL (e.g., Auth0 domain or proxy).
+ * @param accessToken - Optional access token for authorization.
+ * @param onlyActive - Whether to filter for only active authenticators.
  *
- * @returns Promise resolving to enriched authenticators array
+ * @returns Promise resolving to factors grouped by type.
  */
 export async function fetchMfaFactors(
   baseUrl: string,
   accessToken?: string,
   onlyActive = false,
-): Promise<Authenticator[]> {
+): Promise<Record<MFAType, Authenticator[]>> {
   const response = await get<Authenticator[]>(`${baseUrl}mfa/authenticators`, {
     accessToken,
   });
 
-  // Build map prioritizing active authenticators
-  const map = new Map<string, Authenticator>();
-  response.forEach((f) => {
-    const type = f.id.split('|')[0];
-    const existing = map.get(type);
+  // Initialize result with empty arrays
+  const result = Object.fromEntries(
+    Array.from(factorsMetaKeys).map((type) => [type, [] as Authenticator[]]),
+  ) as Record<MFAType, Authenticator[]>;
 
-    // Only replace if the new one is active and existing is not, or if no existing factor
-    if (!existing || (f.active && !existing.active)) {
-      map.set(type, f);
+  // Track which factor types have any factors (active or inactive)
+  const factorTypesWithFactors = new Set<string>();
+
+  for (const factor of response) {
+    const normalizedFactor = mapToAuthenticator(factor);
+    const { factorName, active } = normalizedFactor;
+
+    if (factorName && factorsMetaKeys.has(factorName)) {
+      factorTypesWithFactors.add(factorName);
+
+      if (!onlyActive || active) {
+        result[factorName].push(normalizedFactor);
+      }
     }
-  });
+  }
 
-  return Array.from(factorsMetaKeys).reduce<Authenticator[]>((acc, type) => {
-    const factor = map.get(type);
+  // Add placeholders only for factor types with no factors at all (not even inactive ones)
+  if (!onlyActive) {
+    for (const type of factorsMetaKeys) {
+      if (!factorTypesWithFactors.has(type)) {
+        result[type as MFAType].push(createPlaceholderFactor(type));
+      }
+    }
+  }
 
-    if (onlyActive && !factor?.active) return acc;
+  return result;
+}
 
-    const factorName = (factor?.id?.split('|')[0] ?? type) as MFAType;
+const FACTOR_TYPE_MAP = {
+  push: FACTOR_TYPE_PUSH_NOTIFICATION,
+  totp: FACTOR_TYPE_OTP,
+} as const;
 
-    acc.push({
-      id: factor?.id ?? '',
-      authenticator_type: (factor?.authenticator_type ?? type) as AuthenticatorType,
-      oob_channel: factor?.oob_channel ?? [],
-      active: factor?.active ?? false,
-      factorName,
-      name: factor?.name,
-    });
+function normalizeFactorType(apiType: string): string {
+  return FACTOR_TYPE_MAP[apiType as keyof typeof FACTOR_TYPE_MAP] || apiType;
+}
 
-    return acc;
-  }, []);
+/**
+ * Helper function to map a raw API factor object to a normalized Authenticator.
+ */
+function mapToAuthenticator(factor: Authenticator): Authenticator {
+  const apiType = factor.id.split('|')[0];
+  const normalizedType = normalizeFactorType(apiType);
+
+  return {
+    ...factor,
+    oob_channel: factor.oob_channel ?? [],
+    factorName: normalizedType as MFAType,
+  };
+}
+
+/**
+ * Helper function to create a placeholder Authenticator object.
+ */
+function createPlaceholderFactor(type: string): Authenticator {
+  return {
+    id: '',
+    authenticator_type: type as AuthenticatorType,
+    oob_channel: [],
+    active: false,
+    factorName: type as MFAType,
+    name: undefined,
+  };
 }
 
 /**

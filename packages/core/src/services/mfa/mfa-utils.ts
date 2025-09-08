@@ -9,7 +9,7 @@ import {
   FACTOR_TYPE_EMAIL,
   FACTOR_TYPE_SMS,
   FACTOR_TYPE_PUSH_NOTIFICATION,
-  FACTOR_TYPE_TOPT,
+  FACTOR_TYPE_OTP,
 } from './mfa-constants';
 
 /**
@@ -45,7 +45,7 @@ export function buildEnrollParams(
         email: options.email,
       };
 
-    case FACTOR_TYPE_TOPT:
+    case FACTOR_TYPE_OTP:
       return {
         authenticator_types: ['otp'],
       };
@@ -78,7 +78,7 @@ export function buildConfirmParams(
 ): ConfirmMfaEnrollmentParams {
   const baseParams: ConfirmMfaEnrollmentParams = {
     grant_type:
-      factorName === FACTOR_TYPE_TOPT
+      factorName === FACTOR_TYPE_OTP
         ? 'http://auth0.com/oauth/grant-type/mfa-otp'
         : 'http://auth0.com/oauth/grant-type/mfa-oob',
     oob_code: options.oobCode,
@@ -86,7 +86,7 @@ export function buildConfirmParams(
     mfa_token: mfaToken,
   };
 
-  if (factorName === FACTOR_TYPE_TOPT) {
+  if (factorName === FACTOR_TYPE_OTP) {
     baseParams.otp = options.userOtpCode;
   } else if (
     [FACTOR_TYPE_SMS, FACTOR_TYPE_EMAIL, FACTOR_TYPE_PUSH_NOTIFICATION].includes(factorName)

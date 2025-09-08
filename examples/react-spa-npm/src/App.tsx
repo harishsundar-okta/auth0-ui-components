@@ -15,17 +15,20 @@ function App() {
     clientId: config.auth0.clientId,
     domain: config.auth0.domain,
   };
+
   return (
-    <div>
+    <div className="min-h-screen">
       <Auth0ComponentProvider
         authDetails={defaultAuthDetails}
         i18n={{ currentLanguage: i18n.language }}
       >
         <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/profile" element={<UserProfilePage />} />
-        </Routes>
+        <main className="pt-16">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/profile" element={<UserProfilePage />} />
+          </Routes>
+        </main>
       </Auth0ComponentProvider>
     </div>
   );

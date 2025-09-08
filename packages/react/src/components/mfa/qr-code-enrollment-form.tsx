@@ -1,25 +1,29 @@
 import * as React from 'react';
 import QRCode from 'react-qr-code';
-import { Copy } from 'lucide-react';
 
-import { getComponentStyles, FACTOR_TYPE_TOPT } from '@auth0-web-ui-components/core';
+import {
+  getComponentStyles,
+  FACTOR_TYPE_OTP,
+  FACTOR_TYPE_PUSH_NOTIFICATION,
+} from '@auth0-web-ui-components/core';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import { TextField } from '@/components/ui/text-field';
+import { CopyableTextField } from '@/components/ui/copyable-text-field';
 
-import { QR_PHASE_ENTER_OTP, QR_PHASE_SCAN } from '@/lib/mfa-constants';
+import { QR_PHASE_ENTER_OTP, QR_PHASE_SCAN, SHOW_RECOVERY_CODE } from '@/lib/mfa-constants';
 
 import { useTheme, useTranslator } from '@/hooks';
 import { useOtpEnrollment } from '@/hooks/mfa';
 
 import { OTPVerificationForm } from './otp-verification-form';
+import { ShowRecoveryCode } from './show-recovery-code';
 import { QRCodeEnrollmentFormProps } from '@/types';
 import { cn } from '@/lib/theme-utils';
 
 const PHASES = {
   SCAN: QR_PHASE_SCAN,
   ENTER_OTP: QR_PHASE_ENTER_OTP,
+  SHOW_RECOVERY: SHOW_RECOVERY_CODE,
 } as const;
 
 type Phase = (typeof PHASES)[keyof typeof PHASES];
@@ -47,8 +51,6 @@ export function QRCodeEnrollmentForm({
     () => getComponentStyles(styling, isDarkMode),
     [styling, isDarkMode],
   );
-  const [tooltipOpen, setTooltipOpen] = React.useState(false);
-  const [tooltipText, setTooltipText] = React.useState(t('copy'));
 
   const { fetchOtpEnrollment, otpData, resetOtpData, loading } = useOtpEnrollment({
     factorType,
@@ -58,28 +60,29 @@ export function QRCodeEnrollmentForm({
   });
 
   React.useEffect(() => {
-    fetchOtpEnrollment();
-  }, [phase]);
+    // Only fetch if we don't have data and we're in scan phase
+    if (!otpData?.barcodeUri) {
+      fetchOtpEnrollment();
+    }
+  }, [otpData?.barcodeUri, fetchOtpEnrollment]);
 
   const handleContinue = React.useCallback(() => {
-    setPhase(QR_PHASE_ENTER_OTP);
-  }, []);
+    if (factorType === FACTOR_TYPE_PUSH_NOTIFICATION) {
+      // Check if recovery codes exist for push notification
+      if (otpData?.recoveryCodes && otpData.recoveryCodes.length > 0) {
+        setPhase(PHASES.SHOW_RECOVERY);
+      } else {
+        resetOtpData();
+        onClose();
+      }
+    } else {
+      setPhase(QR_PHASE_ENTER_OTP);
+    }
+  }, [factorType, otpData?.recoveryCodes, onClose]);
 
   const handleBack = React.useCallback(() => {
     setPhase(QR_PHASE_SCAN);
-    resetOtpData();
   }, []);
-
-  const handleCopySecret = React.useCallback(async () => {
-    try {
-      const textToCopy = otpData?.secret || otpData?.barcodeUri || '';
-      await navigator.clipboard.writeText(textToCopy);
-      setTooltipOpen(true);
-      setTooltipText(t('copied'));
-    } catch (err) {
-      console.error('Failed to copy text:', err);
-    }
-  }, [otpData?.secret, otpData?.barcodeUri, t]);
 
   const renderQrScreen = () => {
     return (
@@ -108,38 +111,18 @@ export function QRCodeEnrollmentForm({
                   'font-normal block text-sm text-center text-(length:--font-size-paragraph)',
                 )}
               >
-                {factorType === FACTOR_TYPE_TOPT
+                {factorType === FACTOR_TYPE_OTP
                   ? t('enrollment_form.show_otp.title')
                   : t('enrollment_form.show_auth0_guardian_title')}
               </p>
             </div>
 
             <div className="flex flex-col gap-3 justify-center" aria-describedby="qr-description">
-              <TextField
-                readOnly
+              <CopyableTextField
                 value={otpData?.secret || otpData?.barcodeUri || ''}
-                aria-label={t('enrollment_form.show_otp.secret_code')}
-                className="text-sm"
-                endAdornment={
-                  <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={handleCopySecret}
-                        aria-label={t('enrollment_form.show_otp.copy_as_code')}
-                      >
-                        <Copy className="h-4 w-4" aria-hidden="true" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" align="end" sideOffset={5} className="z-[1000]">
-                      {tooltipText}
-                    </TooltipContent>
-                  </Tooltip>
-                }
+                label={t('enrollment_form.show_otp.secret_code')}
               />
+
               <div className="mt-3" />
               <Button
                 type="button"
@@ -174,11 +157,26 @@ export function QRCodeEnrollmentForm({
       onError={onError}
       onSuccess={onSuccess}
       onClose={onClose}
-      oobCode={otpData?.oobCode || ''}
+      oobCode={otpData.oobCode}
+      recoveryCodes={otpData.recoveryCodes}
       onBack={handleBack}
       styling={styling}
     />
   );
+
+  const renderRecoveryCodeScreen = () => (
+    <ShowRecoveryCode
+      recoveryCodes={otpData.recoveryCodes || []}
+      onSuccess={onClose}
+      styling={styling}
+      onBack={handleBack}
+      factorType={factorType}
+    />
+  );
+
+  if (phase === PHASES.SHOW_RECOVERY) {
+    return renderRecoveryCodeScreen();
+  }
 
   return phase === QR_PHASE_SCAN ? renderQrScreen() : renderOtpScreen();
 }

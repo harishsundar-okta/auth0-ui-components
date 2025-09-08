@@ -31,36 +31,23 @@ export function DeleteFactorConfirmation({
   );
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      aria-modal="true"
-      aria-labelledby="delete-mfa-title"
-      aria-describedby="delete-mfa-description"
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         style={currentStyles?.variables}
-        aria-describedby="delete-mfa-description"
         className={cn(
           'w-[400px] max-h-[90vh] min-h-[548px]',
           currentStyles.classes?.['DeleteFactorConfirmation-dialogContent'],
         )}
       >
         <DialogHeader>
-          <DialogTitle
-            id="delete-mfa-title"
-            className="text-center text-(length:--font-size-title) font-medium"
-          >
+          <DialogTitle className="text-center text-(length:--font-size-title) font-medium">
             {t('delete_mfa_title')}
           </DialogTitle>
           <Separator className="my-2" />
         </DialogHeader>
 
         <div className="flex flex-col items-center mt-6">
-          <p
-            id="delete-mfa-description"
-            className={cn('text-center text-(length:--font-size-paragraph) font-normal mb-10')}
-          >
+          <p className={cn('text-center text-(length:--font-size-paragraph) font-normal mb-10')}>
             {t(`delete_mfa_${factorToDelete?.type}_consent`)}
           </p>
 
