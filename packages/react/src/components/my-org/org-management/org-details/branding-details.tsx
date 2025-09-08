@@ -19,12 +19,6 @@ import { useTranslator } from '@/hooks';
  *
  * Renders the organization branding section with logo and color fields.
  * This component is focused purely on the branding-related form fields.
- *
- * @param {UseFormReturn<OrganizationDetailFormValues>} form - React Hook Form instance
- * @param {boolean} [readOnly=false] - Whether the fields should be read-only
- * @param {Record<string, string>} [customMessages={}] - Custom messages for internationalization
- *
- * @returns {React.JSX.Element} The rendered branding section
  */
 export function BrandingDetails({
   form,

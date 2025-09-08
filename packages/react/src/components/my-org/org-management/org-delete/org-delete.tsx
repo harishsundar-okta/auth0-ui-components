@@ -14,9 +14,6 @@ import { OrgDeleteModal } from './org-delete-modal';
  * A component for deleting an organization with a confirmation warning.
  * Displays a card with delete warning message and a destructive action button.
  * Opens a modal with organization name confirmation before deletion.
- *
- * @param {OrgDeleteProps} props - Component properties
- * @returns {React.JSX.Element} The rendered organization delete component
  */
 function OrgDeleteComponent({
   styling = { variables: { common: {}, light: {}, dark: {} }, classes: {} },
