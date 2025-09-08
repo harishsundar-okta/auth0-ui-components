@@ -23,7 +23,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { TextField } from '@/components/ui/text-field';
 import { useTheme, useTranslator } from '@/hooks';
-import { useContactEnrollment } from '@/hooks/mfa';
+import { useContactEnrollment } from '@/hooks/my-account/mfa';
 import { ENTER_CONTACT, ENTER_OTP } from '@/lib/mfa-constants';
 import { cn } from '@/lib/theme-utils';
 import type { ContactInputFormProps } from '@/types';

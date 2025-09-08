@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 
 import type { UseMFAResult } from '@/types';
 
-import { useCoreClient } from '../use-core-client';
+import { useCoreClient } from '../../use-core-client';
 
 /**
  * A custom React hook for managing all Multi-Factor Authentication (MFA) operations.

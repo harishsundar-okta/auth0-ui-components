@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { CopyableTextField } from '@/components/ui/copyable-text-field';
 import { Spinner } from '@/components/ui/spinner';
 import { useTheme, useTranslator } from '@/hooks';
-import { useOtpEnrollment } from '@/hooks/mfa';
+import { useOtpEnrollment } from '@/hooks/my-account/mfa';
 import { QR_PHASE_ENTER_OTP, QR_PHASE_SCAN, SHOW_RECOVERY_CODE } from '@/lib/mfa-constants';
 import { cn } from '@/lib/theme-utils';
 import type { QRCodeEnrollmentFormProps } from '@/types';
