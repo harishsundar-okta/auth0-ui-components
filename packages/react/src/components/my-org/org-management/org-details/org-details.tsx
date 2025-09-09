@@ -142,6 +142,7 @@ function OrgDetailsComponent({
                     isLoading ||
                     readOnly,
                   type: 'submit',
+                  className: formActions.nextAction?.className,
                 }}
                 previousAction={
                   formActions?.previousAction && {
