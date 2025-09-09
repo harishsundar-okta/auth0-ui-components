@@ -1,5 +1,4 @@
 import * as React from 'react';
-import QRCode from 'react-qr-code';
 
 import {
   getComponentStyles,
@@ -9,6 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { CopyableTextField } from '@/components/ui/copyable-text-field';
+import { QRCodeDisplayer } from '@/components/ui/qr-code';
 
 import { QR_PHASE_ENTER_OTP, QR_PHASE_SCAN, SHOW_RECOVERY_CODE } from '@/lib/mfa-constants';
 
@@ -99,10 +99,10 @@ export function QRCodeEnrollmentForm({
           <div className="w-full max-w-sm mx-auto text-center">
             <div className="mb-6">
               <div className="flex justify-center items-center mb-6">
-                <QRCode
+                <QRCodeDisplayer
                   size={150}
-                  value={otpData.barcodeUri || ''}
-                  aria-label={t('enrollment_form.show_otp.qr_code_description')}
+                  barcodeUri={otpData.barcodeUri || ''}
+                  altTranslationKey="enrollment_form.show_otp.qr_code_description"
                 />
               </div>
               <p
