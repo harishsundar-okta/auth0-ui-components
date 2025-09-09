@@ -47,7 +47,7 @@ export function ContactInputForm({
   confirmEnrollment,
   onSuccess,
   onClose,
-  schemaValidation,
+  schema,
   styling = {
     variables: {
       common: {},
@@ -73,9 +73,9 @@ export function ContactInputForm({
 
   const ContactSchema = React.useMemo(() => {
     return factorType === FACTOR_TYPE_EMAIL
-      ? createEmailContactSchema(t('errors.invalid_email'), schemaValidation?.email)
-      : createSmsContactSchema(t('errors.invalid_phone_number'), schemaValidation?.phone);
-  }, [factorType, t, schemaValidation]);
+      ? createEmailContactSchema(t('errors.invalid_email'), schema?.email)
+      : createSmsContactSchema(t('errors.invalid_phone_number'), schema?.phone);
+  }, [factorType, t, schema]);
 
   const form = useForm<ContactForm>({
     resolver: zodResolver(ContactSchema),

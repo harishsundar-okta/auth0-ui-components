@@ -3,3 +3,4 @@ export * from './providers';
 export * from './blocks';
 export * from './hooks';
 export * from './types';
+export { QRCodeDisplayer } from './components/ui/qr-code';

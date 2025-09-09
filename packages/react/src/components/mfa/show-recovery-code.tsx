@@ -60,7 +60,7 @@ export function ShowRecoveryCode({
         <div>
           <p
             className={cn(
-              'font-normal block text-sm text-center text-(length:--font-size-paragraph) mb-4',
+              'font-normal block text-sm text-center text-(length:--font-size-paragraph) mb-4 text-primary',
             )}
           >
             {t('enrollment_form.recovery_code_description')}

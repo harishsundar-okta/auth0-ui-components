@@ -35,70 +35,6 @@ import { cn } from '@/lib/theme-utils';
  * It operates in both ProxyMode (RWA) and SPA modes for authentication.
  * - **ProxyMode (RWA)**: In this mode, the component interacts with a proxy service to manage MFA
  * - **SPA (Single Page Application)**: In this mode, the component communicates directly with the API to manage MFA factors.
- *
- * @param {Object} props - The properties passed to the component.
- * @param {StylingConfig} [props.styling] - Styling configuration for customizing the component.
- * @param {Object} [props.customMessages] - Custom localization messages for the component.
- * @param {boolean} [props.hideHeader=false] - Whether to hide the header.
- * @param {boolean} [props.showActiveOnly=false] - Whether to show only active MFA factors.
- * @param {boolean} [props.disableEnroll=false] - Whether to disable the enrollment of new factors.
- * @param {boolean} [props.disableDelete=false] - Whether to disable the deletion of factors.
- * @param {boolean} [props.readOnly=false] - Whether the component is in read-only mode.
- * @param {Object} [props.factorConfig={}] - Configuration for MFA factors, controlling visibility and enabled state.
- * @param {Function} [props.onEnroll] - Callback fired when an MFA factor is successfully enrolled.
- * @param {Function} [props.onDelete] - Callback fired when an MFA factor is successfully deleted.
- * @param {Function} [props.onFetch] - Callback fired when MFA factors are fetched.
- * @param {Function} [props.onErrorAction] - Callback fired when an error occurs during an action (enroll/delete).
- * @param {Function} [props.onBeforeAction] - Callback fired before performing an action (enroll/delete).
- * @param {Object} [props.schemaValidation] - Optional validation schema for email and phone number fields.
- *   @param {RegExp} [props.schemaValidation.email] - Regex for validating email input.
- *   @param {RegExp} [props.schemaValidation.phone] - Regex for validating phone number input.
- *
- * @example
- * <UserMFAMgmt
- *   styling={{
- *     variables: {
- *       common: {
- *         '--font-size-heading': '1.5rem',
- *         '--font-size-paragraph': '0.875rem',
- *       },
- *       light: {
- *         '--color-primary': 'blue',
- *         '--color-primary-foreground': 'white',
- *       },
- *       dark: {
- *         '--color-primary': 'red',
- *         '--color-primary-foreground': 'black',
- *       },
- *     },
- *     classNames: {
- *       container: 'custom-container',
- *       card: 'custom-card',
- *       button: 'custom-button'
- *     }
- *   }}
- *   customMessages={{
- *     title: 'Manage MFA Factors',
- *     description: 'Here you can manage your Multi-Factor Authentication (MFA) factors.',
- *   }}
- *   hideHeader={false}
- *   showActiveOnly={false}
- *   disableEnroll={false}
- *   disableDelete={false}
- *   readOnly={false}
- *   factorConfig={{}}
- *   onEnroll={() => {}}
- *   onDelete={() => {}}
- *   onFetch={() => {}}
- *   onErrorAction={() => {}}
- *   onBeforeAction={() => {}}
- *   schemaValidation={{
- *     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
- *     phone: /^\+?[1-9]\d{1,14}$/
- *   }}
- * />
- *
- * @returns {React.JSX.Element} The rendered component.
  */
 function UserMFAMgmtComponent({
   customMessages = {},
@@ -121,7 +57,7 @@ function UserMFAMgmtComponent({
   onFetch,
   onErrorAction,
   onBeforeAction,
-  schemaValidation,
+  schema,
 }: UserMFAMgmtProps): React.JSX.Element {
   const { t } = useTranslator('mfa', customMessages);
   const { loader, isDarkMode } = useTheme();
@@ -465,7 +401,7 @@ function UserMFAMgmtComponent({
           confirmEnrollment={confirmEnrollment}
           onSuccess={handleEnrollSuccess}
           onError={handleEnrollError}
-          schemaValidation={schemaValidation}
+          schema={schema}
           styling={styling}
         />
       )}

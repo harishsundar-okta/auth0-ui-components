@@ -30,7 +30,7 @@ import { withCoreClient } from '@/hoc';
 function OrgDetailsComponent({
   organization = {},
   isLoading = false,
-  schemaValidation,
+  schema,
   customMessages = {},
   styling = {
     variables: { common: {}, light: {}, dark: {} },
@@ -52,7 +52,7 @@ function OrgDetailsComponent({
       field: keyof OrganizationDetailSchemaValidation,
       defaultError: string,
     ) => {
-      const fieldConfig = schemaValidation?.[field];
+      const fieldConfig = schema?.[field];
       return fieldConfig
         ? {
             ...fieldConfig,
@@ -72,7 +72,7 @@ function OrgDetailsComponent({
       color: mergeFieldConfig('color', t('sections.branding.fields.primary_color.error')),
       logoURL: mergeFieldConfig('logoURL', t('sections.branding.fields.logo.error')),
     });
-  }, [t, schemaValidation]);
+  }, [t, schema]);
 
   const form = useForm<OrganizationDetailFormValues>({
     resolver: zodResolver(organizationDetailSchema),
