@@ -1,5 +1,5 @@
-import { OrgDeletesCustomMessages } from './org-delete-types';
-import { OrgDetailsCustomMessages } from './org-details-types';
+import type { OrgDeletesCustomMessages } from './org-delete-types';
+import type { OrgDetailsCustomMessages } from './org-details-types';
 
 /**
  * Interface for Org Edit messages that extends both OrgDetails and OrgDelete messages.

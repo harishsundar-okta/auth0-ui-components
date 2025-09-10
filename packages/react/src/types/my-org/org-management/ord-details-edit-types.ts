@@ -1,13 +1,14 @@
-import React from 'react';
-import {
+import type {
   OrgEditCustomMessages,
   SharedComponentProps,
   OrganizationDetailSchemaValidation,
   OrganizationDetailFormValues,
 } from '@auth0-web-ui-components/core';
-import { OrgDetailsClasses, OrgDetailsFormActions } from './org-details-types';
-import { OrgDeleteClasses } from './org-delete-types';
-import { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import type React from 'react';
+
+import type { OrgDeleteClasses } from './org-delete-types';
+import type { OrgDetailsClasses, OrgDetailsFormActions } from './org-details-types';
 
 export interface OrgEditClasses extends OrgDetailsClasses, OrgDeleteClasses {}
 

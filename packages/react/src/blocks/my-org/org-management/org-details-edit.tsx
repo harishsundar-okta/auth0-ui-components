@@ -1,14 +1,16 @@
-import * as React from 'react';
-import { useTheme, useTranslator } from '@/hooks';
+import type { OrganizationDetailFormValues } from '@auth0-web-ui-components/core';
+import { getComponentStyles } from '@auth0-web-ui-components/core';
 import { Flag } from 'lucide-react';
-import { getComponentStyles, OrganizationDetailFormValues } from '@auth0-web-ui-components/core';
-import { OrgDetailsEditProps } from '@/types/my-org/org-management/ord-details-edit-types';
-import { withCoreClient } from '@/hoc';
-import { OrgDetails } from '@/components/my-org/org-management/org-details';
-import { OrgDelete } from '@/components/my-org/org-management/org-delete';
-import { Header } from '@/components/ui/header';
+import * as React from 'react';
 import { toast } from 'sonner';
-import { OrgDetailsFormActions } from '@/types/my-org/org-management/org-details-types';
+
+import { OrgDelete } from '@/components/my-org/org-management/org-delete';
+import { OrgDetails } from '@/components/my-org/org-management/org-details';
+import { Header } from '@/components/ui/header';
+import { withCoreClient } from '@/hoc';
+import { useTheme, useTranslator } from '@/hooks';
+import type { OrgDetailsEditProps } from '@/types/my-org/org-management/ord-details-edit-types';
+import type { OrgDetailsFormActions } from '@/types/my-org/org-management/org-details-types';
 
 /**
  * OrgDetailsEdit Component
