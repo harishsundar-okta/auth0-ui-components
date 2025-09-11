@@ -154,9 +154,9 @@ jobs:
           echo "Publishing @auth0-web-ui-components/core..."
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             echo "DRY RUN: Would publish @auth0-web-ui-components/core"
-            pnpm publish --dry-run --access public
+            pnpm publish --dry-run --access public --no-git-checks
           else
-            pnpm publish --access public
+            pnpm publish --access public --no-git-checks
           fi
         env:
           NODE_AUTH_TOKEN: ${{ steps.setup-jfrog-cli.outputs.oidc-token }}
@@ -168,9 +168,9 @@ jobs:
           echo "Publishing @auth0-web-ui-components/react..."
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             echo "DRY RUN: Would publish @auth0-web-ui-components/react"
-            pnpm publish --dry-run --access public
+            pnpm publish --dry-run --access public --no-git-checks
           else
-            pnpm publish --access public
+            pnpm publish --access public --no-git-checks
           fi
         env:
           NODE_AUTH_TOKEN: ${{ steps.setup-jfrog-cli.outputs.oidc-token }}
