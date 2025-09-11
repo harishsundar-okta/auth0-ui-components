@@ -90,6 +90,24 @@ jobs:
             fi
           }
           
+          # Function to update package.json version directly
+          update_package_version() {
+            local package_path=$1
+            local new_version=$2
+            local package_name=$3
+            
+            cd "$package_path"
+            # Use node to update the version in package.json directly
+            node -e "
+              const fs = require('fs');
+              const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+              pkg.version = '$new_version';
+              fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+            "
+            echo "✅ Updated $package_name version to $new_version"
+            cd - > /dev/null
+          }
+          
           # Update core package version if provided
           if [ -n "${{ github.event.inputs.core_version }}" ]; then
             CORE_VERSION="${{ github.event.inputs.core_version }}"
@@ -98,9 +116,7 @@ jobs:
             
             if [ -d "./packages/core" ]; then
               echo "📝 Updating @auth0-web-ui-components/core to version $CORE_VERSION"
-              cd "./packages/core"
-              npm version "$CORE_VERSION" --no-git-tag-version
-              cd - > /dev/null
+              update_package_version "./packages/core" "$CORE_VERSION" "@auth0-web-ui-components/core"
             fi
           fi
           
@@ -112,9 +128,7 @@ jobs:
             
             if [ -d "./packages/react" ]; then
               echo "📝 Updating @auth0-web-ui-components/react to version $REACT_VERSION"
-              cd "./packages/react"
-              npm version "$REACT_VERSION" --no-git-tag-version
-              cd - > /dev/null
+              update_package_version "./packages/react" "$REACT_VERSION" "@auth0-web-ui-components/react"
             fi
           fi
           
