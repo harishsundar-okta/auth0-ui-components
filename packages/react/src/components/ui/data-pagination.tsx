@@ -51,7 +51,6 @@ export const defaultLabels: DataPaginationLabels = {
 };
 
 export interface RegularPaginationState {
-  type: 'regular';
   currentPage: number;
   totalPages: number;
   pageSize: number;
@@ -60,20 +59,15 @@ export interface RegularPaginationState {
 }
 
 export interface CheckpointPaginationState {
-  type: 'checkpoint';
   pageSize: number;
   totalItems?: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-  nextCursor?: string;
-  previousCursor?: string;
-  currentCursor?: string;
 }
 
-export type PaginationState = RegularPaginationState | CheckpointPaginationState;
-
 export interface DataPaginationProps {
-  pagination: PaginationState;
+  type: 'regular' | 'checkpoint';
+  paginationState: RegularPaginationState | CheckpointPaginationState;
   pageSizeOptions?: number[];
   showPageSizeSelector?: boolean;
   showPageInfo?: boolean;
@@ -83,8 +77,8 @@ export interface DataPaginationProps {
   locale?: string;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
-  onNextPage?: (cursor?: string) => void;
-  onPreviousPage?: (cursor?: string) => void;
+  onNextPage?: () => void;
+  onPreviousPage?: () => void;
 }
 
 const formatNumber = (num: number, locale?: string): string => {
@@ -120,7 +114,8 @@ const generatePageNumbers = (
 };
 
 export function DataPagination({
-  pagination,
+  type,
+  paginationState,
   pageSizeOptions,
   showPageSizeSelector = true,
   showPageInfo = true,
@@ -136,30 +131,35 @@ export function DataPagination({
   const labels = useMemo(() => ({ ...defaultLabels, ...customLabels }), [customLabels]);
   const ariaLiveRegionRef = useRef<HTMLDivElement | null>(null);
 
-  if (!pagination) {
+  if (!paginationState) {
     return null;
   }
 
-  const isRegular = pagination.type === 'regular';
-  const regularState = isRegular ? (pagination as RegularPaginationState) : null;
-  const checkpointState = !isRegular ? (pagination as CheckpointPaginationState) : null;
+  const isRegular = type === 'regular';
+  const regularState = isRegular ? (paginationState as RegularPaginationState) : null;
+  const checkpointState = !isRegular ? (paginationState as CheckpointPaginationState) : null;
+
+  const shouldShowPageNumbers = isRegular ? showPageNumbers : false;
+  const shouldShowPageSizeSelector = showPageSizeSelector;
+
+  const currentPageSize = paginationState.pageSize;
 
   const allPageSizeOptions = useMemo(() => {
-    if (!pageSizeOptions) return [];
-    const uniqueOptions = new Set([...pageSizeOptions, pagination.pageSize]);
+    if (!shouldShowPageSizeSelector || !pageSizeOptions) return [];
+    const uniqueOptions = new Set([...pageSizeOptions, currentPageSize]);
     return Array.from(uniqueOptions).sort((a, b) => a - b);
-  }, [pageSizeOptions, pagination.pageSize]);
+  }, [shouldShowPageSizeSelector, pageSizeOptions, currentPageSize]);
 
   const pageNumbers = useMemo(
     () =>
-      regularState
+      isRegular && regularState
         ? generatePageNumbers(
             regularState.currentPage,
             regularState.totalPages,
             regularState.maxVisiblePages,
           )
         : [],
-    [regularState],
+    [isRegular, regularState],
   );
 
   useEffect(() => {
@@ -170,7 +170,7 @@ export function DataPagination({
         ariaLiveRegionRef.current.textContent = 'Content loaded.';
       }
     }
-  }, [pagination, isRegular, regularState, checkpointState]);
+  }, [type, paginationState, isRegular, regularState, checkpointState]);
 
   return (
     <div
@@ -228,15 +228,15 @@ export function DataPagination({
       )}
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        {showPageSizeSelector && allPageSizeOptions.length > 0 && (
+        {shouldShowPageSizeSelector && allPageSizeOptions.length > 0 && (
           <div className="flex items-center justify-center gap-2 whitespace-nowrap sm:justify-start">
             <span className="text-sm text-muted-foreground">{labels.show}</span>
             <Select
-              value={pagination.pageSize.toString()}
+              value={currentPageSize.toString()}
               onValueChange={(value) => onPageSizeChange?.(Number(value))}
             >
               <SelectTrigger className="w-20 h-9">
-                <SelectValue placeholder={formatNumber(pagination.pageSize, locale)} />
+                <SelectValue placeholder={formatNumber(currentPageSize, locale)} />
               </SelectTrigger>
               <SelectContent>
                 {allPageSizeOptions.map((size) => (
@@ -252,21 +252,21 @@ export function DataPagination({
 
         <Pagination role="navigation" aria-label="Pagination Navigation">
           <PaginationContent>
-            {isRegular ? (
+            {isRegular && regularState ? (
               <>
                 <PaginationItem>
                   <PaginationPrevious
                     label={labels.previous}
-                    onClick={() => onPageChange?.(Math.max(1, regularState!.currentPage - 1))}
+                    onClick={() => onPageChange?.(Math.max(1, regularState.currentPage - 1))}
                     className={cn(
-                      regularState!.currentPage <= 1 && 'pointer-events-none opacity-50',
+                      regularState.currentPage <= 1 && 'pointer-events-none opacity-50',
                     )}
                     aria-label={labels.goToPrevious}
-                    aria-disabled={regularState!.currentPage <= 1}
-                  ></PaginationPrevious>
+                    aria-disabled={regularState.currentPage <= 1}
+                  />
                 </PaginationItem>
 
-                {showPageNumbers &&
+                {shouldShowPageNumbers &&
                   pageNumbers.map((page, idx) => (
                     <PaginationItem key={`page-${idx}`}>
                       {page === 'ellipsis' ? (
@@ -276,11 +276,11 @@ export function DataPagination({
                       ) : (
                         <PaginationLink
                           onClick={() => onPageChange?.(page)}
-                          isActive={regularState!.currentPage === page}
+                          isActive={regularState.currentPage === page}
                           aria-label={interpolate(labels.goToPage, {
                             page: formatNumber(page, locale),
                           })}
-                          aria-current={regularState!.currentPage === page ? 'page' : undefined}
+                          aria-current={regularState.currentPage === page ? 'page' : undefined}
                         >
                           {formatNumber(page, locale)}
                         </PaginationLink>
@@ -293,45 +293,43 @@ export function DataPagination({
                     label={labels.next}
                     onClick={() =>
                       onPageChange?.(
-                        Math.min(regularState!.totalPages, regularState!.currentPage + 1),
+                        Math.min(regularState.totalPages, regularState.currentPage + 1),
                       )
                     }
                     className={cn(
-                      regularState!.currentPage >= regularState!.totalPages &&
+                      regularState.currentPage >= regularState.totalPages &&
                         'pointer-events-none opacity-50',
                     )}
                     aria-label={labels.goToNext}
-                    aria-disabled={regularState!.currentPage >= regularState!.totalPages}
-                  ></PaginationNext>
+                    aria-disabled={regularState.currentPage >= regularState.totalPages}
+                  />
                 </PaginationItem>
               </>
-            ) : (
+            ) : checkpointState ? (
               <>
                 <PaginationItem>
                   <PaginationPrevious
                     label={labels.previous}
-                    onClick={() => onPreviousPage?.(checkpointState!.previousCursor)}
+                    onClick={() => onPreviousPage?.()} // No cursor parameter
                     className={cn(
-                      !checkpointState!.hasPreviousPage && 'pointer-events-none opacity-50',
+                      !checkpointState.hasPreviousPage && 'pointer-events-none opacity-50',
                     )}
                     aria-label={labels.goToPrevious}
-                    aria-disabled={!checkpointState!.hasPreviousPage}
-                  ></PaginationPrevious>
+                    aria-disabled={!checkpointState.hasPreviousPage}
+                  />
                 </PaginationItem>
 
                 <PaginationItem>
                   <PaginationNext
                     label={labels.next}
-                    onClick={() => onNextPage?.(checkpointState!.nextCursor)}
-                    className={cn(
-                      !checkpointState!.hasNextPage && 'pointer-events-none opacity-50',
-                    )}
+                    onClick={() => onNextPage?.()}
+                    className={cn(!checkpointState.hasNextPage && 'pointer-events-none opacity-50')}
                     aria-label={labels.goToNext}
-                    aria-disabled={!checkpointState!.hasNextPage}
-                  ></PaginationNext>
+                    aria-disabled={!checkpointState.hasNextPage}
+                  />
                 </PaginationItem>
               </>
-            )}
+            ) : null}
           </PaginationContent>
         </Pagination>
       </div>
