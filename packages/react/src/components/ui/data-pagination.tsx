@@ -71,7 +71,6 @@ export interface DataPaginationProps {
   pageSizeOptions?: number[];
   showPageSizeSelector?: boolean;
   showPageInfo?: boolean;
-  showPageNumbers?: boolean;
   className?: string;
   labels?: Partial<DataPaginationLabels>;
   locale?: string;
@@ -81,7 +80,11 @@ export interface DataPaginationProps {
   onPreviousPage?: () => void;
 }
 
-const formatNumber = (num: number, locale?: string): string => {
+const formatNumber = (num: number | undefined | null, locale?: string): string => {
+  if (num === null || num === undefined || isNaN(num)) {
+    return '0';
+  }
+
   const resolvedLocale =
     locale ?? (typeof navigator !== 'undefined' ? navigator.language : 'en-US');
   return num.toLocaleString(resolvedLocale);
@@ -117,9 +120,8 @@ export function DataPagination({
   type,
   paginationState,
   pageSizeOptions,
-  showPageSizeSelector = true,
-  showPageInfo = true,
-  showPageNumbers = true,
+  showPageSizeSelector = false,
+  showPageInfo = false,
   className,
   labels: customLabels,
   locale,
@@ -139,7 +141,7 @@ export function DataPagination({
   const regularState = isRegular ? (paginationState as RegularPaginationState) : null;
   const checkpointState = !isRegular ? (paginationState as CheckpointPaginationState) : null;
 
-  const shouldShowPageNumbers = isRegular ? showPageNumbers : false;
+  const shouldShowPageNumbers = isRegular;
   const shouldShowPageSizeSelector = showPageSizeSelector;
 
   const currentPageSize = paginationState.pageSize;
@@ -174,10 +176,7 @@ export function DataPagination({
 
   return (
     <div
-      className={cn(
-        'flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between',
-        className,
-      )}
+      className={cn('flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end', className)}
     >
       <div
         ref={ariaLiveRegionRef}
@@ -188,7 +187,7 @@ export function DataPagination({
       />
 
       {showPageInfo && (
-        <div className="text-sm text-foreground whitespace-nowrap">
+        <div className="text-sm text-foreground whitespace-nowrap sm:mr-auto">
           {isRegular && regularState ? (
             <>
               {labels.showing}{' '}
