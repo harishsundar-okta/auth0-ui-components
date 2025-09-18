@@ -10,10 +10,10 @@ import type { UseFormReturn } from 'react-hook-form';
 import type { FormActionsProps } from '@/components/ui/form-actions';
 
 export interface OrgDetailsClasses {
-  'OrgDetails-Card'?: string;
-  'OrgDetails-FormActions'?: string;
-  'OrgDetails-SettingsDetails'?: string;
-  'OrgDetails-BrandingDetails'?: string;
+  OrgDetails_Card?: string;
+  OrgDetails_FormActions?: string;
+  OrgDetails_SettingsDetails?: string;
+  OrgDetails_BrandingDetails?: string;
 }
 
 export interface OrgDetailsFormActions extends Omit<FormActionsProps, 'nextAction'> {
