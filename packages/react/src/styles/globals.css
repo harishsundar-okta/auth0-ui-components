@@ -55,7 +55,7 @@
   --color-background: var(--color-neutral-min);
   --color-foreground: var(--color-neutral-12);
 
-  --color-card-background: var(--color-neutral-min);
+  --color-card: var(--color-neutral-min);
   --color-card-foreground: var(--color-neutral-max);
 
   --color-primary: var(--color-carbon-9);
