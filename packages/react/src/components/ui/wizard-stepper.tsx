@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Stepper, Step, StepTitle, StepDescription } from './stepper';
 
 export interface WizardStep {
-  id: string;
+  id?: string;
   title: string;
   description?: string;
 }
@@ -25,7 +25,7 @@ function WizardStepper({
   onStepClick,
   allowClickableSteps = false,
   className,
-  hideNumbers = false,
+  hideNumbers = true,
 }: WizardStepperProps) {
   const handleStepClick = React.useCallback(
     (stepIndex: number, stepId?: string) => {
@@ -48,8 +48,8 @@ function WizardStepper({
       className={className}
     >
       {steps.map((step, index) => (
-        <Step key={step.id} step={index} id={step.id} hideNumber={hideNumbers}>
-          <StepTitle className={'text-(length:--font-size-label)'}>{step.title}</StepTitle>
+        <Step key={step.id || index} step={index} id={step.id} hideNumber={hideNumbers}>
+          <StepTitle className="text-(length:--font-size-label)">{step.title}</StepTitle>
           {step.description && <StepDescription>{step.description}</StepDescription>}
         </Step>
       ))}
