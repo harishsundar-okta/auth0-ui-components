@@ -39,7 +39,7 @@ function OrgDetailsComponent({
   readOnly = false,
   formActions,
 }: OrgDetailsProps): React.JSX.Element {
-  const { t } = useTranslator('org_management', customMessages);
+  const { t } = useTranslator('org_management.org_details', customMessages);
 
   const { isDarkMode } = useTheme();
   const currentStyles = React.useMemo(
@@ -64,16 +64,13 @@ function OrgDetailsComponent({
     };
 
     return createOrganizationDetailSchema({
-      name: mergeFieldConfig('name', t('org_details.sections.settings.fields.name.error')),
+      name: mergeFieldConfig('name', t('sections.settings.fields.name.error')),
       displayName: mergeFieldConfig(
         'displayName',
-        t('org_details.sections.settings.fields.display_name.error'),
+        t('sections.settings.fields.display_name.error'),
       ),
-      color: mergeFieldConfig(
-        'color',
-        t('org_details.sections.branding.fields.primary_color.error'),
-      ),
-      logoURL: mergeFieldConfig('logoURL', t('org_details.sections.branding.fields.logo.error')),
+      color: mergeFieldConfig('color', t('sections.branding.fields.primary_color.error')),
+      logoURL: mergeFieldConfig('logoURL', t('sections.branding.fields.logo.error')),
     });
   }, [t, schema]);
 
@@ -97,10 +94,23 @@ function OrgDetailsComponent({
   const onValid = React.useCallback(
     async (values: OrganizationDetailFormValues) => {
       if (formActions?.nextAction?.onClick) {
-        await formActions.nextAction.onClick(values);
+        const payload = {
+          ...values,
+          id: organization?.id,
+        };
+
+        const success = await formActions.nextAction.onClick(payload);
+
+        if (success) {
+          form.reset(values, {
+            keepValues: true,
+            keepDirty: false,
+            keepTouched: false,
+          });
+        }
       }
     },
-    [formActions?.nextAction],
+    [formActions?.nextAction, organization?.id, form],
   );
 
   const handlePreviousAction = React.useCallback(
@@ -115,39 +125,45 @@ function OrgDetailsComponent({
     <div style={currentStyles.variables} className="w-full space-y-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onValid)} className="space-y-6">
-          <Card className={cn('p-6', currentStyles.classes?.['OrgDetails-card'])}>
+          <Card className={cn('p-6', currentStyles.classes?.OrgDetails_Card)}>
             <div className="space-y-6">
-              <SettingsDetails form={form} readOnly={readOnly} customMessages={customMessages} />
+              <SettingsDetails
+                form={form}
+                readOnly={readOnly}
+                customMessages={customMessages}
+                className={currentStyles.classes?.OrgDetails_SettingsDetails}
+              />
 
               <Separator />
 
-              <BrandingDetails form={form} readOnly={readOnly} customMessages={customMessages} />
+              <BrandingDetails
+                form={form}
+                readOnly={readOnly}
+                customMessages={customMessages}
+                className={currentStyles.classes?.OrgDetails_BrandingDetails}
+              />
 
               <FormActions
                 hasUnsavedChanges={hasUnsavedChanges}
                 isLoading={isLoading}
                 nextAction={{
-                  label: formActions?.nextAction?.label || t('org_details.submit_button_label'),
+                  label: t('submit_button_label'),
                   disabled:
                     formActions?.nextAction?.disabled ||
                     !hasUnsavedChanges ||
                     isLoading ||
                     readOnly,
-                  ...formActions?.nextAction,
+                  type: 'submit',
                 }}
-                previousAction={
-                  formActions?.previousAction && {
-                    ...formActions.previousAction,
-                    onClick: handlePreviousAction,
-                  }
-                }
+                previousAction={{
+                  label: t('cancel_button_label'),
+                  onClick: handlePreviousAction,
+                }}
                 showPrevious={formActions?.showPrevious}
-                unsavedChangesText={
-                  formActions?.unsavedChangesText || t('org_details.unsaved_changes_text')
-                }
+                unsavedChangesText={t('unsaved_changes_text')}
                 showUnsavedChanges={formActions?.showUnsavedChanges}
                 align={formActions?.align}
-                className={formActions?.className}
+                className={currentStyles.classes?.OrgDetails_FormActions}
               />
             </div>
           </Card>

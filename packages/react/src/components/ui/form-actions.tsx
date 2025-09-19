@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/theme-utils';
 
-export interface FormActionsProps {
+export interface FormActionsProps<T = void> {
   hasUnsavedChanges?: boolean;
   isLoading?: boolean;
-  nextAction?: Partial<ActionButton>;
-  previousAction?: Partial<ActionButton>;
+  nextAction?: Partial<ActionButton<T>>;
+  previousAction?: Partial<ActionButton<T>>;
   showPrevious?: boolean;
   showUnsavedChanges?: boolean;
   align?: 'left' | 'right';
@@ -92,7 +92,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
           size={previousButtonProps.size}
           onClick={handlePreviousClick}
           disabled={previousButtonProps.disabled || isLoading}
-          className={previousButtonProps.className}
+          className="FormActions-previous"
         >
           {previousButtonProps.label}
         </Button>
@@ -103,7 +103,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
         variant={nextButtonProps.variant}
         size={nextButtonProps.size}
         disabled={nextButtonProps.disabled || isLoading}
-        className={nextButtonProps.className}
+        className="FormActions-next"
         {...(nextButtonProps.type !== 'submit' && { onClick: handleNextClick })}
       >
         {isLoading ? <Spinner size="sm" aria-hidden="true" /> : nextButtonProps.label}
