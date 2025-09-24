@@ -379,10 +379,7 @@ export function MockUserMFAMgmt(props: MockUserMFAMgmtProps) {
       </div>
 
       {/* Use the REAL UserMFAMgmt component with proxy mode and intercepted API calls */}
-      <Auth0ComponentProvider
-        authProxyUrl="/api/mock-auth/"
-        i18n={{ currentLanguage: 'en', fallbackLanguage: 'en' }}
-      >
+      <Auth0ComponentProvider i18n={{ currentLanguage: 'en', fallbackLanguage: 'en' }}>
         <UserMFAMgmt
           {...props}
           onErrorAction={(error, action) => {

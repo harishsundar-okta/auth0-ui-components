@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { UserMFAMgmt } from '@auth0-web-ui-components/react';
+import '@auth0-web-ui-components/react/dist/index.css';
 import React, { useState } from 'react';
 
 import { MockUserMFAMgmt } from './MockUserMFAMgmt';
@@ -24,8 +25,9 @@ export function ComponentDemo() {
       hideHeader: false,
       showActiveOnly: false,
       smsEnabled: true,
-      totpEnabled: true,
+      otpEnabled: true,
       emailEnabled: true,
+      pushEnabled: true,
       useMockData: false,
       useCustomValidation: false,
     };
@@ -58,16 +60,13 @@ export function ComponentDemo() {
               showActiveOnly={config.showActiveOnly}
               factorConfig={{
                 sms: { enabled: config.smsEnabled, visible: true },
-                totp: { enabled: config.totpEnabled, visible: true },
+                otp: { enabled: config.otpEnabled, visible: true },
                 email: { enabled: config.emailEnabled, visible: true },
-                duo: { enabled: false },
-                'webauthn-platform': { visible: false },
-                'recovery-code': { visible: false },
-                'webauthn-roaming': { visible: false },
+                'push-notification': { enabled: config.pushEnabled, visible: true },
               }}
               localization={{
-                title: 'Multi-Factor Authentication',
-                description: 'Secure your account with additional verification methods',
+                title: 'Multi-Factor Authentication methods',
+                description: 'Extra protection for your account and your identity',
               }}
               schemaValidation={
                 config.useCustomValidation
@@ -84,18 +83,15 @@ export function ComponentDemo() {
               showActiveOnly={config.showActiveOnly}
               factorConfig={{
                 sms: { enabled: config.smsEnabled, visible: true },
-                totp: { enabled: config.totpEnabled, visible: true },
+                otp: { enabled: config.otpEnabled, visible: true },
                 email: { enabled: config.emailEnabled, visible: true },
-                duo: { enabled: false, visible: false },
-                'webauthn-platform': { visible: false },
-                'recovery-code': { visible: false },
-                'webauthn-roaming': { visible: false },
+                'push-notification': { enabled: config.pushEnabled, visible: true },
               }}
-              localization={{
-                title: 'Multi-Factor Authentication',
-                description: 'Secure your account with additional verification methods',
+              customMessages={{
+                title: 'Multi-Factor Authentication methods',
+                description: 'Extra protection for your account and your identity',
               }}
-              schemaValidation={
+              schema={
                 config.useCustomValidation
                   ? {
                       email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
@@ -177,11 +173,11 @@ export function ComponentDemo() {
           <label className="flex items-center space-x-2">
             <input
               type="checkbox"
-              checked={config.totpEnabled}
-              onChange={(e) => setConfig({ ...config, totpEnabled: e.target.checked })}
+              checked={config.otpEnabled}
+              onChange={(e) => setConfig({ ...config, otpEnabled: e.target.checked })}
               className="rounded border-gray-300"
             />
-            <span className="text-sm text-gray-700">TOTP Enabled</span>
+            <span className="text-sm text-gray-700">OTP Enabled</span>
           </label>
 
           <label className="flex items-center space-x-2">
@@ -192,6 +188,16 @@ export function ComponentDemo() {
               className="rounded border-gray-300"
             />
             <span className="text-sm text-gray-700">Email Enabled</span>
+          </label>
+
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={config.pushEnabled}
+              onChange={(e) => setConfig({ ...config, pushEnabled: e.target.checked })}
+              className="rounded border-gray-300"
+            />
+            <span className="text-sm text-gray-700">Push Notification Enabled</span>
           </label>
 
           <label className="flex items-center space-x-2">
@@ -222,13 +228,14 @@ export function ComponentDemo() {
           <code>{`<UserMFAMgmt${config.hideHeader ? '\n  hideHeader={true}' : ''}${config.showActiveOnly ? '\n  showActiveOnly={true}' : ''}
   factorConfig={{
     sms: { enabled: ${config.smsEnabled} },
-    totp: { enabled: ${config.totpEnabled} },
-    email: { enabled: ${config.emailEnabled} }
+    otp: { enabled: ${config.otpEnabled} },
+    email: { enabled: ${config.emailEnabled} },
+    'push-notification': { enabled: ${config.pushEnabled} }
   }}
-  localization={{
-    title: 'Multi-Factor Authentication',
-    description: 'Secure your account...'
-  }}${config.useCustomValidation ? '\n  schemaValidation={{\n    email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/,\n    phone: /^\\+1[2-9]\\d{2}[2-9]\\d{2}\\d{4}$/\n  }}' : ''}
+  customMessages={{
+    title: 'Multi-Factor Authentication methods',
+    description: 'Extra protection for your account...'
+  }}${config.useCustomValidation ? '\n  schema={{\n    email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/,\n    phone: /^\\+1[2-9]\\d{2}[2-9]\\d{2}\\d{4}$/\n  }}' : ''}
 />`}</code>
         </pre>
       </div>
