@@ -1,7 +1,16 @@
+import type { Auth0MyOrg } from 'auth0-myorg-sdk';
+
+// Re-export SDK types for convenience
+export type GetOrganizationDetailsResponseContent =
+  Auth0MyOrg.GetOrganizationDetailsResponseContent;
+export type UpdateOrganizationDetailsRequestContent =
+  Auth0MyOrg.UpdateOrganizationDetailsRequestContent;
+export type UpdateOrganizationDetailsResponseContent =
+  Auth0MyOrg.UpdateOrganizationDetailsResponseContent;
+
 /**
  * Interface for Org Details messages that can be used in the UI.
  */
-
 export interface OrgDetailsCustomMessages {
   sections?: {
     settings?: {

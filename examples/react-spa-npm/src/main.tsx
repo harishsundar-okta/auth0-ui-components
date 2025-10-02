@@ -15,7 +15,9 @@ createRoot(document.getElementById('root')!).render(
       <Auth0Provider
         domain={config.auth0.domain}
         clientId={config.auth0.clientId}
-        authorizationParams={{ redirect_uri: window.location.origin }}
+        authorizationParams={{
+          redirect_uri: window.location.origin,
+        }}
       >
         <I18nextProvider i18n={i18n}>
           <App />

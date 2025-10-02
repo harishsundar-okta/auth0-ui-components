@@ -1,5 +1,5 @@
 import type { AuthDetailsCore, Auth0ContextInterface } from './auth-types';
-import { toURL } from './auth-utils';
+import { AuthUtils } from './auth-utils';
 
 /**
  * Store for pending token requests to prevent duplicate requests for the same token.
@@ -20,7 +20,7 @@ const TokenUtils = {
    * @returns The complete audience URL with trailing slash or empty string if domain is not defined
    */
   buildAudience(domain: string, audiencePath: string): string {
-    const domainURL = toURL(domain);
+    const domainURL = AuthUtils.toURL(domain);
     return domainURL ? `${domainURL}${audiencePath}/` : '';
   },
 
@@ -36,14 +36,26 @@ const TokenUtils = {
   },
 
   /**
-   * Validates that the core client is properly initialized with required authentication context.
+   * Validates that the core client is properly initialized with auth data.
+   *
+   * @param auth - The authentication details to validate
+   * @throws {Error} When the core client is not initialized
+   */
+  isCoreClientAuthInitialized(auth: AuthDetailsCore): void {
+    if (!auth) {
+      throw new Error('TokenUtils: auth in CoreClient is not initialized.');
+    }
+  },
+
+  /**
+   * Validates that the core client is properly initialized with auth data and required authentication context.
    *
    * @param auth - The authentication details to validate
    * @throws {Error} When the core client is not initialized or missing context interface
    */
-  isCoreClientInitialized(auth: AuthDetailsCore): void {
+  isCoreClientContextInterfaceInitialized(auth: AuthDetailsCore): void {
     if (!auth || !auth.contextInterface) {
-      throw new Error('TokenUtils: CoreClient is not initialized.');
+      throw new Error('TokenUtils: contextInterface in CoreClient is not initialized.');
     }
   },
 
@@ -161,13 +173,15 @@ export function createTokenManager(auth: AuthDetailsCore) {
       audiencePath: string,
       ignoreCache: boolean = false,
     ): Promise<string | undefined> {
-      // Ensure core client is initialized before getting a token
+      // Ensure core client auth is initialized
+      TokenUtils.isCoreClientAuthInitialized(auth);
 
       if (TokenUtils.isProxyMode(auth)) {
         return Promise.resolve(undefined);
       }
 
-      TokenUtils.isCoreClientInitialized(auth);
+      // Ensure core client "contextInterface" is initialized before getting a token
+      TokenUtils.isCoreClientContextInterfaceInitialized(auth);
 
       // Validate request
       TokenUtils.validateTokenRequest(auth, scope);

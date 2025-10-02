@@ -4,7 +4,12 @@ export { normalizeError } from './api';
 
 export { createCoreClient } from './auth/core-client';
 
-export { AuthDetailsCore, CoreClientInterface } from './auth/auth-types';
+export {
+  AuthDetailsCore,
+  CoreClientInterface,
+  MyOrgServiceConfig,
+  ServicesConfig,
+} from './auth/auth-types';
 
 export * from './schemas';
 

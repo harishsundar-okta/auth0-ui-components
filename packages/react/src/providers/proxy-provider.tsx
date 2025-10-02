@@ -16,6 +16,11 @@ export const ProxyProvider = ({
       ...authDetails,
       contextInterface: undefined,
     },
+    servicesConfig: {
+      myOrg: {
+        enabled: false, // TODO: We should change this when RWA implementation is available.
+      },
+    },
     i18nOptions: i18n,
   });
 

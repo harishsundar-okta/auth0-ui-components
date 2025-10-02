@@ -1,9 +1,15 @@
 import type { I18nInitOptions } from '../i18n';
 import { createI18nService } from '../i18n';
 import { createAuthenticationAPIService } from '../services/authentication-api-service';
+import { createMyOrgAPIService } from '../services/my-org-api-service';
 
-import type { AuthDetailsCore, CoreClientInterface } from './auth-types';
-import { toURL } from './auth-utils';
+import type {
+  ServicesConfig,
+  AuthDetailsCore,
+  BaseCoreClientInterface,
+  CoreClientInterface,
+} from './auth-types';
+import { AuthUtils } from './auth-utils';
 import { createTokenManager } from './token-manager';
 
 /**
@@ -27,7 +33,7 @@ const CoreUtils = {
     if (!domain) {
       throw new Error('getApiBaseUrl: Auth0 domain is not configured');
     }
-    return toURL(domain);
+    return AuthUtils.toURL(domain);
   },
 
   /**
@@ -99,6 +105,7 @@ const CoreUtils = {
  */
 export async function createCoreClient(
   authDetails: AuthDetailsCore,
+  servicesConfig: ServicesConfig,
   i18nOptions?: I18nInitOptions,
 ): Promise<CoreClientInterface> {
   // Initialize i18n service
@@ -115,17 +122,11 @@ export async function createCoreClient(
   // Initialize token manager service
   const tokenManagerService = createTokenManager(auth);
 
-  // Create a placeholder object for circular dependencies
-  const coreClient = {} as CoreClientInterface;
-
-  // Initialize authentication service
-  const authenticationApiService = createAuthenticationAPIService(coreClient);
-
   // Return the complete object with functional core
-  const client: CoreClientInterface = {
+  const baseCoreClient: BaseCoreClientInterface = {
     auth,
+    servicesConfig,
     i18nService,
-    authenticationApiService,
 
     async getToken(scope: string, audiencePath: string, ignoreCache = false) {
       return tokenManagerService.getToken(scope, audiencePath, ignoreCache);
@@ -140,8 +141,19 @@ export async function createCoreClient(
     },
   };
 
-  // Update the placeholder reference for circular dependencies
-  Object.assign(coreClient, client);
+  // Initialize Authentication API service
+  const authenticationApiService = createAuthenticationAPIService(baseCoreClient);
 
-  return client;
+  // Initialize MyOrg API service if it's enabled
+  const myOrgApiService = servicesConfig.myOrg.enabled
+    ? await createMyOrgAPIService(baseCoreClient)
+    : undefined;
+
+  const coreClient: CoreClientInterface = {
+    ...baseCoreClient,
+    authenticationApiService,
+    myOrgApiService,
+  };
+
+  return coreClient;
 }

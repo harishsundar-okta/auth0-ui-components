@@ -1,4 +1,4 @@
-import type { CoreClientInterface } from '../../../auth/auth-types';
+import type { BaseCoreClientInterface } from '../../../auth/auth-types';
 
 import {
   fetchMfaFactors,
@@ -28,7 +28,7 @@ const MFAUtils = {
    * @returns Promise resolving to access token or undefined in proxy mode
    */
   async getToken(
-    coreClient: CoreClientInterface,
+    coreClient: BaseCoreClientInterface,
     ignoreCache: boolean = false,
   ): Promise<string | undefined> {
     return coreClient.getToken(
@@ -47,7 +47,7 @@ const MFAUtils = {
    * @returns Promise resolving to factors grouped by type
    */
   async fetchFactors(
-    coreClient: CoreClientInterface,
+    coreClient: BaseCoreClientInterface,
     onlyActive: boolean = false,
     ignoreCache: boolean = false,
   ): Promise<Record<MFAType, Authenticator[]>> {
@@ -66,7 +66,7 @@ const MFAUtils = {
    * @returns Promise resolving to enrollment response with QR codes or setup instructions
    */
   async enrollFactor(
-    coreClient: CoreClientInterface,
+    coreClient: BaseCoreClientInterface,
     factorName: MFAType,
     options: EnrollOptions = {},
     ignoreCache: boolean = false,
@@ -86,7 +86,7 @@ const MFAUtils = {
    * @returns Promise that resolves when the factor is successfully deleted
    */
   async deleteFactor(
-    coreClient: CoreClientInterface,
+    coreClient: BaseCoreClientInterface,
     authenticatorId: string,
     ignoreCache: boolean = false,
   ): Promise<void> {
@@ -105,7 +105,7 @@ const MFAUtils = {
    * @returns Promise resolving to confirmation result
    */
   async confirmEnrollment(
-    coreClient: CoreClientInterface,
+    coreClient: BaseCoreClientInterface,
     factorName: MFAType,
     options: ConfirmEnrollmentOptions,
     ignoreCache: boolean = false,
@@ -125,7 +125,7 @@ const MFAUtils = {
  * @param coreClient - The core client interface that provides authentication context and API access
  * @returns An MFA controller interface with all MFA management capabilities
  */
-export function createMFAController(coreClient: CoreClientInterface): MFAControllerInterface {
+export function createMFAController(coreClient: BaseCoreClientInterface): MFAControllerInterface {
   return {
     /**
      * Fetches MFA factors (authenticators) associated with the authenticated user.

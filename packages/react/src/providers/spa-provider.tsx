@@ -14,12 +14,32 @@ export const SpaProvider = ({
 }: InternalProviderProps & { children: React.ReactNode }) => {
   const auth0ContextInterface = useAuth0();
 
-  const coreClient = useCoreClientInitialization({
-    authDetails: {
+  const memoizedAuthDetails = React.useMemo(
+    () => ({
       ...authDetails,
       contextInterface: auth0ContextInterface,
-    },
+    }),
+    [
+      authDetails,
+      auth0ContextInterface.isAuthenticated,
+      auth0ContextInterface.getAccessTokenSilently,
+      auth0ContextInterface.user?.sub,
+    ],
+  );
+
+  const memoizedServicesConfig = React.useMemo(
+    () => ({
+      myOrg: {
+        enabled: auth0ContextInterface.user?.org_id !== undefined,
+      },
+    }),
+    [auth0ContextInterface.user?.org_id],
+  );
+
+  const coreClient = useCoreClientInitialization({
+    authDetails: memoizedAuthDetails,
     i18nOptions: i18n,
+    servicesConfig: memoizedServicesConfig,
   });
 
   const coreClientValue = React.useMemo(

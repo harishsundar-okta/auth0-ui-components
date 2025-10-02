@@ -40,6 +40,7 @@
     "vitest": "^3.2.3"
   },
   "dependencies": {
+    "auth0-myorg-sdk": "file:./dependencies/my-org-sdk/auth0-my-org-0.0.353.tgz",
     "zod": "^3.25.56"
   }
 }

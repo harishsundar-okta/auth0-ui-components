@@ -1,7 +1,7 @@
 import type { SafeAny } from '@core/types';
 
 import type { I18nServiceInterface } from '../i18n';
-import type { MFAControllerInterface } from '../services';
+import type { MFAControllerInterface, OrganizationDetailsControllerInterface } from '../services';
 
 export type TokenEndpointResponse = {
   id_token: string;
@@ -79,6 +79,14 @@ export interface Auth0ContextInterface<TUser = User> {
   handleRedirectCallback: () => Promise<SafeAny>;
 }
 
+export interface MyOrgServiceConfig {
+  enabled: boolean;
+}
+
+export interface ServicesConfig {
+  myOrg: MyOrgServiceConfig;
+}
+
 export interface AuthDetailsCore {
   domain?: string | undefined;
   clientId?: string | undefined;
@@ -88,10 +96,10 @@ export interface AuthDetailsCore {
   contextInterface?: Auth0ContextInterface | undefined;
 }
 
-export interface CoreClientInterface {
+export interface BaseCoreClientInterface {
   auth: AuthDetailsCore;
+  servicesConfig: ServicesConfig;
   i18nService: I18nServiceInterface;
-  authenticationApiService: AuthenticationAPIServiceInterface;
   getToken: (
     scope: string,
     audiencePath: string,
@@ -101,6 +109,15 @@ export interface CoreClientInterface {
   isProxyMode: () => boolean;
 }
 
+export interface CoreClientInterface extends BaseCoreClientInterface {
+  authenticationApiService: AuthenticationAPIServiceInterface;
+  myOrgApiService?: MyOrgAPIServiceInterface;
+}
+
 export interface AuthenticationAPIServiceInterface {
   mfa: MFAControllerInterface;
+}
+
+export interface MyOrgAPIServiceInterface {
+  organizationDetails: OrganizationDetailsControllerInterface;
 }
