@@ -22,17 +22,23 @@ export const OrgDetailsMappers = {
   },
   toAPI(formValues: OrganizationPrivate): UpdateOrganizationDetailsRequestContent {
     const updateLogo =
-      formValues.branding.logo_url !== undefined && formValues.branding.logo_url !== '';
+      formValues.branding.logo_url !== undefined &&
+      formValues.branding.logo_url !== '' &&
+      formValues.branding.logo_url.trim() !== '';
 
-    return {
+    const payload: UpdateOrganizationDetailsRequestContent = {
       display_name: formValues.display_name,
       branding: {
-        logo_url: updateLogo ? formValues.branding.logo_url : undefined,
         colors: {
           primary: formValues.branding.colors.primary,
           page_background: formValues.branding.colors.page_background,
         },
       },
     };
+    if (updateLogo) {
+      payload.branding!.logo_url = formValues.branding.logo_url;
+    }
+
+    return payload;
   },
 };

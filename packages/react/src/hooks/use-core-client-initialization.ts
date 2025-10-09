@@ -40,7 +40,7 @@ export const useCoreClientInitialization = ({
     };
 
     initializeCoreClient();
-  }, [authDetails, i18nOptions?.currentLanguage, i18nOptions?.fallbackLanguage, servicesConfig]);
+  }, []);
 
   return coreClient;
 };

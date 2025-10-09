@@ -18,7 +18,7 @@ export const ProxyProvider = ({
     },
     servicesConfig: {
       myOrg: {
-        enabled: false, // TODO: We should change this when RWA implementation is available.
+        enabled: true,
       },
     },
     i18nOptions: i18n,

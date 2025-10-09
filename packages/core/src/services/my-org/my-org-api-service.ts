@@ -26,8 +26,12 @@ async function createMyOrgClient(coreClient: BaseCoreClientInterface): Promise<M
 export async function createMyOrgAPIService(
   coreClient: BaseCoreClientInterface,
 ): Promise<MyOrgAPIServiceInterface> {
-  const myOrgClient = await createMyOrgClient(coreClient);
+  let myOrgClient: MyOrgClient | undefined;
+
+  if (!coreClient.isProxyMode()) {
+    myOrgClient = await createMyOrgClient(coreClient);
+  }
   return {
-    organizationDetails: createOrganizationDetailsController(myOrgClient),
+    organizationDetails: createOrganizationDetailsController(coreClient, myOrgClient),
   };
 }
