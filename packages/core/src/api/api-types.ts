@@ -1,11 +1,15 @@
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
+export type FetcherFunction = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 export interface RequestOptions {
-  accessToken?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body?: any;
+  body?: unknown;
   retryCount?: number;
-  token?: string; // auth token to be sent in Authorization header
+  timeoutInSeconds?: number;
+  maxRetries?: number;
+  abortSignal?: AbortSignal;
+  queryParams?: Record<string, unknown>;
+  headers?: Record<string, string>;
+  fetcher?: FetcherFunction;
 }
 
 export interface HttpRequest {
