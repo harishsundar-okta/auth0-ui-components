@@ -92,6 +92,38 @@
             "error": "有効な表示名を入力してください"
           }
         }
+      },
+      "provider_configure": {
+        "title": "Configure Provider",
+        "description": "Establish a connection between your identity provider and Auth0.",
+        "fields": {
+          "okta": {
+            "domain": {
+              "label": "Oktaドメイン",
+              "placeholder": "domain-name.okta.com",
+              "helper_text": "<link>Oktaドメインはどこで確認できますか？</link>",
+              "error": "有効なOktaドメインを入力してください"
+            },
+            "client_id": {
+              "label": "クライアントID",
+              "placeholder": "クライアントIDを入力してください",
+              "helper_text": "クライアントアプリケーションまたはサービス統合の一意識別子。<link>クライアントIDはどこで確認できますか？</link>",
+              "error": "有効なクライアントIDを入力してください"
+            },
+            "client_secret": {
+              "label": "クライアントシークレット",
+              "placeholder": "クライアントシークレットを入力してください",
+              "helper_text": "クライアント認証に使用される機密トークン。<link>クライアントシークレットはどこで確認できますか？</link>",
+              "error": "有効なクライアントシークレットを入力してください"
+            },
+            "icon_url": {
+              "label": "アイコンURL",
+              "placeholder": "アイコンURLを入力してください",
+              "helper_text": "ユーザーに表示されるプロバイダーアイコンのURL。",
+              "error": "有効なURLを入力してください"
+            }
+          }
+        }
       }
     },
     "edit_sso_provider": {

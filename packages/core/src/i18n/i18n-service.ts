@@ -4,6 +4,8 @@ import type {
   I18nInitOptions,
   TFactory,
   I18nServiceInterface,
+  TransComponent,
+  TranslationElements,
 } from './i18n-types';
 
 /**
@@ -16,6 +18,12 @@ const I18nUtils = {
    * Matches patterns like ${variableName} for dynamic content substitution.
    */
   VAR_REGEX: /\${(\w+)}/g,
+
+  /**
+   * Regular expression for matching component placeholders in translation strings.
+   * Matches patterns like <0>text</0> or <link>text</link> for safe HTML rendering.
+   */
+  COMPONENT_REGEX: /<(\w+)>(.*?)<\/\1>/g,
 
   /**
    * Retrieves a nested value from an object using dot notation path traversal.
@@ -64,6 +72,121 @@ const I18nUtils = {
 
     I18nUtils.VAR_REGEX.lastIndex = 0;
     return template.replace(I18nUtils.VAR_REGEX, (_, key) => String(vars[key] ?? ''));
+  },
+
+  /**
+   * Parses a translation string with component placeholders and returns structured data
+   * for safe rendering without dangerouslySetInnerHTML.
+   *
+   * @param template - The translation string with component placeholders like <0>text</0>
+   * @param components - Object mapping component keys to React elements or render functions
+   * @returns Array of strings and React elements for safe rendering
+   *
+   * @example
+   * ```typescript
+   * const result = parseComponents(
+   *   'Click <link>here</link> to learn more',
+   *   { link: (children) => <a href="/help">{children}</a> }
+   * );
+   * // Returns: ['Click ', <a href="/help">here</a>, ' to learn more']
+   * ```
+   */
+  parseComponents(template: string, components?: TranslationElements): (string | TransComponent)[] {
+    if (!components || !template.includes('<')) {
+      return [template];
+    }
+
+    const result: (string | TransComponent)[] = [];
+    let lastIndex = 0;
+
+    I18nUtils.COMPONENT_REGEX.lastIndex = 0;
+    let match;
+
+    while ((match = I18nUtils.COMPONENT_REGEX.exec(template)) !== null) {
+      const [fullMatch, componentKey, content] = match;
+      const matchStart = match.index!;
+
+      // Add text before the component
+      if (matchStart > lastIndex) {
+        result.push(template.slice(lastIndex, matchStart));
+      }
+
+      // Add the component
+      const component = components[componentKey];
+      if (component) {
+        if (typeof component === 'function') {
+          result.push(component(content));
+        } else {
+          result.push(component);
+        }
+      } else {
+        // Fallback: render as plain text if component not found
+        result.push(content);
+      }
+
+      lastIndex = matchStart + fullMatch.length;
+    }
+
+    // Add remaining text
+    if (lastIndex < template.length) {
+      result.push(template.slice(lastIndex));
+    }
+
+    return result.length === 1 && typeof result[0] === 'string' ? [result[0]] : result;
+  },
+
+  /**
+   * Creates an enhanced translation function that supports both simple translations
+   * and component-based translations for safe HTML rendering.
+   *
+   * @param namespace - The namespace prefix for translations
+   * @param translations - The loaded translation data
+   * @param overrides - Optional override translations that take precedence
+   * @returns An enhanced translation function with Trans component support
+   */
+  createEnhancedTranslator(
+    namespace: string,
+    translations: LangTranslations | null,
+    overrides?: Record<string, unknown>,
+  ): TranslationFunction & {
+    trans: (
+      key: string,
+      options?: {
+        components?: TranslationElements;
+        vars?: Record<string, unknown>;
+        fallback?: string;
+      },
+    ) => (string | TransComponent)[];
+  } {
+    const baseTranslator = I18nUtils.createTranslator(namespace, translations, overrides);
+
+    const enhancedTranslator = baseTranslator as TranslationFunction & {
+      trans: (
+        key: string,
+        options?: {
+          components?: TranslationElements;
+          vars?: Record<string, unknown>;
+          fallback?: string;
+        },
+      ) => (string | TransComponent)[];
+    };
+
+    // Add Trans component method for safe HTML rendering
+    enhancedTranslator.trans = (
+      key: string,
+      options: {
+        components?: TranslationElements;
+        vars?: Record<string, unknown>;
+        fallback?: string;
+      } = {},
+    ) => {
+      const { components, vars, fallback } = options;
+      let text = baseTranslator(key, vars, fallback);
+
+      return I18nUtils.parseComponents(text, components);
+    };
+
+    return enhancedTranslator;
   },
 
   /**
@@ -175,7 +298,8 @@ const I18nUtils = {
  * Creates an internationalization (i18n) service with translation loading and management capabilities.
  *
  * This factory function initializes the i18n service with language support, translation loading,
- * and runtime language switching. It supports namespace-based translations and variable substitution.
+ * and runtime language switching. It supports namespace-based translations, variable substitution,
+ * and safe HTML rendering through Trans component pattern.
  *
  * @param options - Optional configuration for i18n initialization
  * @param options.currentLanguage - The current language code (defaults to 'en-US')
@@ -193,9 +317,14 @@ const I18nUtils = {
  *   fallbackLanguage: 'en-US'
  * });
  *
- * // Use translations
+ * // Use translations with safe HTML rendering
  * const t = i18nService.translator('mfa');
- * const message = t('enrollment.success'); // Gets 'mfa.enrollment.success'
+ * const message = t('enrollment.success'); // Plain text
+ * const elements = t.trans('help.link', {
+ *   components: {
+ *     link: (children) => <a href="/help">{children}</a>
+ *   }
+ * }); // Safe HTML components
  * ```
  */
 export async function createI18nService(
@@ -228,11 +357,20 @@ export async function createI18nService(
 
     get translator(): TFactory {
       return (namespace: string, overrides?: Record<string, unknown>) =>
-        I18nUtils.createTranslator(namespace, translations, overrides);
+        I18nUtils.createEnhancedTranslator(namespace, _translations, overrides);
     },
 
-    get commonTranslator(): TranslationFunction {
-      return I18nUtils.createTranslator('common', translations);
+    get commonTranslator(): TranslationFunction & {
+      trans: (
+        key: string,
+        options?: {
+          components?: TranslationElements;
+          vars?: Record<string, unknown>;
+          fallback?: string;
+        },
+      ) => (string | TransComponent)[];
+    } {
+      return I18nUtils.createEnhancedTranslator('common', _translations);
     },
 
     getCurrentTranslations(): LangTranslations | null {

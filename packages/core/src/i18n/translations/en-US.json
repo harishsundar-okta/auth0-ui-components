@@ -92,6 +92,38 @@
             "error": "Please enter a valid display name"
           }
         }
+      },
+      "provider_configure": {
+        "title": "Configure Provider",
+        "description": "Establish a connection between your identity provider and Auth0.",
+        "fields": {
+          "okta": {
+            "domain": {
+              "label": "Okta Domain",
+              "placeholder": "domain-name.okta.com",
+              "helper_text": "<link>Where do I find the Okta Domain?</link>",
+              "error": "Please enter a valid Okta domain"
+            },
+            "client_id": {
+              "label": "Client ID",
+              "placeholder": "Enter your client ID",
+              "helper_text": "Unique identifier for client application or service integration. <link>Where do I find the Client ID?</link>",
+              "error": "Please enter a valid client ID"
+            },
+            "client_secret": {
+              "label": "Client Secret",
+              "placeholder": "Enter your client secret",
+              "helper_text": "Confidential token used for client authentication. <link>Where do I find the Client Secret?</link>",
+              "error": "Please enter a valid client secret"
+            },
+            "icon_url": {
+              "label": "Icon URL",
+              "placeholder": "Enter icon URL",
+              "helper_text": "URL for the provider icon displayed to users.",
+              "error": "Please enter a valid URL"
+            }
+          }
+        }
       }
     },
     "edit_sso_provider": {

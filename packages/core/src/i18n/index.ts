@@ -5,5 +5,6 @@ export type {
   TranslationFunction,
   TFactory,
   I18nServiceInterface,
+  EnhancedTranslationFunction,
 } from './i18n-types';
 export * from './custom-messages';

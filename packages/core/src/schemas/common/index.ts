@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-interface StringValidationOptions {
+export interface StringValidationOptions {
   required?: boolean;
   regex?: RegExp;
   minLength?: number;
@@ -8,10 +8,23 @@ interface StringValidationOptions {
   errorMessage?: string;
 }
 
-interface LogoValidationOptions {
+export interface LogoValidationOptions {
   required?: boolean;
   regex?: RegExp;
   errorMessage?: string;
+}
+
+export interface BooleanFieldOptions {
+  required?: boolean;
+  errorMessage?: string;
+}
+
+export interface FieldOptions {
+  required?: boolean;
+  regex?: RegExp;
+  errorMessage?: string;
+  minLength?: number;
+  maxLength?: number;
 }
 
 export const createStringSchema = (options: StringValidationOptions = {}) => {
@@ -88,3 +101,61 @@ export const createLogoSchema = (options: LogoValidationOptions = {}) => {
         .optional()
         .refine((val) => !val || urlValidator(val), { message });
 };
+
+export const createBooleanSchema = (options: BooleanFieldOptions = {}) => {
+  const schema = z.boolean({
+    errorMap: () => ({ message: options.errorMessage || 'Invalid boolean value' }),
+  });
+
+  return options.required === false ? schema.optional() : schema;
+};
+
+export const COMMON_FIELD_CONFIGS = {
+  domain: {
+    defaultError: 'Please enter a valid domain',
+    regex: undefined as RegExp | undefined,
+  },
+  client_id: {
+    defaultError: 'Please enter a valid client ID',
+    regex: undefined as RegExp | undefined,
+  },
+  client_secret: {
+    defaultError: 'Please enter a valid client secret',
+    regex: undefined as RegExp | undefined,
+  },
+  icon_url: {
+    defaultError: 'Please enter a valid URL',
+    regex: /^https?:\/\/.+/,
+  },
+  url: {
+    defaultError: 'Please enter a valid URL',
+    regex: /^https?:\/\/.+/,
+  },
+  certificate: {
+    defaultError: 'Please enter a valid certificate',
+    regex: undefined as RegExp | undefined,
+  },
+  algorithm: {
+    defaultError: 'Please enter a valid algorithm',
+    regex: undefined as RegExp | undefined,
+  },
+  metadata: {
+    defaultError: 'Please enter valid metadata',
+    regex: undefined as RegExp | undefined,
+  },
+} as const;
+
+export type FieldConfig = (typeof COMMON_FIELD_CONFIGS)[keyof typeof COMMON_FIELD_CONFIGS];
+
+export const createFieldSchema = (
+  fieldConfig: FieldConfig,
+  options: FieldOptions = {},
+  customError?: string,
+) =>
+  createStringSchema({
+    required: options.required ?? false,
+    regex: options.regex ?? fieldConfig.regex ?? undefined,
+    errorMessage: options.errorMessage ?? customError ?? fieldConfig.defaultError,
+    minLength: options.minLength,
+    maxLength: options.maxLength,
+  });

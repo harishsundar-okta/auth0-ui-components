@@ -1,4 +1,4 @@
-import { type TranslationFunction } from '@auth0-web-ui-components/core';
+import { type EnhancedTranslationFunction } from '@auth0-web-ui-components/core';
 import { useMemo, useCallback } from 'react';
 
 import { useCoreClient } from './use-core-client';
@@ -7,11 +7,11 @@ import { useCoreClient } from './use-core-client';
  * Custom hook for accessing the i18n service from CoreClient.
  *
  * This hook provides access to the i18n service from the CoreClient context,
- * including translation functions and language change capabilities.
+ * including enhanced translation functions with Trans component support and language change capabilities.
  *
  * @param namespace - The translation namespace (e.g., 'mfa', 'common')
  * @param overrides - Optional translation overrides for the namespace
- * @returns An object containing the translator function and changeLanguage function
+ * @returns An object containing the enhanced translator function and changeLanguage function
  *
  * @example
  * ```tsx
@@ -24,9 +24,27 @@ import { useCoreClient } from './use-core-client';
  *   'sms.title': 'Text Message'
  * });
  *
- * // Using the translator
+ * // Using the basic translator
  * const title = t('title');
  * const message = t('welcome', { name: 'John' });
+ *
+ * // Using the trans method for safe HTML rendering
+ * const elements = t.trans('help.message', {
+ *   components: {
+ *     link: (children) => <a href="/help" target="_blank">{children}</a>,
+ *     strong: (children) => <strong>{children}</strong>
+ *   },
+ *   vars: { name: 'John' }
+ * });
+ *
+ * // Render the elements
+ * return (
+ *   <div>
+ *     {elements.map((element, index) => (
+ *       <Fragment key={index}>{element}</Fragment>
+ *     ))}
+ *   </div>
+ * );
  *
  * // Changing language
  * await changeLanguage('es-ES');
@@ -36,7 +54,7 @@ export function useTranslator(
   namespace: string,
   overrides?: Record<string, unknown>,
 ): {
-  t: TranslationFunction;
+  t: EnhancedTranslationFunction;
   changeLanguage: (language: string, fallbackLanguage?: string) => Promise<void>;
   currentLanguage: string;
   fallbackLanguage: string | undefined;

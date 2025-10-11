@@ -1,5 +1,6 @@
 import type { Auth0MyOrg } from 'auth0-myorg-sdk';
 
+export type CreateIdentityProviderRequestContent = Auth0MyOrg.CreateIdentityProviderRequestContent;
 export type IdentityProvider = Auth0MyOrg.IdpKnown;
 
 export type IdpStrategy =
