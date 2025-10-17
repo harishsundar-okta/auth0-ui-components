@@ -1,6 +1,6 @@
-import { Form } from '@/components/ui/form';
-import { cn } from '@/lib/theme-utils';
-import type { ProviderConfigureFieldsProps } from '@/types';
+import { cn } from '../../../../../lib/theme-utils';
+import type { ProviderConfigureFieldsProps } from '../../../../../types';
+import { Form } from '../../../../ui/form';
 
 import AdfsProviderForm from './adfs-sso-configure-form';
 import GoogleAppsProviderForm from './google-apps-sso-configure-form';

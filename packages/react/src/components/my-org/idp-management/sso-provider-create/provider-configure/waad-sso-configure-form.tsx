@@ -5,7 +5,9 @@ import type {
 } from '@auth0-web-ui-components/core';
 import type { UseFormReturn } from 'react-hook-form';
 
-import { CopyableTextField } from '@/components/ui/copyable-text-field';
+import { useTranslator } from '../../../../../hooks/use-translator';
+import { cn } from '../../../../../lib/theme-utils';
+import { CopyableTextField } from '../../../../ui/copyable-text-field';
 import {
   FormField,
   FormItem,
@@ -13,10 +15,8 @@ import {
   FormControl,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
-import { TextField } from '@/components/ui/text-field';
-import { useTranslator } from '@/hooks';
-import { cn } from '@/lib/theme-utils';
+} from '../../../../ui/form';
+import { TextField } from '../../../../ui/text-field';
 
 interface WaadConfigureFormProps extends SharedComponentProps<ProviderConfigureFieldsMessages> {
   form: UseFormReturn<ProviderConfigureFormValues>;

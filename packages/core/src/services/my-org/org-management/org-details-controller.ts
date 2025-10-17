@@ -6,61 +6,42 @@ import type { OrganizationPrivate } from '../../../services';
 import { OrgDetailsMappers } from './org-details-mappers';
 import { getOrgDetails, updateOrgDetails } from './org-details-service';
 
-export interface OrganizationDetailsControllerInterface {
+export interface OrganizationDetailsController {
   get(): Promise<OrganizationPrivate>;
   update(data: OrganizationPrivate): Promise<OrganizationPrivate>;
 }
 
-const OrganizationDetailsUtils = {
-  /**
-   * Fetches organization details.
-   */
-  async get(
-    coreClient: BaseCoreClientInterface,
-    myOrgClient?: MyOrgClient,
-  ): Promise<OrganizationPrivate> {
-    if (!coreClient.isProxyMode()) {
-      if (!myOrgClient) {
-        throw new Error('MyOrgClient is required for non-proxy mode');
-      }
-      const response = await myOrgClient.organizationDetails.get();
-      return OrgDetailsMappers.fromAPI(response);
-    }
-    const baseUrl = coreClient.getApiBaseUrl();
-    return getOrgDetails(baseUrl);
-  },
-
-  /**
-   * Updates organization details.
-   */
-  async update(
-    coreClient: BaseCoreClientInterface,
-    formData: OrganizationPrivate,
-    myOrgClient?: MyOrgClient,
-  ): Promise<OrganizationPrivate> {
-    if (!coreClient.isProxyMode()) {
-      if (!myOrgClient) {
-        throw new Error('MyOrgClient is required for non-proxy mode');
-      }
-      const updateData = OrgDetailsMappers.toAPI(formData);
-      const response = await myOrgClient.organizationDetails.update(updateData);
-      return OrgDetailsMappers.fromAPI(response);
-    }
-
-    const baseUrl = coreClient.getApiBaseUrl();
-    return updateOrgDetails(baseUrl, formData);
-  },
-};
-
-/**
- * Creates an organization controller instance.
- */
 export function createOrganizationDetailsController(
   coreClient: BaseCoreClientInterface,
   myOrgClient?: MyOrgClient,
-): OrganizationDetailsControllerInterface {
+): OrganizationDetailsController {
+  const isProxy = coreClient.isProxyMode();
+
+  if (!isProxy && !myOrgClient) {
+    throw new Error('MyOrgClient is required for non-proxy mode');
+  }
+
+  const delegateCall = <T>(proxyFn: () => Promise<T>, sdkFn: () => Promise<T>): Promise<T> =>
+    isProxy ? proxyFn() : sdkFn();
+
   return {
-    get: () => OrganizationDetailsUtils.get(coreClient, myOrgClient),
-    update: (data) => OrganizationDetailsUtils.update(coreClient, data, myOrgClient),
+    get: () =>
+      delegateCall(
+        () => getOrgDetails(coreClient.getApiBaseUrl()),
+        async () => {
+          const response = await myOrgClient!.organizationDetails.get();
+          return OrgDetailsMappers.fromAPI(response);
+        },
+      ),
+
+    update: (data: OrganizationPrivate) =>
+      delegateCall(
+        () => updateOrgDetails(coreClient.getApiBaseUrl(), data),
+        async () => {
+          const updateData = OrgDetailsMappers.toAPI(data);
+          const response = await myOrgClient!.organizationDetails.update(updateData);
+          return OrgDetailsMappers.fromAPI(response);
+        },
+      ),
   };
 }

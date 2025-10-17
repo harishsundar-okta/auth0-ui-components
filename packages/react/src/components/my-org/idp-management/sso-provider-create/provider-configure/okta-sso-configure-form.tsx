@@ -6,7 +6,9 @@ import type {
 import type { ReactNode } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 
-import { CopyableTextField } from '@/components/ui/copyable-text-field';
+import { useTranslator } from '../../../../../hooks/use-translator';
+import { cn } from '../../../../../lib/theme-utils';
+import { CopyableTextField } from '../../../../ui/copyable-text-field';
 import {
   FormField,
   FormItem,
@@ -14,11 +16,9 @@ import {
   FormControl,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
-import { Link } from '@/components/ui/link';
-import { TextField } from '@/components/ui/text-field';
-import { useTranslator } from '@/hooks';
-import { cn } from '@/lib/theme-utils';
+} from '../../../../ui/form';
+import { Link } from '../../../../ui/link';
+import { TextField } from '../../../../ui/text-field';
 
 const OKTA_HELP_LINKS = {
   domain: 'https://developer.okta.com/docs/guides/find-your-domain/main/',

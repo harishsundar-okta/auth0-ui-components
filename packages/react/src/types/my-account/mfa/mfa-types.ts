@@ -142,7 +142,7 @@ export interface ShowRecoveryCodeProps
   factorType: MFAType;
   authSession: string;
   authenticationMethodId: string;
-  confirmEnrollment?: (
+  confirmEnrollment: (
     factorType: MFAType,
     authSession: string,
     authenticationMethodId: string,

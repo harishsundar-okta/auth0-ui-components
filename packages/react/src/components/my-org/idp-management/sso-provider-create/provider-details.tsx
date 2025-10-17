@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { useTranslator } from '../../../../hooks/use-translator';
+import type { ProviderDetailsProps } from '../../../../types';
 import {
   FormControl,
   FormDescription,
@@ -7,11 +9,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Section } from '@/components/ui/section';
-import { TextField } from '@/components/ui/text-field';
-import { useTranslator } from '@/hooks';
-import type { ProviderDetailsProps } from '@/types';
+} from '../../../ui/form';
+import { Section } from '../../../ui/section';
+import { TextField } from '../../../ui/text-field';
 
 /**
  * ProviderDetails Component

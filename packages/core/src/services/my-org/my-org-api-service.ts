@@ -1,7 +1,7 @@
 import type { BaseCoreClientInterface, MyOrgAPIServiceInterface } from '@core/auth/auth-types';
-import type { MyOrgClientOptions } from 'auth0-myorg-sdk';
 import { MyOrgClient } from 'auth0-myorg-sdk';
 
+import { createIdentityProvidersController } from './idp-management';
 import { MY_ORG_SCOPES } from './my-org-api-constants';
 import { createOrganizationDetailsController } from './org-management';
 
@@ -9,15 +9,17 @@ import { createOrganizationDetailsController } from './org-management';
  * Creates a configured MyOrgClient instance using user-based authentication
  */
 async function createMyOrgClient(coreClient: BaseCoreClientInterface): Promise<MyOrgClient> {
-  const audiencePath = 'my-org';
-  const token = await coreClient.getToken(MY_ORG_SCOPES, audiencePath);
+  const { domain } = coreClient.auth;
+  const token = await coreClient.getToken(MY_ORG_SCOPES, 'my-org');
 
-  const clientOptions: MyOrgClientOptions = {
-    domain: coreClient.auth.domain,
-    token: token || '',
-  };
+  if (!domain?.trim() || !token?.trim()) {
+    throw new Error('Invalid or missing domain/token for MyOrg API client');
+  }
 
-  return new MyOrgClient(clientOptions);
+  return new MyOrgClient({
+    domain: domain.trim(),
+    token: token.trim(),
+  });
 }
 
 /**
@@ -33,5 +35,8 @@ export async function createMyOrgAPIService(
   }
   return {
     organizationDetails: createOrganizationDetailsController(coreClient, myOrgClient),
+    organization: {
+      identityProviders: createIdentityProvidersController(coreClient, myOrgClient),
+    },
   };
 }

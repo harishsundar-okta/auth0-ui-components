@@ -2,68 +2,144 @@ import { MyOrgClient, type Auth0MyOrg } from 'auth0-myorg-sdk';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-// Update Organization Details
+import { auth0Config } from '@/config/auth';
+import { auth0 } from '@/lib/auth0';
+
 export type UpdateOrganizationDetailsRequestContent =
   Auth0MyOrg.UpdateOrganizationDetailsRequestContent;
 
-import { auth0Config } from '@/config/auth';
-import { auth0 } from '@/lib/auth0';
+export type CreateIdentityProviderRequestContent = Auth0MyOrg.CreateIdentityProviderRequestContent;
+
+export type UpdateIdentityProviderRequestContent = Auth0MyOrg.UpdateIdentityProviderRequestContent;
 
 const createErrorResponse = (message: string, status: number, details?: string) => {
   return NextResponse.json(details ? { error: message, details } : { error: message }, { status });
 };
 
 const createMyOrgClient = async (): Promise<MyOrgClient> => {
-  const { token: accessToken } = (await auth0.getAccessToken()) || {};
-  if (!accessToken) {
+  const { token } = (await auth0.getAccessToken()) || {};
+  if (!token) {
     throw new Error('No access token available');
   }
 
   return new MyOrgClient({
     domain: auth0Config.issuerBaseUrl,
-    token: accessToken,
+    token: token,
   });
 };
 
-const routeHandlers = {
-  'GET /my-org/details': async (myOrgClient: MyOrgClient) => {
-    return await myOrgClient.organizationDetails.get();
-  },
-  'PATCH /my-org/details': async (
+interface RouteConfig {
+  method: string;
+  pattern: RegExp;
+  handler: (
     myOrgClient: MyOrgClient,
-    body: UpdateOrganizationDetailsRequestContent,
-  ) => {
-    return await myOrgClient.organizationDetails.update(body);
+    body?: Record<string, unknown>,
+    pathParams?: Record<string, string>,
+  ) => Promise<unknown>;
+}
+
+const routes: RouteConfig[] = [
+  // My Org - Organization Details
+  {
+    method: 'GET',
+    pattern: /^\/my-org\/details$/,
+    handler: async (myOrgClient) => {
+      return await myOrgClient.organizationDetails.get();
+    },
   },
-} as const;
+  {
+    method: 'PATCH',
+    pattern: /^\/my-org\/details$/,
+    handler: async (myOrgClient, body) => {
+      return await myOrgClient.organizationDetails.update(
+        body as UpdateOrganizationDetailsRequestContent,
+      );
+    },
+  },
+
+  // My Org - Identity Providers
+  {
+    method: 'GET',
+    pattern: /^\/my-org\/identity-providers\/(?<idpId>[^/]+)$/,
+    handler: async (myOrgClient, body, pathParams) => {
+      return await myOrgClient.organization.identityProviders.get(pathParams!.idpId);
+    },
+  },
+  {
+    method: 'PATCH',
+    pattern: /^\/my-org\/identity-providers\/(?<idpId>[^/]+)$/,
+    handler: async (myOrgClient, body, pathParams) => {
+      return await myOrgClient.organization.identityProviders.update(
+        pathParams!.idpId,
+        body as UpdateIdentityProviderRequestContent,
+      );
+    },
+  },
+  {
+    method: 'DELETE',
+    pattern: /^\/my-org\/identity-providers\/(?<idpId>[^/]+)$/,
+    handler: async (myOrgClient, body, pathParams) => {
+      return await myOrgClient.organization.identityProviders.delete(pathParams!.idpId);
+    },
+  },
+  {
+    method: 'POST',
+    pattern: /^\/my-org\/identity-providers\/(?<idpId>[^/]+)\/detach$/,
+    handler: async (myOrgClient, body, pathParams) => {
+      return await myOrgClient.organization.identityProviders.detach(pathParams!.idpId);
+    },
+  },
+  {
+    method: 'GET',
+    pattern: /^\/my-org\/identity-providers$/,
+    handler: async (myOrgClient) => {
+      return await myOrgClient.organization.identityProviders.list();
+    },
+  },
+  {
+    method: 'POST',
+    pattern: /^\/my-org\/identity-providers$/,
+    handler: async (myOrgClient, body) => {
+      return await myOrgClient.organization.identityProviders.create(
+        body as unknown as CreateIdentityProviderRequestContent,
+      );
+    },
+  },
+];
+
+const extractPathParams = (match: RegExpMatchArray): Record<string, string> => {
+  return match.groups || {};
+};
 
 const proxyHandler = async (req: NextRequest) => {
   try {
     const path = req.nextUrl.pathname.substring('/api'.length);
+    const method = req.method;
 
-    // Check authentication
     const session = await auth0.getSession();
     if (!session) {
       return createErrorResponse('Not authenticated', 401, 'No user session found.');
     }
 
-    // Find route handler
-    const routeKey = `${req.method} ${path}` as keyof typeof routeHandlers;
-    const handler = routeHandlers[routeKey];
+    const route = routes.find((r) => {
+      return r.method === method && r.pattern.test(path);
+    });
 
-    if (!handler) {
-      return createErrorResponse('Route not found', 404, `No handler for ${req.method} ${path}`);
+    if (!route) {
+      return createErrorResponse('Route not found', 404, `No handler for ${method} ${path}`);
     }
 
-    // Create MyOrgClient and handle SDK route
     const myOrgClient = await createMyOrgClient();
 
-    let body;
-    if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+    let body: Record<string, unknown> | undefined;
+    if (['POST', 'PUT', 'PATCH'].includes(method)) {
       body = await req.json();
     }
 
-    const result = await handler(myOrgClient, body);
+    const match = path.match(route.pattern);
+    const pathParams = match ? extractPathParams(match) : {};
+
+    const result = await route.handler(myOrgClient, body, pathParams);
     return NextResponse.json(result);
   } catch (error) {
     console.error('Proxy error:', error);

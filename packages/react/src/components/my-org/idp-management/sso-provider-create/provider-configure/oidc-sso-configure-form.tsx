@@ -5,7 +5,9 @@ import type {
 } from '@auth0-web-ui-components/core';
 import type { UseFormReturn } from 'react-hook-form';
 
-import { CopyableTextField } from '@/components/ui/copyable-text-field';
+import { useTranslator } from '../../../../../hooks/use-translator';
+import { cn } from '../../../../../lib/theme-utils';
+import { CopyableTextField } from '../../../../ui/copyable-text-field';
 import {
   FormField,
   FormItem,
@@ -13,12 +15,10 @@ import {
   FormControl,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { TextField } from '@/components/ui/text-field';
-import { useTranslator } from '@/hooks';
-import { cn } from '@/lib/theme-utils';
+} from '../../../../ui/form';
+import { Label } from '../../../../ui/label';
+import { RadioGroup, RadioGroupItem } from '../../../../ui/radio-group';
+import { TextField } from '../../../../ui/text-field';
 
 interface OidcConfigureFormProps extends SharedComponentProps<ProviderConfigureFieldsMessages> {
   form: UseFormReturn<ProviderConfigureFormValues>;

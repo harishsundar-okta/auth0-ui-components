@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "auth0-myorg-sdk": "file:./dependencies/my-org-sdk/auth0-my-org-0.0.353.tgz",
+    "auth0-myorg-sdk": "file:./dependencies/my-org-sdk/auth0-my-org-0.69.0.tgz",
     "@auth0-web-ui-components/react": "workspace:*",
     "@auth0/nextjs-auth0": "^4.9.0",
     "@tailwindcss/postcss": "^4.1.10",

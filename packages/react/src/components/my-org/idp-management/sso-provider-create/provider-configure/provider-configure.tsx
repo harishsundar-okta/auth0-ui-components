@@ -1,6 +1,6 @@
-import { Section } from '@/components/ui/section';
-import { useTranslator } from '@/hooks';
-import type { ProviderConfigureProps } from '@/types';
+import { useTranslator } from '../../../../../hooks/use-translator';
+import type { ProviderConfigureProps } from '../../../../../types';
+import { Section } from '../../../../ui/section';
 
 import { ProviderConfigureFields } from './provider-configure-fields';
 

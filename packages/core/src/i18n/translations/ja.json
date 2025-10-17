@@ -70,6 +70,70 @@
     }
   },
   "idp_management": {
+    "sso_provider_table": {
+      "header": {
+        "title": "シングルサインオン",
+        "description": "組織のSSOアクセスを設定・管理します。",
+        "create_button_text": "プロバイダーを追加"
+      },
+      "table": {
+        "empty_message": "プロバイダーがありません。",
+        "columns": {
+          "name": "名前",
+          "identity_provider": "アイデンティティプロバイダー",
+          "display_name": "表示名"
+        },
+        "actions": {
+          "edit_button_text": "編集",
+          "delete_button_text": "削除",
+          "remove_button_text": "組織から削除"
+        }
+      },
+      "create_consent_modal": {
+        "title": "プロバイダーを作成する前に、以下をご確認ください：",
+        "description": "このプロバイダーを作成すると、${organizationName}へのSSOアクセスが有効になります。セキュリティを優先するため、プロバイダーがアクティブになったら、できるだけ早くアクセス権限を割り当てて、プロバイダーをテストしてください。",
+        "actions": {
+          "cancel_button_text": "キャンセル",
+          "process_button_text": "続行"
+        }
+      },
+      "delete_modal": {
+        "title": "${providerName}を削除",
+        "description": "このプロバイダー経由でサインインしているユーザーはアクセスできなくなります。この操作は元に戻せません。このプロバイダーを削除してもよろしいですか？",
+        "model_content": {
+          "description": "削除を確認するためにプロバイダー名を入力してください。",
+          "field": {
+            "label": "プロバイダー名",
+            "placeholder": "プロバイダー名を入力してください"
+          }
+        },
+        "actions": {
+          "cancel_button_text": "キャンセル",
+          "delete_button_text": "削除"
+        }
+      },
+      "remove_modal": {
+        "title": "${organizationName}から${providerName}を削除",
+        "description": "これにより、この組織のすべてのユーザーの${providerName}へのアクセスが取り消されます。ユーザーは削除されませんが、このプロバイダーを使用してサインインできなくなります",
+        "model_content": {
+          "description": "削除を確認するためにプロバイダー名を入力してください。",
+          "field": {
+            "label": "プロバイダー名",
+            "placeholder": "プロバイダー名を入力してください"
+          }
+        },
+        "actions": {
+          "cancel_button_text": "キャンセル",
+          "remove_button_text": "続行"
+        }
+      },
+      "notifications": {
+        "delete_success": "${providerName}が削除されました。",
+        "remove_success": "${providerName}が${organizationName}から削除されました",
+        "update_success": "${providerName}への変更が保存されました。",
+        "general_error": "リクエストの処理中に問題が発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。"
+      }
+    },
     "create_sso_provider": {
       "select_sso_provider": {
         "title": "IDプロバイダーを選択",

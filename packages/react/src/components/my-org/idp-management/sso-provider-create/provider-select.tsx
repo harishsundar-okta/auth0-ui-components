@@ -1,13 +1,13 @@
 import type { IdpStrategy } from '@auth0-web-ui-components/core';
 import React from 'react';
 
-import GoogleLogo from '@/assets/icons/google-logo';
-import { MicrosoftLogo } from '@/assets/icons/microsoft-logo';
-import { OktaLogo } from '@/assets/icons/okta-logo';
-import { Button } from '@/components/ui/button';
-import { Section } from '@/components/ui/section';
-import { useTranslator } from '@/hooks';
-import type { ProviderSelectProps } from '@/types';
+import GoogleLogo from '../../../../assets/icons/google-logo';
+import { MicrosoftLogo } from '../../../../assets/icons/microsoft-logo';
+import { OktaLogo } from '../../../../assets/icons/okta-logo';
+import { Button } from '../../../../components/ui/button';
+import { Section } from '../../../../components/ui/section';
+import { useTranslator } from '../../../../hooks';
+import type { ProviderSelectProps } from '../../../../types';
 
 const STRATEGY_CONFIG: Record<
   IdpStrategy,

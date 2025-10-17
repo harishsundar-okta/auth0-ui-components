@@ -93,7 +93,7 @@ export type Column<Item> =
 
 export interface EmptyStateProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   action?: ActionButton;
 }
 
@@ -287,7 +287,7 @@ function EmptyState({ title, subtitle, action }: EmptyStateProps) {
   return (
     <div className="text-center py-12">
       <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground mb-4">{subtitle}</p>
+      {subtitle && <p className="text-sm text-muted-foreground mb-4">{subtitle}</p>}
       {action && (
         <Button variant={action.variant} onClick={action.onClick}>
           {action.label}

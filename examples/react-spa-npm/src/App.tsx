@@ -11,6 +11,7 @@ import { config } from './config/env';
 import HomePage from './views/home-page';
 import MFAPage from './views/mfa-page';
 import OrgManagementPage from './views/org-management-page';
+import SsoProviderPage from './views/sso-provider-page';
 import UserProfilePage from './views/user-profile-page';
 
 function AppContent() {
@@ -26,6 +27,7 @@ function AppContent() {
           <Route path="/profile" element={<UserProfilePage />} />
           <Route path="/mfa" element={<MFAPage />} />
           <Route path="/org-management" element={<OrgManagementPage />} />
+          <Route path="/sso-providers" element={<SsoProviderPage />} />
         </Routes>
       </main>
     </div>

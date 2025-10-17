@@ -7,14 +7,16 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 
+import { useTranslator } from '../../../../../hooks/use-translator';
+import { cn } from '../../../../../lib/theme-utils';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Checkbox } from '@/components/ui/checkbox';
-import { FileUpload } from '@/components/ui/file-upload';
+} from '../../../../ui/accordion';
+import { Checkbox } from '../../../../ui/checkbox';
+import { FileUpload } from '../../../../ui/file-upload';
 import {
   FormField,
   FormItem,
@@ -22,20 +24,18 @@ import {
   FormControl,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { Link } from '@/components/ui/link';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+} from '../../../../ui/form';
+import { Label } from '../../../../ui/label';
+import { Link } from '../../../../ui/link';
+import { RadioGroup, RadioGroupItem } from '../../../../ui/radio-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { TextField } from '@/components/ui/text-field';
-import { useTranslator } from '@/hooks';
-import { cn } from '@/lib/theme-utils';
+} from '../../../../ui/select';
+import { TextField } from '../../../../ui/text-field';
 
 interface SamlpConfigureFormProps extends SharedComponentProps<ProviderConfigureFieldsMessages> {
   form: UseFormReturn<ProviderConfigureFormValues>;

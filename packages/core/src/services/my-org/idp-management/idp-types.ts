@@ -1,7 +1,12 @@
 import type { Auth0MyOrg } from 'auth0-myorg-sdk';
 
-export type CreateIdentityProviderRequestContent = Auth0MyOrg.CreateIdentityProviderRequestContent;
+export type ListIdentityProvidersResponseContent = Auth0MyOrg.ListIdentityProvidersResponseContent;
 export type IdentityProvider = Auth0MyOrg.IdpKnown;
+export type DetachIdpProviderResponseContent = Auth0MyOrg.DetachIdpProviderResponseContent;
+export type CreateIdentityProviderRequestContent = Auth0MyOrg.CreateIdentityProviderRequestContent;
+export type UpdateIdentityProviderRequestContent = Auth0MyOrg.UpdateIdentityProviderRequestContent;
+export type UpdateIdentityProviderResponseContent =
+  Auth0MyOrg.UpdateIdentityProviderResponseContent;
 
 export type IdpStrategy =
   | 'adfs'

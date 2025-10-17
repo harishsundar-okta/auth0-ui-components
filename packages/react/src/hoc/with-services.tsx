@@ -26,19 +26,25 @@ export function withServices<P extends object>(
     const { loader } = useTheme();
     const { coreClient } = useCoreClient();
 
+    const defaultLoader = (
+      <div className="fixed inset-0 flex items-center justify-center">
+        <Spinner className="h-8 w-8" />
+      </div>
+    );
+
     // Basic core client check
     if (!coreClient) {
-      return <>{loader || <Spinner />}</>;
+      return <>{loader || defaultLoader}</>;
     }
 
     // Check authentication service requirement
     if (requirements.myAccountApiService && !coreClient.myAccountApiService) {
-      return <>{loader || <Spinner />}</>;
+      return <>{loader || defaultLoader}</>;
     }
 
     // Check MyOrg service requirement
     if (requirements.myOrgService && !coreClient.myOrgApiService) {
-      return <>{loader || <Spinner />}</>;
+      return <>{loader || defaultLoader}</>;
     }
 
     return <WrappedComponent {...props} />;
