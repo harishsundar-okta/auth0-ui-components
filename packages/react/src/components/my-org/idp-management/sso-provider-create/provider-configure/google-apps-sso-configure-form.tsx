@@ -25,6 +25,7 @@ import { TextField } from '../../../../ui/text-field';
 export interface GoogleAppsConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => GoogleAppsConfigureFormValues;
+  isDirty: () => boolean;
 }
 
 interface GoogleAppsConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'strategy'> {}
@@ -33,7 +34,7 @@ export const GoogleAppsProviderForm = React.forwardRef<
   GoogleAppsConfigureFormHandle,
   GoogleAppsConfigureFormProps
 >(function GoogleAppsProviderForm(
-  { initialData, readOnly = false, customMessages = {}, className },
+  { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
   ref,
 ) {
   const { t } = useTranslator(
@@ -62,11 +63,18 @@ export const GoogleAppsProviderForm = React.forwardRef<
     },
   });
 
+  const { isDirty } = form.formState;
+
+  React.useEffect(() => {
+    onFormDirty?.(isDirty);
+  }, [isDirty, onFormDirty]);
+
   React.useImperativeHandle(ref, () => ({
     validate: async () => {
       return await form.trigger();
     },
     getData: () => form.getValues(),
+    isDirty: () => form.formState.isDirty,
   }));
 
   return (

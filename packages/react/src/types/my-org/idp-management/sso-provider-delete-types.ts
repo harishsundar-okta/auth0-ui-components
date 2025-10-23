@@ -4,12 +4,15 @@ import type {
   SsoProviderDeleteModalContentMessages,
   IdentityProvider,
   SsoProviderDeleteSchema,
+  SsoProvideRemoveMessages,
 } from '@auth0-web-ui-components/core';
 
 export interface SsoProviderDeleteClasses {
   'ProviderDelete-root'?: string;
 }
-
+export interface SsoProviderRemoveClasses {
+  'ProviderRemove-root'?: string;
+}
 export interface SsoProviderDeleteModalContentProps
   extends SharedComponentProps<SsoProviderDeleteModalContentMessages, SsoProviderDeleteClasses> {
   onChange: (name: string, value: string) => void;
@@ -23,7 +26,45 @@ export interface SsoProviderDeleteProps
     SsoProviderDeleteSchema
   > {
   provider: IdentityProvider;
-  className?: string;
-  onDelete: (idpId: string) => Promise<void>;
+  onDelete: (provider: IdentityProvider) => Promise<void>;
+  isLoading?: boolean;
+}
+
+export interface SsoProviderDeleteModalProps
+  extends SharedComponentProps<
+    SsoProvideDeleteMessages,
+    SsoProviderDeleteClasses,
+    SsoProviderDeleteSchema
+  > {
+  isOpen: boolean;
+  onClose: () => void;
+  provider: IdentityProvider;
+  onDelete: (provider: IdentityProvider) => Promise<void>;
+  isLoading?: boolean;
+}
+
+export interface SsoProviderRemoveFromOrgProps
+  extends SharedComponentProps<
+    SsoProvideRemoveMessages,
+    SsoProviderRemoveClasses,
+    SsoProviderDeleteSchema
+  > {
+  provider: IdentityProvider;
+  organizationName: string;
+  onRemove: (provider: IdentityProvider) => Promise<void>;
+  isLoading?: boolean;
+}
+
+export interface SsoProviderRemoveFromOrgModalProps
+  extends SharedComponentProps<
+    SsoProvideRemoveMessages,
+    SsoProviderRemoveClasses,
+    SsoProviderDeleteSchema
+  > {
+  isOpen: boolean;
+  onClose: () => void;
+  provider: IdentityProvider;
+  organizationName?: string;
+  onRemove: (provider: IdentityProvider) => Promise<void>;
   isLoading?: boolean;
 }

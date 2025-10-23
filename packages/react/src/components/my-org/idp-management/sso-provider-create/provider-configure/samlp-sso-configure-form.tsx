@@ -56,6 +56,7 @@ const DIGEST_ALGORITHMS = [
 export interface SamlpConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => SamlpConfigureFormValues;
+  isDirty: () => boolean;
 }
 
 interface SamlpConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'strategy'> {}
@@ -64,7 +65,7 @@ export const SamlpProviderForm = React.forwardRef<
   SamlpConfigureFormHandle,
   SamlpConfigureFormProps
 >(function SamlpProviderForm(
-  { initialData, readOnly = false, customMessages = {}, className },
+  { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
   ref,
 ) {
   const { t } = useTranslator(
@@ -91,11 +92,18 @@ export const SamlpProviderForm = React.forwardRef<
     },
   });
 
+  const { isDirty } = form.formState;
+
+  React.useEffect(() => {
+    onFormDirty?.(isDirty);
+  }, [isDirty, onFormDirty]);
+
   React.useImperativeHandle(ref, () => ({
     validate: async () => {
       return await form.trigger();
     },
     getData: () => form.getValues(),
+    isDirty: () => form.formState.isDirty,
   }));
 
   const typeValue = form.watch('meta_data_source');

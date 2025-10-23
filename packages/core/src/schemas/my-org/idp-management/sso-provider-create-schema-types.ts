@@ -165,6 +165,7 @@ export interface ProviderConfigureSchema {
       maxLength?: number;
       required?: boolean;
     };
+    isFrontChannel?: boolean;
   };
 
   pingfederate?: {

@@ -11,13 +11,15 @@ export type DetachIdpProviderResponseContent = Auth0MyOrg.DetachIdpProviderRespo
 export type CreateIdentityProviderRequestContent = Auth0MyOrg.CreateIdentityProviderRequestContent;
 export type CreateIdentityProviderResponseContent =
   Auth0MyOrg.CreateIdentityProviderResponseContent;
+export type GetIdentityProviderResponseContent = Auth0MyOrg.GetIdentityProviderResponseContent;
+export type IdpId = Auth0MyOrg.IdpId;
+export type UpdateIdentityProviderRequestContent = Auth0MyOrg.UpdateIdentityProviderRequestContent;
+export type UpdateIdentityProviderResponseContent =
+  Auth0MyOrg.UpdateIdentityProviderResponseContent;
 
 export type CreateIdentityProviderRequestContentPrivate = ProviderSelectionFormValues &
   ProviderDetailsFormValues &
   ProviderConfigureFormValues;
-export type UpdateIdentityProviderRequestContent = Auth0MyOrg.UpdateIdentityProviderRequestContent;
-export type UpdateIdentityProviderResponseContent =
-  Auth0MyOrg.UpdateIdentityProviderResponseContent;
 export type IdpUpdateBase = Auth0MyOrg.IdpUpdateBase;
 
 export type UpdateIdentityProviderRequestContentPrivate = ProviderSelectionFormValues &

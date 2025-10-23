@@ -28,13 +28,14 @@ import { TextField } from '../../../../ui/text-field';
 export interface AdfsConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => AdfsConfigureFormValues;
+  isDirty: () => boolean;
 }
 
 interface AdfsConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'strategy'> {}
 
 export const AdfsProviderForm = React.forwardRef<AdfsConfigureFormHandle, AdfsConfigureFormProps>(
   function AdfsProviderForm(
-    { initialData, readOnly = false, customMessages = {}, className },
+    { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
     ref,
   ) {
     const { t } = useTranslator(
@@ -58,11 +59,18 @@ export const AdfsProviderForm = React.forwardRef<AdfsConfigureFormHandle, AdfsCo
       },
     });
 
+    const { isDirty } = form.formState;
+
+    React.useEffect(() => {
+      onFormDirty?.(isDirty);
+    }, [isDirty, onFormDirty]);
+
     React.useImperativeHandle(ref, () => ({
       validate: async () => {
         return await form.trigger();
       },
       getData: () => form.getValues(),
+      isDirty: () => form.formState.isDirty,
     }));
 
     const typeValue = form.watch('meta_data_source');

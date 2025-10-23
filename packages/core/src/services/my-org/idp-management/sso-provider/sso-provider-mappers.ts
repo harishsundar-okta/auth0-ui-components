@@ -5,7 +5,10 @@ import type {
 } from '@core/schemas';
 
 import type { IdpStrategy } from '../idp-types';
-import type { CreateIdentityProviderRequestContent } from '../idp-types';
+import type {
+  CreateIdentityProviderRequestContent,
+  UpdateIdentityProviderRequestContent,
+} from '../idp-types';
 
 import { STRATEGIES } from './sso-provider-constants';
 
@@ -13,6 +16,14 @@ type CombinedProviderFormValues = ProviderSelectionFormValues &
   ProviderDetailsFormValues & {
     options: ProviderConfigureFormValues;
   };
+
+type UpdateProviderFormValues = Partial<ProviderDetailsFormValues> & {
+  strategy?: IdpStrategy;
+  options?: Partial<ProviderConfigureFormValues>;
+  is_enabled?: boolean;
+  show_as_button?: boolean;
+  assign_membership_on_login?: boolean;
+};
 
 const STRATEGY_FIELD_MAPPINGS = {
   [STRATEGIES.OKTA]: ['domain', 'client_id', 'client_secret', 'icon_url'],
@@ -84,5 +95,46 @@ export const SsoProviderMappers = {
       display_name,
       options: getValidOptionsForStrategy(strategy, options),
     };
+  },
+
+  /**
+   * Transforms form data to API request format for updating SSO providers.
+   * Only includes fields that have been modified and are valid for the strategy.
+   */
+  updateToAPI(data: UpdateProviderFormValues): UpdateIdentityProviderRequestContent {
+    const {
+      strategy,
+      display_name,
+      is_enabled,
+      show_as_button,
+      assign_membership_on_login,
+      ...configOptions
+    } = data;
+
+    const updateRequest: UpdateIdentityProviderRequestContent = {};
+
+    // Only include defined values for core fields
+    if (display_name !== undefined) {
+      updateRequest.display_name = display_name;
+    }
+    if (is_enabled !== undefined) {
+      updateRequest.is_enabled = is_enabled;
+    }
+    if (show_as_button !== undefined) {
+      updateRequest.show_as_button = show_as_button;
+    }
+    if (assign_membership_on_login !== undefined) {
+      updateRequest.assign_membership_on_login = assign_membership_on_login;
+    }
+
+    // Add filtered options if strategy exists and config options are provided
+    if (strategy && Object.keys(configOptions).length > 0) {
+      const validOptions = getValidOptionsForStrategy(strategy, configOptions);
+      if (Object.keys(validOptions).length > 0) {
+        updateRequest.options = validOptions;
+      }
+    }
+
+    return updateRequest;
   },
 };

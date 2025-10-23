@@ -44,6 +44,7 @@ interface OidcOptions {
   client_id?: FieldOptions;
   client_secret?: FieldOptions;
   discovery_url?: FieldOptions;
+  isFrontChannel?: boolean;
 }
 
 interface PingFederateOptions {
@@ -158,8 +159,8 @@ const STRATEGY_BUILDERS = {
       }),
     }),
 
-  oidc: (options: OidcOptions = {}) =>
-    z.object({
+  oidc: (options: OidcOptions = {}) => {
+    const baseSchema = z.object({
       type: createFieldSchema(
         COMMON_FIELD_CONFIGS.algorithm,
         { ...options.type, required: true },
@@ -178,7 +179,24 @@ const STRATEGY_BUILDERS = {
         { ...options.discovery_url, required: true },
         'Please enter a valid discovery URL',
       ),
-    }),
+    });
+
+    // Add conditional validation for client_secret
+    return baseSchema.superRefine((data, ctx) => {
+      const isFrontChannel = data.type === 'front_channel';
+
+      // Only require client_secret for back_channel in create mode
+      if (!isFrontChannel) {
+        if (!data.client_secret || data.client_secret.trim() === '') {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Client secret is required',
+            path: ['client_secret'],
+          });
+        }
+      }
+    });
+  },
 
   pingfederate: (options: PingFederateOptions = {}) =>
     z.object({
@@ -370,7 +388,7 @@ export function createProviderConfigureSchema<T extends IdpStrategy>(
   strategy: T,
   options: ProviderConfigureSchema = {},
 ): StrategySchemaMap[T] {
-  const strategyOptions = options[strategy] || {};
+  const strategyOptions = { ...(options[strategy] || {}) };
   const builder = STRATEGY_BUILDERS[strategy];
 
   if (!builder) {

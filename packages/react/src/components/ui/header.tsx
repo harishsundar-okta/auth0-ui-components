@@ -6,7 +6,7 @@ import * as React from 'react';
 import { cn } from '../../lib/theme-utils';
 
 import { Button } from './button';
-import { Toggle } from './toggle';
+import { Switch } from './switch';
 
 export interface BaseActionProps extends Omit<CoreActionButton, 'icon' | 'onClick'> {
   icon?: LucideIcon;
@@ -18,14 +18,14 @@ export interface ButtonActionProps extends BaseActionProps {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export interface ToggleActionProps extends Omit<BaseActionProps, 'type'> {
-  type: 'toggle';
-  pressed?: boolean;
-  onPressedChange: (pressed: boolean) => void;
-  'aria-label': string;
+export interface SwitchActionProps extends Omit<BaseActionProps, 'type' | 'label'> {
+  type: 'switch';
+  checked?: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  'aria-label'?: string;
 }
 
-export type ActionProps = ButtonActionProps | ToggleActionProps;
+export type ActionProps = ButtonActionProps | SwitchActionProps;
 
 export interface HeaderProps {
   title?: string;
@@ -61,29 +61,21 @@ const ButtonAction: React.FC<ButtonActionProps> = ({
   </Button>
 );
 
-const ToggleAction: React.FC<ToggleActionProps> = ({
-  icon: Icon,
+const SwitchAction: React.FC<SwitchActionProps> = ({
   className,
-  label,
   'aria-label': ariaLabel,
-  pressed,
-  onPressedChange,
+  checked,
+  onCheckedChange,
   disabled,
-  variant,
-  size,
 }) => (
-  <Toggle
-    pressed={pressed}
-    onPressedChange={onPressedChange}
-    disabled={disabled}
-    variant={variant === 'outline' ? 'outline' : 'default'}
-    size={size === 'icon' || size === 'xs' ? 'sm' : size}
-    className={cn('flex items-center gap-2', className)}
-    aria-label={ariaLabel}
-  >
-    {Icon && <Icon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />}
-    {label && <span className="truncate">{label}</span>}
-  </Toggle>
+  <div className={cn('flex items-center gap-2', className)}>
+    <Switch
+      checked={checked}
+      onCheckedChange={onCheckedChange}
+      disabled={disabled}
+      aria-label={ariaLabel}
+    />
+  </div>
 );
 
 export const Header = React.forwardRef<
@@ -94,8 +86,8 @@ export const Header = React.forwardRef<
 
   const renderAction = (action: ActionProps, index: number) => {
     const key = `action-${index}`;
-    return action.type === 'toggle' ? (
-      <ToggleAction key={key} {...action} />
+    return action.type === 'switch' ? (
+      <SwitchAction key={key} {...action} />
     ) : (
       <ButtonAction key={key} {...action} />
     );

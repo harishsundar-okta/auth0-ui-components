@@ -54,6 +54,7 @@ const DIGEST_ALGORITHMS = [
 export interface PingFederateConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => PingFederateConfigureFormValues;
+  isDirty: () => boolean;
 }
 
 interface PingFederateConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'strategy'> {}
@@ -62,7 +63,7 @@ export const PingFederateProviderForm = React.forwardRef<
   PingFederateConfigureFormHandle,
   PingFederateConfigureFormProps
 >(function PingFederateProviderForm(
-  { initialData, readOnly = false, customMessages = {}, className },
+  { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
   ref,
 ) {
   const { t } = useTranslator(
@@ -87,11 +88,18 @@ export const PingFederateProviderForm = React.forwardRef<
     },
   });
 
+  const { isDirty } = form.formState;
+
+  React.useEffect(() => {
+    onFormDirty?.(isDirty);
+  }, [isDirty, onFormDirty]);
+
   React.useImperativeHandle(ref, () => ({
     validate: async () => {
       return await form.trigger();
     },
     getData: () => form.getValues(),
+    isDirty: () => form.formState.isDirty,
   }));
 
   const signRequestEnabled = form.watch('signSAMLRequest');

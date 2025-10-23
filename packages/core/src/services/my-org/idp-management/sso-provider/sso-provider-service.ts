@@ -5,6 +5,8 @@ import type {
   DetachIdpProviderResponseContent,
   CreateIdentityProviderRequestContent,
   CreateIdentityProviderResponseContent,
+  IdpId,
+  GetIdentityProviderResponseContent,
   UpdateIdentityProviderRequestContent,
   UpdateIdentityProviderResponseContent,
 } from '../idp-types';
@@ -22,7 +24,15 @@ export async function createIdentityProvider(
   return post(`${baseUrl}my-org/identity-providers`, provider);
 }
 
-export async function deleteIdentityProvider(baseUrl: string, idpId: string): Promise<void> {
+export async function updateIdentityProvider(
+  baseUrl: string,
+  idpId: IdpId,
+  provider: UpdateIdentityProviderRequestContent,
+): Promise<UpdateIdentityProviderResponseContent> {
+  return patch(`${baseUrl}my-org/identity-providers/${idpId}`, provider);
+}
+
+export async function deleteIdentityProvider(baseUrl: string, idpId: IdpId): Promise<void> {
   return del(`${baseUrl}my-org/identity-providers/${idpId}`);
 }
 
@@ -33,10 +43,9 @@ export async function detachIdentityProvider(
   return post(`${baseUrl}my-org/identity-providers/${idpId}/detach`, undefined);
 }
 
-export async function updateIdentityProvider(
+export async function getIdentityProvider(
   baseUrl: string,
-  idpId: string,
-  data: UpdateIdentityProviderRequestContent,
-): Promise<UpdateIdentityProviderResponseContent> {
-  return patch(`${baseUrl}my-org/identity-providers/${idpId}`, data);
+  idpId: IdpId,
+): Promise<GetIdentityProviderResponseContent> {
+  return get(`${baseUrl}my-org/identity-providers/${idpId}`);
 }

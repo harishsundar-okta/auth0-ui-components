@@ -23,10 +23,14 @@ import { TextField } from '../../../ui/text-field';
 export interface ProviderDetailsFormHandle {
   validate: () => Promise<boolean>;
   getData: () => ProviderDetailsFormValues;
+  isDirty: () => boolean;
 }
 
 export const ProviderDetails = React.forwardRef<ProviderDetailsFormHandle, ProviderDetailsProps>(
-  function ProviderDetails({ initialData, readOnly = false, customMessages = {}, className }, ref) {
+  function ProviderDetails(
+    { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
+    ref,
+  ) {
     const { t } = useTranslator(
       'idp_management.create_sso_provider.provider_details',
       customMessages,
@@ -42,11 +46,18 @@ export const ProviderDetails = React.forwardRef<ProviderDetailsFormHandle, Provi
       },
     });
 
+    const { isDirty } = form.formState;
+
+    React.useEffect(() => {
+      onFormDirty?.(isDirty);
+    }, [isDirty, onFormDirty]);
+
     React.useImperativeHandle(ref, () => ({
       validate: async () => {
         return await form.trigger();
       },
       getData: () => form.getValues(),
+      isDirty: () => form.formState.isDirty,
     }));
 
     return (

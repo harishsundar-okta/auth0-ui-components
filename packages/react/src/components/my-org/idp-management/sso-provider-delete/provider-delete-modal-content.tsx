@@ -15,7 +15,7 @@ export function SsoProviderDeleteModalContent({
     onChange('providerName', event.target.value);
   };
 
-  const { t } = useTranslator('idp_management.delete_sso_provider.model_content', customMessages);
+  const { t } = useTranslator('idp_management.delete_sso_provider.modal.content', customMessages);
 
   return (
     <div className={className}>

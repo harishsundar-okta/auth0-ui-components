@@ -32,6 +32,8 @@ export function SsoProviderDetails({
   const { isDarkMode } = useTheme();
   const providerDetailsRef = React.useRef<ProviderDetailsFormHandle>(null);
   const providerConfigureRef = React.useRef<ProviderConfigureFormHandle>(null);
+  const [isDetailsDirty, setIsDetailsDirty] = React.useState(false);
+  const [isConfigureDirty, setIsConfigureDirty] = React.useState(false);
 
   const currentStyles = React.useMemo(
     () => getComponentStyles(styling, isDarkMode),
@@ -46,6 +48,8 @@ export function SsoProviderDetails({
       display_name: provider.display_name ?? undefined,
     };
   }, [provider]);
+
+  const hasUnsavedChanges = isDetailsDirty || isConfigureDirty;
 
   const handleSave = async () => {
     if (!formActions?.nextAction?.onClick || !provider?.strategy) return;
@@ -66,6 +70,9 @@ export function SsoProviderDetails({
     };
 
     await formActions.nextAction.onClick(updateData);
+
+    setIsDetailsDirty(false);
+    setIsConfigureDirty(false);
   };
 
   if (!provider) {
@@ -79,9 +86,10 @@ export function SsoProviderDetails({
           ref={providerDetailsRef}
           initialData={providerDetailsData}
           readOnly={readOnly}
-          customMessages={customMessages.provider_details}
+          customMessages={customMessages.details_fields}
           className={currentStyles.classes?.['ProviderDetails-root']}
           hideHeader
+          onFormDirty={setIsDetailsDirty}
         />
       </div>
 
@@ -91,17 +99,24 @@ export function SsoProviderDetails({
           strategy={provider.strategy}
           initialData={provider.options}
           readOnly={readOnly}
-          customMessages={customMessages.provider_configure}
+          customMessages={customMessages.configure_fields}
           className={currentStyles.classes?.['ProviderConfigure-root']}
+          onFormDirty={setIsConfigureDirty}
         />
       </div>
 
       {formActions && (
         <FormActions
+          hasUnsavedChanges={hasUnsavedChanges}
+          showUnsavedChanges
           isLoading={formActions.isLoading}
           nextAction={{
             label: t('submit_button_label'),
-            disabled: formActions?.nextAction?.disabled || formActions.isLoading || readOnly,
+            disabled:
+              !hasUnsavedChanges ||
+              formActions?.nextAction?.disabled ||
+              formActions.isLoading ||
+              readOnly,
             type: 'button',
             onClick: handleSave,
           }}

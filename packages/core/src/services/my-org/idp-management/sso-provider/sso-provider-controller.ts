@@ -7,8 +7,11 @@ import type {
   DetachIdpProviderResponseContent,
   CreateIdentityProviderRequestContent,
   CreateIdentityProviderResponseContent,
+  GetIdentityProviderResponseContent,
+  IdpId,
   UpdateIdentityProviderRequestContent,
   UpdateIdentityProviderResponseContent,
+  UpdateIdentityProviderRequestContentPrivate,
 } from '../idp-types';
 
 import { SsoProviderMappers } from './sso-provider-mappers';
@@ -16,8 +19,9 @@ import {
   getIdentityProviders,
   deleteIdentityProvider,
   detachIdentityProvider,
-  updateIdentityProvider,
   createIdentityProvider,
+  getIdentityProvider,
+  updateIdentityProvider,
 } from './sso-provider-service';
 
 export interface IdentityProvidersController {
@@ -27,9 +31,10 @@ export interface IdentityProvidersController {
   create(
     provider: CreateIdentityProviderRequestContentPrivate,
   ): Promise<CreateIdentityProviderResponseContent>;
+  get(idpId: IdpId): Promise<GetIdentityProviderResponseContent>;
   update(
-    idpId: string,
-    data: UpdateIdentityProviderRequestContent,
+    idpId: IdpId,
+    provider: UpdateIdentityProviderRequestContentPrivate,
   ): Promise<UpdateIdentityProviderResponseContent>;
 }
 
@@ -56,7 +61,7 @@ export function createIdentityProvidersController(
     create: (provider: CreateIdentityProviderRequestContentPrivate) => {
       const { strategy, name, display_name, ...configOptions } = provider;
 
-      const providerRequestData = {
+      const formData = {
         strategy,
         name,
         display_name,
@@ -64,7 +69,7 @@ export function createIdentityProvidersController(
       };
 
       const apiRequestData: CreateIdentityProviderRequestContent =
-        SsoProviderMappers.createToAPI(providerRequestData);
+        SsoProviderMappers.createToAPI(formData);
 
       return delegateCall(
         () => createIdentityProvider(coreClient.getApiBaseUrl(), apiRequestData),
@@ -84,10 +89,23 @@ export function createIdentityProvidersController(
         () => myOrgClient!.organization.identityProviders.detach(idpId),
       ),
 
-    update: (idpId: string, data: UpdateIdentityProviderRequestContent) =>
+    get: (idpId: IdpId) =>
       delegateCall(
-        () => updateIdentityProvider(coreClient.getApiBaseUrl(), idpId, data),
-        () => myOrgClient!.organization.identityProviders.update(idpId, data),
+        () => getIdentityProvider(coreClient.getApiBaseUrl(), idpId),
+        () => myOrgClient!.organization.identityProviders.get(idpId),
       ),
+
+    update: (
+      idpId: IdpId,
+      provider: UpdateIdentityProviderRequestContentPrivate,
+    ): Promise<UpdateIdentityProviderResponseContent> => {
+      const apiRequestData: UpdateIdentityProviderRequestContent =
+        SsoProviderMappers.updateToAPI(provider);
+
+      return delegateCall(
+        () => updateIdentityProvider(coreClient.getApiBaseUrl(), idpId, apiRequestData),
+        () => myOrgClient!.organization.identityProviders.update(idpId, apiRequestData),
+      );
+    },
   };
 }

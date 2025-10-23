@@ -2,7 +2,7 @@ import type {
   ComponentAction,
   IdentityProvider,
   OrganizationPrivate,
-  UpdateIdentityProviderRequestContent,
+  UpdateIdentityProviderRequestContentPrivate,
 } from '@auth0-web-ui-components/core';
 import { useCallback, useState, useEffect } from 'react';
 
@@ -20,7 +20,7 @@ export function useSsoProviderTable(
   enableAction?: ComponentAction<IdentityProvider, boolean>,
   customMessages = {},
 ): UseSsoProviderTableReturn {
-  const { t } = useTranslator('idp_management.sso_provider_table', customMessages);
+  const { t } = useTranslator('idp_management.notifications', customMessages);
   const { coreClient } = useCoreClient();
 
   const [providers, setProviders] = useState<IdentityProvider[]>([]);
@@ -44,7 +44,7 @@ export function useSsoProviderTable(
     } catch (error) {
       showToast({
         type: 'error',
-        message: t('notifications.general_error'),
+        message: t('general_error'),
       });
       return null;
     }
@@ -65,7 +65,7 @@ export function useSsoProviderTable(
     } catch (error) {
       showToast({
         type: 'error',
-        message: t('notifications.general_error'),
+        message: t('general_error'),
       });
     } finally {
       setIsDataLoading(false);
@@ -88,7 +88,8 @@ export function useSsoProviderTable(
           }
         }
 
-        const updateData: UpdateIdentityProviderRequestContent = {
+        const updateData: UpdateIdentityProviderRequestContentPrivate = {
+          strategy: selectedIdp.strategy,
           is_enabled: enabled,
         };
 
@@ -115,7 +116,7 @@ export function useSsoProviderTable(
       } catch (error) {
         showToast({
           type: 'error',
-          message: t('notifications.general_error'),
+          message: t('general_error'),
         });
         return false;
       } finally {
@@ -149,7 +150,7 @@ export function useSsoProviderTable(
       } catch (error) {
         showToast({
           type: 'error',
-          message: t('notifications.general_error'),
+          message: t('general_error'),
         });
       } finally {
         setIsDeleting(false);
@@ -187,7 +188,7 @@ export function useSsoProviderTable(
       } catch (error) {
         showToast({
           type: 'error',
-          message: t('notifications.general_error'),
+          message: t('general_error'),
         });
       } finally {
         setIsRemoving(false);

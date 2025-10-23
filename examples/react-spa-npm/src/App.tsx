@@ -12,6 +12,7 @@ import HomePage from './views/home-page';
 import MFAPage from './views/mfa-page';
 import OrgManagementPage from './views/org-management-page';
 import SsoProviderCreatePage from './views/sso-provider-create-page';
+import SsoProviderEditPage from './views/sso-provider-edit-page';
 import SsoProviderPage from './views/sso-provider-page';
 import UserProfilePage from './views/user-profile-page';
 
@@ -30,6 +31,7 @@ function AppContent() {
           <Route path="/org-management" element={<OrgManagementPage />} />
           <Route path="/sso-providers" element={<SsoProviderPage />} />
           <Route path="/sso-provider/create" element={<SsoProviderCreatePage />} />
+          <Route path="/sso-provider/edit/:id" element={<SsoProviderEditPage />} />
         </Routes>
       </main>
     </div>

@@ -25,13 +25,14 @@ import { TextField } from '../../../../ui/text-field';
 export interface WaadConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => WaadConfigureFormValues;
+  isDirty: () => boolean;
 }
 
 interface WaadConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'strategy'> {}
 
 export const WaadProviderForm = React.forwardRef<WaadConfigureFormHandle, WaadConfigureFormProps>(
   function WaadProviderForm(
-    { initialData, readOnly = false, customMessages = {}, className },
+    { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
     ref,
   ) {
     const { t } = useTranslator(
@@ -60,11 +61,18 @@ export const WaadProviderForm = React.forwardRef<WaadConfigureFormHandle, WaadCo
       },
     });
 
+    const { isDirty } = form.formState;
+
+    React.useEffect(() => {
+      onFormDirty?.(isDirty);
+    }, [isDirty, onFormDirty]);
+
     React.useImperativeHandle(ref, () => ({
       validate: async () => {
         return await form.trigger();
       },
       getData: () => form.getValues(),
+      isDirty: () => form.formState.isDirty,
     }));
 
     return (

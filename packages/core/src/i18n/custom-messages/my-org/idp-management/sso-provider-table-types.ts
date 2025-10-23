@@ -1,4 +1,7 @@
-import type { SsoProviderDeleteModalContentMessages } from './sso-provider-delete-types';
+import type {
+  SsoProvideDeleteMessages,
+  SsoProviderDeleteModalContentMessages,
+} from './sso-provider-delete-types';
 
 export interface SsoProviderTableMessages {
   header: {
@@ -27,15 +30,7 @@ export interface SsoProviderTableMessages {
       process_button_text?: string;
     };
   };
-  delete_modal: {
-    title?: string;
-    description?: string;
-    model_content?: SsoProviderDeleteModalContentMessages;
-    actions?: {
-      cancel_button_text?: string;
-      delete_button_text?: string;
-    };
-  };
+  delete_modal: SsoProvideDeleteMessages;
   remove_modal: {
     title?: string;
     description?: string;

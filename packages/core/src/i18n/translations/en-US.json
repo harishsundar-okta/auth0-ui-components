@@ -96,42 +96,6 @@
           "cancel_button_text": "Cancel",
           "process_button_text": "Proceed"
         }
-      },
-      "delete_modal": {
-        "title": "Delete ${providerName}",
-        "description": "Users who sign in through this provider will lose access. This action cannot be undone. Are you sure you want to delete this provider?",
-        "model_content": {
-          "description": "Type in the name of the provider to confirm.",
-          "field": {
-            "label": "Provider Name",
-            "placeholder": "Type in the provider name"
-          }
-        },
-        "actions": {
-          "cancel_button_text": "Cancel",
-          "delete_button_text": "Delete"
-        }
-      },
-      "remove_modal": {
-        "title": "Remove ${providerName} from ${organizationName}",
-        "description": "This will revoke access to ${providerName} for all users in this organization. Users will not be deleted but will no longer be able to sign in using this provider",
-        "model_content": {
-          "description": "Type in the name of the provider to confirm.",
-          "field": {
-            "label": "Provider Name",
-            "placeholder": "Type in the provider name"
-          }
-        },
-        "actions": {
-          "cancel_button_text": "Cancel",
-          "remove_button_text": "Proceed"
-        }
-      },
-      "notifications": {
-        "delete_success": "${providerName} has been deleted.",
-        "remove_success": "${providerName} has been removed from ${organizationName}",
-        "update_success": "Changes to ${providerName} have been saved.",
-        "general_error": "There was an issue processing your request. Please try again or contact support if the issue persists."
       }
     },
     "create_sso_provider": {
@@ -414,31 +378,80 @@
       }
     },
     "edit_sso_provider": {
-      "delete_sso_provider": {
-        "title": "Delete this provider",
-        "description": "Once confirmed, this operation cannot be undone.",
-        "delete_button_label": "Delete",
-        "modal": {
-          "title": "Delete ${providerName}",
-          "description": "Users who sign in through this provider will lose access. The action cannot be undone. Are you sure you want to delete this provider?",
-          "actions": {
-            "cancel_button_label": "Cancel",
-            "delete_button_label": "Delete"
+      "header": {
+        "back_button_text": "Back to Single Sign-On"
+      },
+      "tabs": {
+        "sso": {
+          "name": "Single Sign-On",
+          "content": {
+            "title": "Single Sign-On",
+            "description": "Manage and configure single sign-on.",
+            "alert": {
+              "warning": "User attribute mappings for single sign-on have been updated. Please review the attributes and update your identity provider configuration to avoid login issues."
+            }
           }
+        },
+        "provisioning": {
+          "name": "Provisioning"
+        },
+        "domains": {
+          "name": "Domains"
         }
       },
       "provider_details": {
         "save_button_label": "Save"
       }
     },
+    "sso_provider_details": {
+      "unsaved_changes_text": "Unsaved changes",
+      "submit_button_label": "Save"
+    },
     "delete_sso_provider": {
-      "model_content": {
-        "description": "Type in the name of the provider to confirm.",
-        "field": {
-          "label": "Provider Name",
-          "placeholder": "Type in the provider name"
+      "title": "Delete this provider",
+      "description": "Once confirmed, this operation cannot be undone.",
+      "delete_button_label": "Delete",
+      "modal": {
+        "title": "Delete ${providerName}",
+        "description": "Users who sign in through this provider will lose access. The action cannot be undone. Are you sure you want to delete this provider?",
+        "content": {
+          "description": "Type in the name of the provider to confirm.",
+          "field": {
+            "label": "Provider Name",
+            "placeholder": "Type in the provider name"
+          }
+        },
+        "actions": {
+          "cancel_button_label": "Cancel",
+          "delete_button_label": "Delete"
         }
       }
+    },
+    "remove_sso_provider": {
+      "title": "Remove this provider from the organization",
+      "description": "Once confirmed, this operation cannot be undone.",
+      "remove_button_label": "Delete",
+      "modal": {
+        "title": "Remove ${providerName} from ${organizationName}",
+        "description": "This will revoke access to ${providerName} for all users in this organization. Users will not be deleted but will no longer be able to sign in using this provider",
+        "content": {
+          "description": "Type in the name of the provider to confirm.",
+          "field": {
+            "label": "Provider Name",
+            "placeholder": "Type in the provider name"
+          }
+        },
+        "actions": {
+          "cancel_button_text": "Cancel",
+          "remove_button_text": "Proceed"
+        }
+      }
+    },
+    "notifications": {
+      "delete_success": "${providerName} has been deleted.",
+      "remove_success": "${providerName} has been removed from ${organizationName}",
+      "update_success": "Changes to ${providerName} have been saved.",
+      "general_error": "There was an issue processing your request. Please try again or contact support if the issue persists."
     }
   },
   "mfa": {

@@ -26,13 +26,14 @@ import { TextField } from '../../../../ui/text-field';
 export interface OidcConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => OidcConfigureFormValues;
+  isDirty: () => boolean;
 }
 
 interface OidcConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'strategy'> {}
 
 export const OidcProviderForm = React.forwardRef<OidcConfigureFormHandle, OidcConfigureFormProps>(
   function OidcProviderForm(
-    { initialData, readOnly = false, customMessages = {}, className },
+    { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
     ref,
   ) {
     const { t } = useTranslator(
@@ -54,15 +55,30 @@ export const OidcProviderForm = React.forwardRef<OidcConfigureFormHandle, OidcCo
       },
     });
 
+    const { isDirty } = form.formState;
+
+    React.useEffect(() => {
+      onFormDirty?.(isDirty);
+    }, [isDirty, onFormDirty]);
+
     React.useImperativeHandle(ref, () => ({
       validate: async () => {
         return await form.trigger();
       },
       getData: () => form.getValues(),
+      isDirty: () => form.formState.isDirty,
     }));
 
     const typeValue = form.watch('type');
     const showClientSecret = typeValue === 'back_channel';
+
+    // Clear client_secret error and value when switching to front channel
+    React.useEffect(() => {
+      if (typeValue === 'front_channel') {
+        form.clearErrors('client_secret');
+        form.setValue('client_secret', '', { shouldValidate: false });
+      }
+    }, [typeValue, form]);
 
     return (
       <Form {...form}>

@@ -96,42 +96,6 @@
           "cancel_button_text": "キャンセル",
           "process_button_text": "続行"
         }
-      },
-      "delete_modal": {
-        "title": "${providerName}を削除",
-        "description": "このプロバイダー経由でサインインしているユーザーはアクセスできなくなります。この操作は元に戻せません。このプロバイダーを削除してもよろしいですか？",
-        "model_content": {
-          "description": "削除を確認するためにプロバイダー名を入力してください。",
-          "field": {
-            "label": "プロバイダー名",
-            "placeholder": "プロバイダー名を入力してください"
-          }
-        },
-        "actions": {
-          "cancel_button_text": "キャンセル",
-          "delete_button_text": "削除"
-        }
-      },
-      "remove_modal": {
-        "title": "${organizationName}から${providerName}を削除",
-        "description": "これにより、この組織のすべてのユーザーの${providerName}へのアクセスが取り消されます。ユーザーは削除されませんが、このプロバイダーを使用してサインインできなくなります",
-        "model_content": {
-          "description": "削除を確認するためにプロバイダー名を入力してください。",
-          "field": {
-            "label": "プロバイダー名",
-            "placeholder": "プロバイダー名を入力してください"
-          }
-        },
-        "actions": {
-          "cancel_button_text": "キャンセル",
-          "remove_button_text": "続行"
-        }
-      },
-      "notifications": {
-        "delete_success": "${providerName}が削除されました。",
-        "remove_success": "${providerName}が${organizationName}から削除されました",
-        "update_success": "${providerName}への変更が保存されました。",
-        "general_error": "リクエストの処理中に問題が発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。"
       }
     },
     "create_sso_provider": {
@@ -414,17 +378,25 @@
       }
     },
     "edit_sso_provider": {
-      "delete_sso_provider": {
-        "title": "このプロバイダーを削除",
-        "description": "一度確認すると、この操作は元に戻すことができません。",
-        "delete_button_label": "削除",
-        "modal": {
-          "title": "${providerName}を削除",
-          "description": "このプロバイダーでサインインするユーザーはアクセスできなくなります。この操作は元に戻すことができません。このプロバイダーを削除してもよろしいですか？",
-          "actions": {
-            "cancel_button_label": "キャンセル",
-            "delete_button_label": "削除"
+      "header": {
+        "back_button_text": "シングルサインオンに戻る"
+      },
+      "tabs": {
+        "sso": {
+          "name": "シングルサインオン",
+          "content": {
+            "title": "シングルサインオン",
+            "description": "シングルサインオンを管理・設定します。",
+            "alert": {
+              "warning": "シングルサインオンのユーザー属性マッピングが更新されました。ログインの問題を回避するため、属性を確認してアイデンティティプロバイダーの設定を更新してください。"
+            }
           }
+        },
+        "provisioning": {
+          "name": "プロビジョニング"
+        },
+        "domains": {
+          "name": "ドメイン"
         }
       },
       "provider_details": {
@@ -432,13 +404,55 @@
       }
     },
     "delete_sso_provider": {
-      "model_content": {
-        "description": "確認のためにプロバイダー名を入力してください。",
-        "field": {
-          "label": "プロバイダー名",
-          "placeholder": "プロバイダー名を入力"
+      "title": "このプロバイダーを削除",
+      "description": "一度確認すると、この操作は元に戻すことができません。",
+      "delete_button_label": "削除",
+      "modal": {
+        "title": "${providerName}を削除",
+        "description": "このプロバイダーでサインインするユーザーはアクセスできなくなります。この操作は元に戻すことができません。このプロバイダーを削除してもよろしいですか？",
+        "content": {
+          "description": "確認のためにプロバイダー名を入力してください。",
+          "field": {
+            "label": "プロバイダー名",
+            "placeholder": "プロバイダー名を入力"
+          }
+        },
+        "actions": {
+          "cancel_button_label": "キャンセル",
+          "delete_button_label": "削除"
         }
       }
+    },
+    "remove_sso_provider": {
+      "title": "組織からこのプロバイダーを削除",
+      "description": "確認後、この操作は元に戻すことができません。",
+      "remove_button_label": "削除",
+      "modal": {
+        "title": "${organizationName}から${providerName}を削除",
+        "description": "この操作により、この組織のすべてのユーザーの${providerName}へのアクセスが取り消されます。ユーザーは削除されませんが、このプロバイダーを使用してサインインできなくなります",
+
+        "content": {
+          "description": "確認のためプロバイダー名を入力してください。",
+          "field": {
+            "label": "プロバイダー名",
+            "placeholder": "プロバイダー名を入力"
+          }
+        },
+        "actions": {
+          "cancel_button_text": "キャンセル",
+          "remove_button_text": "実行"
+        }
+      }
+    },
+    "sso_provider_details": {
+      "unsaved_changes_text": "未保存の変更",
+      "submit_button_label": "保存"
+    },
+    "notifications": {
+      "delete_success": "${providerName}が削除されました。",
+      "remove_success": "${providerName}が${organizationName}から削除されました",
+      "update_success": "${providerName}への変更が保存されました。",
+      "general_error": "リクエストの処理中に問題が発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。"
     }
   },
   "mfa": {

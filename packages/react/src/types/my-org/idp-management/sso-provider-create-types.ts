@@ -42,6 +42,7 @@ export interface ProviderDetailsProps
   initialData?: Partial<ProviderDetailsFormValues>;
   className?: string;
   hideHeader?: boolean;
+  onFormDirty?: (isDirty: boolean) => void;
 }
 
 export interface ProviderConfigureProps
@@ -56,6 +57,7 @@ export interface ProviderConfigureFieldsProps
   strategy: IdpStrategy;
   initialData?: Partial<ProviderConfigureFormValues>;
   className?: string;
+  onFormDirty?: (isDirty: boolean) => void;
 }
 
 export interface SsoProviderCreateBackButton extends Omit<BackButton, 'onClick'> {
@@ -77,8 +79,4 @@ export interface SsoProviderCreateProps
 export interface UseSsoProviderCreateOptions {
   create?: SsoProviderCreateProps['create'];
   customMessages?: SsoProviderCreateProps['customMessages'];
-}
-export interface WizardStepAction {
-  onBefore?: (stepId: string, values: SsoProviderFormValues) => boolean;
-  onAfter?: (stepId: string, values: SsoProviderFormValues) => void;
 }

@@ -6,17 +6,16 @@ import {
 import { Plus } from 'lucide-react';
 import * as React from 'react';
 
-import { SsoProviderTableActionsColumn } from '../../../components/my-org/idp-management/sso-provider-create/sso-provider-table/sso-provider-table-action';
-import { SsoProviderDeleteModalContent } from '../../../components/my-org/idp-management/sso-provider-delete/provider-delete-modal-content';
+import { SsoProviderDeleteModal } from '../../../components/my-org/idp-management/sso-provider-delete/provider-delete-modal';
+import { SsoProviderRemoveFromOrgModal } from '../../../components/my-org/idp-management/sso-provider-remove/provider-remove-modal';
+import { SsoProviderTableActionsColumn } from '../../../components/my-org/idp-management/sso-provider-table/sso-provider-table-action';
 import { DataTable, type Column } from '../../../components/ui/data-table';
 import { Header } from '../../../components/ui/header';
-import { Modal } from '../../../components/ui/modal';
 import { Spinner } from '../../../components/ui/spinner';
 import { withMyOrgService } from '../../../hoc/with-services';
 import { useSsoProviderTable } from '../../../hooks/my-org/idp-management/use-sso-provider-table';
 import { useTheme } from '../../../hooks/use-theme';
 import { useTranslator } from '../../../hooks/use-translator';
-import { cn } from '../../../lib/theme-utils';
 import type { SsoProviderTableProps } from '../../../types';
 
 /**
@@ -53,7 +52,6 @@ function SsoProviderTableComponent({
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
   const [showRemoveModal, setShowRemoveModal] = React.useState(false);
   const [selectedIdp, setSelectedIdp] = React.useState<IdentityProvider | null>(null);
-  const [confirmationText, setConfirmationText] = React.useState('');
 
   const currentStyles = React.useMemo(
     () => getComponentStyles(styling, isDarkMode),
@@ -113,36 +111,22 @@ function SsoProviderTableComponent({
   );
 
   const handleDeleteConfirm = React.useCallback(
-    async (idp: IdentityProvider) => {
-      await onDeleteConfirm(idp);
+    async (provider: IdentityProvider) => {
+      await onDeleteConfirm(provider);
       setShowDeleteModal(false);
       setSelectedIdp(null);
-      setConfirmationText('');
     },
-    [onDeleteConfirm],
+    [onDeleteConfirm, selectedIdp],
   );
 
   const handleRemoveConfirm = React.useCallback(
-    async (idp: IdentityProvider) => {
-      await onRemoveConfirm(idp);
+    async (provider: IdentityProvider) => {
+      await onRemoveConfirm(provider);
       setShowRemoveModal(false);
       setSelectedIdp(null);
-      setConfirmationText('');
     },
     [onRemoveConfirm],
   );
-
-  const handleModalContentChange = React.useCallback((field: string, value: string) => {
-    setConfirmationText(value);
-  }, []);
-
-  const isConfirmationValid = confirmationText.trim() === (selectedIdp?.name || '');
-
-  React.useEffect(() => {
-    if (!showDeleteModal && !showRemoveModal) {
-      setConfirmationText('');
-    }
-  }, [showDeleteModal, showRemoveModal]);
 
   const columns: Column<IdentityProvider>[] = React.useMemo(
     () => [
@@ -233,80 +217,28 @@ function SsoProviderTableComponent({
         className={currentStyles.classes?.['SsoProviderTable-table']}
       />
 
-      <Modal
-        open={showDeleteModal}
-        onOpenChange={(open) => !open && setShowDeleteModal(false)}
-        className={cn('p-10', currentStyles.classes?.['SsoProviderTable-deleteProviderModal'])}
-        title={t('delete_modal.title', { providerName: selectedIdp?.name })}
-        content={
-          <>
-            <p
-              className={cn(
-                'font-normal block text-sm text-left text-(length:--font-size-paragraph) text-muted-foreground',
-              )}
-            >
-              {t('delete_modal.description')}
-            </p>
-            <SsoProviderDeleteModalContent
-              customMessages={customMessages.delete_modal}
-              className={currentStyles?.classes?.SsoProviderTable_deleteProviderModal}
-              onChange={handleModalContentChange}
-            />
-          </>
-        }
-        modalActions={{
-          nextAction: {
-            type: 'button',
-            label: t('delete_modal.actions.delete_button_text'),
-            onClick: () => selectedIdp && handleDeleteConfirm(selectedIdp),
-            variant: 'destructive',
-            disabled: isDeleting || !isConfirmationValid,
-          },
-          previousAction: {
-            label: t('delete_modal.actions.cancel_button_text'),
-            onClick: () => setShowDeleteModal(false),
-          },
-        }}
-      />
+      {selectedIdp && (
+        <SsoProviderDeleteModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          provider={selectedIdp}
+          onDelete={handleDeleteConfirm}
+          isLoading={isDeleting}
+          customMessages={customMessages.delete_modal}
+        />
+      )}
 
-      <Modal
-        open={showRemoveModal}
-        onOpenChange={(open) => !open && setShowRemoveModal(false)}
-        title={t('remove_modal.title', {
-          providerName: selectedIdp?.name,
-          organizationName: organization?.name,
-        })}
-        className={cn('p-10', currentStyles.classes?.SsoProviderTable_deleteProviderFromOrgModal)}
-        content={
-          <>
-            <p
-              className={cn(
-                'font-normal block text-sm text-left text-(length:--font-size-paragraph) text-muted-foreground',
-              )}
-            >
-              {t('remove_modal.description', { providerName: selectedIdp?.name })}
-            </p>
-            <SsoProviderDeleteModalContent
-              customMessages={customMessages.remove_modal}
-              className={currentStyles?.classes?.['SsoProviderTable-removeProviderFromOrgModal']}
-              onChange={handleModalContentChange}
-            />
-          </>
-        }
-        modalActions={{
-          nextAction: {
-            type: 'button',
-            label: t('remove_modal.actions.remove_button_text'),
-            onClick: () => selectedIdp && handleRemoveConfirm(selectedIdp),
-            variant: 'destructive',
-            disabled: isRemoving || !isConfirmationValid,
-          },
-          previousAction: {
-            label: t('remove_modal.actions.cancel_button_text'),
-            onClick: () => setShowRemoveModal(false),
-          },
-        }}
-      />
+      {selectedIdp && (
+        <SsoProviderRemoveFromOrgModal
+          isOpen={showRemoveModal}
+          onClose={() => setShowRemoveModal(false)}
+          provider={selectedIdp}
+          organizationName={organization?.name}
+          onRemove={handleRemoveConfirm}
+          isLoading={isRemoving}
+          customMessages={customMessages.remove_modal}
+        />
+      )}
     </div>
   );
 }

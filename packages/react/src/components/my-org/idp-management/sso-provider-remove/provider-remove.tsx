@@ -4,18 +4,19 @@ import { Button } from '../../../../components/ui/button';
 import { Card, CardContent } from '../../../../components/ui/card';
 import { useTranslator } from '../../../../hooks/use-translator';
 import { cn } from '../../../../lib/theme-utils';
-import type { SsoProviderDeleteProps } from '../../../../types/my-org/idp-management/sso-provider-delete-types';
+import type { SsoProviderRemoveFromOrgProps } from '../../../../types/my-org/idp-management/sso-provider-delete-types';
 
-import { SsoProviderDeleteModal } from './provider-delete-modal';
+import { SsoProviderRemoveFromOrgModal } from './provider-remove-modal';
 
-export function SsoProviderDelete({
+export function SsoProviderRemoveFromOrg({
   provider,
-  onDelete,
+  organizationName,
+  onRemove,
   customMessages = {},
   isLoading,
   readOnly,
-}: SsoProviderDeleteProps) {
-  const { t } = useTranslator('idp_management.delete_sso_provider', customMessages);
+}: SsoProviderRemoveFromOrgProps) {
+  const { t } = useTranslator('idp_management.remove_sso_provider', customMessages);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const openModal = React.useCallback(() => {
@@ -35,14 +36,17 @@ export function SsoProviderDelete({
               <h3
                 className={cn('text-lg font-semibold text-left text-(length:--font-size-subtitle)')}
               >
-                {t('title', { providerName: provider.name })}
+                {t('title', {
+                  providerName: provider.name,
+                  organizationName: organizationName,
+                })}
               </h3>
               <p
                 className={cn(
                   'text-sm text-muted-foreground text-left text-(length:--font-size-paragraph)',
                 )}
               >
-                {t('description')}
+                {t('description', { providerName: provider.name })}
               </p>
             </div>
 
@@ -52,17 +56,18 @@ export function SsoProviderDelete({
               disabled={readOnly}
               className="shrink-0"
             >
-              {t('delete_button_label')}
+              {t('remove_button_label')}
             </Button>
           </CardContent>
         </Card>
       </div>
 
-      <SsoProviderDeleteModal
+      <SsoProviderRemoveFromOrgModal
         isOpen={isModalOpen}
         onClose={closeModal}
         provider={provider}
-        onDelete={onDelete}
+        organizationName={organizationName}
+        onRemove={onRemove}
         isLoading={isLoading}
         customMessages={customMessages.modal}
       />

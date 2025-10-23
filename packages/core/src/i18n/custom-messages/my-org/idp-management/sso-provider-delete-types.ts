@@ -13,7 +13,22 @@ export interface SsoProvideDeleteMessages {
   modal?: {
     title?: string;
     description?: string;
-    modal_content: SsoProviderDeleteModalContentMessages;
+    content: SsoProviderDeleteModalContentMessages;
+    actions?: {
+      cancel_button_label?: string;
+      delete_button_label?: string;
+    };
+  };
+}
+
+export interface SsoProvideRemoveMessages {
+  title?: string;
+  description?: string;
+  remove_button_label?: string;
+  modal?: {
+    title?: string;
+    description?: string;
+    content: SsoProviderDeleteModalContentMessages;
     actions?: {
       cancel_button_label?: string;
       delete_button_label?: string;

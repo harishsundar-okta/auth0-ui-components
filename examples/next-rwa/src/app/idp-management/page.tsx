@@ -7,12 +7,11 @@ import { useCallback, useMemo } from 'react';
 export default function IdpManagementPage() {
   const router = useRouter();
   const handleCreate = useCallback((): void => {
-    router.push('/sso-provider-create');
+    router.push('/idp-management/create/');
   }, []);
 
   const handleEdit = useCallback((provider: IdentityProvider): void => {
-    console.log('Navigate to edit SSO provider page', provider);
-    // router.push(`/idp-management/edit/${provider.id}`);
+    router.push(`/idp-management/edit/${provider.id}`);
   }, []);
 
   const createAction = useMemo(

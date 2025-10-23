@@ -6,14 +6,15 @@ const SsoProviderPage = () => {
   const navigate = useNavigate();
 
   const handleCreate = useCallback(() => {
-    console.log('Navigate to create SSO provider page');
     navigate('/sso-provider/create');
-  }, []);
+  }, [navigate]);
 
-  const handleEdit = useCallback((provider: IdentityProvider) => {
-    console.log('Navigate to edit SSO provider page', provider);
-    // router.push(`/sso-providers/edit/${provider.id}`);
-  }, []);
+  const handleEdit = useCallback(
+    (provider: IdentityProvider) => {
+      navigate(`/sso-provider/edit/${provider.id}`);
+    },
+    [navigate],
+  );
 
   // Memoize the action objects
   const createAction = useMemo(

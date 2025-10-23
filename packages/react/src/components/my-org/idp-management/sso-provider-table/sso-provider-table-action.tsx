@@ -1,16 +1,16 @@
 import { MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import * as React from 'react';
 
-import { useTranslator } from '../../../../../hooks/use-translator';
-import type { SsoProviderTableActionsColumnProps } from '../../../../../types';
+import { useTranslator } from '../../../../hooks/use-translator';
+import type { SsoProviderTableActionsColumnProps } from '../../../../types';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuPortal,
-} from '../../../../ui/dropdown-menu';
-import { Switch } from '../../../../ui/switch';
+} from '../../../ui/dropdown-menu';
+import { Switch } from '../../../ui/switch';
 
 /**
  * SsoProviderTableActionsColumn Component
