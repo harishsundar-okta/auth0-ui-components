@@ -31,7 +31,7 @@ type FormState = {
   configure?: ProviderConfigureFormValues | null;
 };
 
-export function SsoProviderCreate({
+export function SsoProviderCreateComponent({
   create,
   backButton,
   onNext,
@@ -199,4 +199,4 @@ export function SsoProviderCreate({
   );
 }
 
-export const ConfigureSsoForm = withMyOrgService(SsoProviderCreate);
+export const SsoProviderCreate = withMyOrgService(SsoProviderCreateComponent);

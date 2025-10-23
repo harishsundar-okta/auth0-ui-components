@@ -1,4 +1,4 @@
-import { ConfigureSsoForm } from '@auth0-web-ui-components/react';
+import { SsoProviderCreate } from '@auth0-web-ui-components/react';
 import { useNavigate } from 'react-router-dom';
 
 const SsoProviderCreatePage = () => {
@@ -6,7 +6,7 @@ const SsoProviderCreatePage = () => {
 
   return (
     <div className="space-y-6">
-      <ConfigureSsoForm
+      <SsoProviderCreate
         create={{
           onAfter: () => {
             navigate('/sso-providers');

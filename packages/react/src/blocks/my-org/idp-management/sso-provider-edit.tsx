@@ -14,7 +14,7 @@ import { useSsoProviderEdit } from '../../../hooks/my-org/idp-management/use-sso
 import { cn } from '../../../lib';
 import type { SsoProviderEditProps } from '../../../types/my-org/idp-management/sso-provider-edit-types';
 
-export function SsoProviderEdit({
+export function SsoProviderEditComponent({
   idpId,
   backButton,
   update,
@@ -148,4 +148,4 @@ export function SsoProviderEdit({
   );
 }
 
-export const EditSsoProvider = withMyOrgService(SsoProviderEdit);
+export const SsoProviderEdit = withMyOrgService(SsoProviderEditComponent);

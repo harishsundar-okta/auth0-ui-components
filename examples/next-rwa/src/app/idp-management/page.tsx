@@ -8,11 +8,14 @@ export default function IdpManagementPage() {
   const router = useRouter();
   const handleCreate = useCallback((): void => {
     router.push('/idp-management/create/');
-  }, []);
+  }, [router]);
 
-  const handleEdit = useCallback((provider: IdentityProvider): void => {
-    router.push(`/idp-management/edit/${provider.id}`);
-  }, []);
+  const handleEdit = useCallback(
+    (provider: IdentityProvider): void => {
+      router.push(`/idp-management/edit/${provider.id}`);
+    },
+    [router],
+  );
 
   const createAction = useMemo(
     () => ({

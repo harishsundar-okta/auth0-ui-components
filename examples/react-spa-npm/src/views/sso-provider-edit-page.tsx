@@ -1,4 +1,4 @@
-import { EditSsoProvider } from '@auth0-web-ui-components/react';
+import { SsoProviderEdit } from '@auth0-web-ui-components/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const SsoProviderEditPage = () => {
@@ -7,7 +7,7 @@ const SsoProviderEditPage = () => {
 
   return (
     <div className="space-y-6">
-      <EditSsoProvider
+      <SsoProviderEdit
         idpId={id!}
         backButton={{
           onClick: () => navigate('/sso-providers'),

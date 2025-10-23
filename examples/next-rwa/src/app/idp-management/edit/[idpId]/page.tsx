@@ -1,6 +1,6 @@
 'use client';
 
-import { EditSsoProvider } from '@auth0-web-ui-components/react';
+import { SsoProviderEdit } from '@auth0-web-ui-components/react';
 import { useRouter, useParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
@@ -26,7 +26,7 @@ export default function SsoProviderEditPage() {
 
   return (
     <div className="p-6 pt-8 space-y-6">
-      <EditSsoProvider
+      <SsoProviderEdit
         idpId={idpId!}
         update={updateAction}
         backButton={{ onClick: handleBack }}
