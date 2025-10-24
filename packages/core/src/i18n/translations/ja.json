@@ -18,6 +18,26 @@
         }
       }
     },
+    "domain_configure_providers": {
+      "modal": {
+        "title": "${domain}を設定",
+        "description": "${domain}メールドメインを持つユーザーを、選択したプロバイダーの認証のためにアイデンティティプロバイダーに直接誘導します。",
+        "table": {
+          "empty_message": "プロバイダーがありません。",
+          "columns": {
+            "name": "名前",
+            "provider": "アイデンティティプロバイダー"
+          },
+          "actions": {
+            "add_provider_button_text": "プロバイダーを追加",
+            "view_provider_button_text": "表示"
+          }
+        },
+        "actions": {
+          "close_button_text": "閉じる"
+        }
+      }
+    },
     "domain_delete": {
       "modal": {
         "title": "ドメインの削除",

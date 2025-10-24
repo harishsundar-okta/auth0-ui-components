@@ -18,6 +18,26 @@
         }
       }
     },
+    "domain_configure_providers": {
+      "modal": {
+        "title": "Configure ${domain}",
+        "description": "Direct users with an ${domain} email domain to your identity provider for authentication for the selected providers.",
+        "table": {
+          "empty_message": "You do not have any providers.",
+          "columns": {
+            "name": "Name",
+            "provider": "Identity Provider"
+          },
+          "actions": {
+            "add_provider_button_text": "Add a Provider",
+            "view_provider_button_text": "View"
+          }
+        },
+        "actions": {
+          "close_button_text": "Close"
+        }
+      }
+    },
     "domain_delete": {
       "modal": {
         "title": "Delete a Domain",
