@@ -1,6 +1,20 @@
 import type { BaseCoreClientInterface } from '@core/auth/auth-types';
 import type { MyOrgClient } from 'auth0-myorg-sdk';
 
+import {
+  createProvisioningController,
+  type ProvisioningController,
+} from '../sso-provisioning/sso-provisioning-controller';
+
+import { SsoProviderMappers } from './sso-provider-mappers';
+import {
+  getIdentityProviders,
+  deleteIdentityProvider,
+  detachIdentityProvider,
+  createIdentityProvider,
+  getIdentityProvider,
+  updateIdentityProvider,
+} from './sso-provider-service';
 import type {
   CreateIdentityProviderRequestContentPrivate,
   ListIdentityProvidersResponseContent,
@@ -12,17 +26,7 @@ import type {
   UpdateIdentityProviderRequestContent,
   UpdateIdentityProviderResponseContent,
   UpdateIdentityProviderRequestContentPrivate,
-} from '../idp-types';
-
-import { SsoProviderMappers } from './sso-provider-mappers';
-import {
-  getIdentityProviders,
-  deleteIdentityProvider,
-  detachIdentityProvider,
-  createIdentityProvider,
-  getIdentityProvider,
-  updateIdentityProvider,
-} from './sso-provider-service';
+} from './sso-provider-types';
 
 export interface IdentityProvidersController {
   list(): Promise<ListIdentityProvidersResponseContent>;
@@ -36,6 +40,7 @@ export interface IdentityProvidersController {
     idpId: IdpId,
     provider: UpdateIdentityProviderRequestContentPrivate,
   ): Promise<UpdateIdentityProviderResponseContent>;
+  provisioning: ProvisioningController;
 }
 
 export function createIdentityProvidersController(
@@ -107,5 +112,7 @@ export function createIdentityProvidersController(
         () => myOrgClient!.organization.identityProviders.update(idpId, apiRequestData),
       );
     },
+
+    provisioning: createProvisioningController(coreClient, myOrgClient, delegateCall),
   };
 }

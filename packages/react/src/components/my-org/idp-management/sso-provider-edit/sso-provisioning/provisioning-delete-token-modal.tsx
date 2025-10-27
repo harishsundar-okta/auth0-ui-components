@@ -1,34 +1,34 @@
-import type { ProvisioningManageTokenMessages } from '@auth0-web-ui-components/core';
-import * as React from 'react';
+import React from 'react';
 
-import { Modal } from '../../../components/ui/modal';
-import { useTranslator } from '../../../hooks';
+import { useTranslator } from '../../../../../hooks';
+import type { ProvisioningDeleteTokenModalProps } from '../../../../../types/my-org/idp-management/sso-provisioning/provisioning-manage-token-types';
+import { Modal } from '../../../../ui/modal';
 
 import { ProvisioningDeleteTokenModalContent } from './provisioning-delete-token-modal-content';
-
-interface ProvisioningDeleteTokenModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  tokenId: string | null;
-  onConfirm: () => void;
-  customMessages?: Partial<ProvisioningManageTokenMessages>;
-}
 
 export function ProvisioningDeleteTokenModal({
   open,
   onOpenChange,
   tokenId,
   onConfirm,
-  customMessages = {},
+  customMessages,
 }: ProvisioningDeleteTokenModalProps): React.JSX.Element {
-  const { t } = useTranslator('provisioning_management.manage_tokens', customMessages);
+  const { t } = useTranslator(
+    'idp_management.edit_sso_provider.tabs.provisioning.content.manage_tokens',
+    customMessages,
+  );
 
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
       title={t('delete_modal.title', { tokenId: tokenId || '' })}
-      content={<ProvisioningDeleteTokenModalContent tokenId={tokenId || ''} />}
+      content={
+        <ProvisioningDeleteTokenModalContent
+          tokenId={tokenId || ''}
+          customMessages={customMessages?.content}
+        />
+      }
       modalActions={{
         showUnsavedChanges: false,
         previousAction: {

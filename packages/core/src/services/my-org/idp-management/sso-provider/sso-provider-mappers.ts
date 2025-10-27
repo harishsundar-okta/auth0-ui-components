@@ -4,13 +4,12 @@ import type {
   ProviderConfigureFormValues,
 } from '@core/schemas';
 
-import type { IdpStrategy } from '../idp-types';
+import { STRATEGIES } from './sso-provider-constants';
+import type { IdpStrategy } from './sso-provider-types';
 import type {
   CreateIdentityProviderRequestContent,
   UpdateIdentityProviderRequestContent,
-} from '../idp-types';
-
-import { STRATEGIES } from './sso-provider-constants';
+} from './sso-provider-types';
 
 type CombinedProviderFormValues = ProviderSelectionFormValues &
   ProviderDetailsFormValues & {

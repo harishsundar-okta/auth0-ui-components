@@ -1,6 +1,6 @@
 export * from './i18n';
 
-export { normalizeError } from './api';
+export { normalizeError, getStatusCode } from './api';
 
 export { createCoreClient } from './auth/core-client';
 

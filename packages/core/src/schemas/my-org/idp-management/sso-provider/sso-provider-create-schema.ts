@@ -185,7 +185,7 @@ const STRATEGY_BUILDERS = {
     return baseSchema.superRefine((data, ctx) => {
       const isFrontChannel = data.type === 'front_channel';
 
-      // Only require client_secret for back_channel in create mode
+      // Only require client_secret for back_channel
       if (!isFrontChannel) {
         if (!data.client_secret || data.client_secret.trim() === '') {
           ctx.addIssue({

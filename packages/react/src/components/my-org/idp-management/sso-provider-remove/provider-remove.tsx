@@ -4,7 +4,7 @@ import { Button } from '../../../../components/ui/button';
 import { Card, CardContent } from '../../../../components/ui/card';
 import { useTranslator } from '../../../../hooks/use-translator';
 import { cn } from '../../../../lib/theme-utils';
-import type { SsoProviderRemoveFromOrgProps } from '../../../../types/my-org/idp-management/sso-provider-delete-types';
+import type { SsoProviderRemoveFromOrgProps } from '../../../../types/my-org/idp-management/sso-provider/sso-provider-delete-types';
 
 import { SsoProviderRemoveFromOrgModal } from './provider-remove-modal';
 

@@ -1,9 +1,19 @@
-import { getComponentStyles } from '@auth0-web-ui-components/core';
+'use client';
+
+import {
+  getComponentStyles,
+  type IdpScimTokenBase,
+  type CreateIdpProvisioningScimTokenResponseContent,
+} from '@auth0-web-ui-components/core';
 import { Trash2, Plus } from 'lucide-react';
 import * as React from 'react';
 
-import { Badge } from '../../../components/ui/badge';
-import { Button } from '../../../components/ui/button';
+import { withMyOrgService } from '../../../../../hoc';
+import { useTheme, useTranslator } from '../../../../../hooks';
+import { cn } from '../../../../../lib/theme-utils';
+import type { ProvisioningManageTokenProps } from '../../../../../types/my-org/idp-management/sso-provisioning/provisioning-manage-token-types';
+import { Badge } from '../../../../ui/badge';
+import { Button } from '../../../../ui/button';
 import {
   Card,
   CardAction,
@@ -11,11 +21,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/card';
-import { withMyOrgService } from '../../../hoc';
-import { useTheme, useTranslator } from '../../../hooks';
-import { cn } from '../../../lib/theme-utils';
-import type { ProvisioningManageTokenProps } from '../../../types';
+} from '../../../../ui/card';
+import { Spinner } from '../../../../ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../ui/tooltip';
 
 import { ProvisioningCreateTokenModal } from './provisioning-create-token-modal';
 import { ProvisioningDeleteTokenModal } from './provisioning-delete-token-modal';
@@ -27,9 +35,12 @@ const TOKEN_STATUS = {
 } as const;
 
 function ProvisioningManageTokenComponent({
-  scimTokens,
-  onGenerateToken,
-  onDeleteToken,
+  isScimTokensLoading,
+  isScimTokenCreating,
+  isScimTokenDeleting,
+  onListScimTokens,
+  onCreateScimToken,
+  onDeleteScimToken,
   styling = {
     variables: {
       common: {},
@@ -39,19 +50,27 @@ function ProvisioningManageTokenComponent({
     classes: {},
   },
   customMessages = {},
-  className,
-  createdToken = null,
-  onCloseCreateModal,
 }: ProvisioningManageTokenProps): React.JSX.Element {
-  const { t } = useTranslator('provisioning_management.manage_tokens', customMessages);
+  const { t } = useTranslator(
+    'idp_management.edit_sso_provider.tabs.provisioning.content.manage_tokens',
+    customMessages,
+  );
   const { isDarkMode } = useTheme();
   const [deleteTokenId, setDeleteTokenId] = React.useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+  const [scimTokens, setScimTokens] = React.useState<IdpScimTokenBase[]>([]);
+  const [createdToken, setCreatedToken] =
+    React.useState<CreateIdpProvisioningScimTokenResponseContent | null>(null);
 
-  // Sync modal state with createdToken prop
   React.useEffect(() => {
-    setIsCreateModalOpen(!!createdToken);
-  }, [createdToken]);
+    const loadTokens = async () => {
+      const tokens = await onListScimTokens();
+      if (tokens?.scim_tokens) {
+        setScimTokens(tokens.scim_tokens);
+      }
+    };
+    loadTokens();
+  }, []);
 
   const currentStyles = React.useMemo(
     () => getComponentStyles(styling, isDarkMode),
@@ -61,7 +80,7 @@ function ProvisioningManageTokenComponent({
   const canGenerateToken = scimTokens.length < MAX_TOKENS;
 
   const getTokenStatus = (
-    token: (typeof scimTokens)[0],
+    token: IdpScimTokenBase,
   ): {
     labelKey: string;
     variant: 'secondary' | 'destructive';
@@ -80,24 +99,45 @@ function ProvisioningManageTokenComponent({
     };
   };
 
+  const handleGenerateToken = async () => {
+    const result = await onCreateScimToken({ token_lifetime: 3600 });
+    if (result) {
+      setCreatedToken(result);
+      setIsCreateModalOpen(true);
+      const tokens = await onListScimTokens();
+      if (tokens?.scim_tokens) {
+        setScimTokens(tokens.scim_tokens);
+      }
+    }
+  };
+
   const handleDeleteClick = (tokenId: string) => {
     setDeleteTokenId(tokenId);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (deleteTokenId) {
-      onDeleteToken(deleteTokenId);
+      await onDeleteScimToken(deleteTokenId);
       setDeleteTokenId(null);
+      const tokens = await onListScimTokens();
+      if (tokens?.scim_tokens) {
+        setScimTokens(tokens.scim_tokens);
+      }
     }
+  };
+
+  const handleCloseCreateModal = () => {
+    setCreatedToken(null);
+    setIsCreateModalOpen(false);
   };
 
   return (
     <div
-      className={cn('w-full', className, currentStyles.classes?.['ProvisioningManageToken-root'])}
+      className={cn('w-full', currentStyles.classes?.['ProvisioningManageToken-root'])}
       style={currentStyles?.variables}
     >
       <Card className={cn(currentStyles.classes?.['ProvisioningManageToken-card'])}>
-        <CardHeader>
+        <CardHeader className={cn(currentStyles.classes?.['ProvisioningManageToken-header'])}>
           <CardTitle className="text-base font-medium text-foreground text-left">
             {t('title')}
           </CardTitle>
@@ -105,17 +145,33 @@ function ProvisioningManageTokenComponent({
             {t('description')}
           </CardDescription>
           <CardAction>
-            <Button
-              onClick={onGenerateToken}
-              disabled={!canGenerateToken}
-              title={!canGenerateToken ? t('max_tokens_tooltip') : undefined}
-            >
-              <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
-              {t('generate_button_label')}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button
+                    onClick={handleGenerateToken}
+                    disabled={!canGenerateToken || isScimTokenCreating}
+                    title={undefined}
+                  >
+                    {isScimTokenCreating ? (
+                      <Spinner className="w-4 h-4 mr-2" />
+                    ) : (
+                      <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
+                    )}
+                    {t('generate_button_label')}
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              {!canGenerateToken && <TooltipContent>{t('max_tokens_tooltip')}</TooltipContent>}
+            </Tooltip>
           </CardAction>
         </CardHeader>
-        {scimTokens.length > 0 && (
+
+        {isScimTokensLoading ? (
+          <CardContent className="flex justify-center py-8">
+            <Spinner />
+          </CardContent>
+        ) : scimTokens.length > 0 ? (
           <CardContent className="space-y-4">
             {scimTokens.map((token) => {
               const status = getTokenStatus(token);
@@ -142,10 +198,15 @@ function ProvisioningManageTokenComponent({
                       variant="destructive"
                       size="default"
                       onClick={() => handleDeleteClick(token.token_id)}
+                      disabled={isScimTokenDeleting}
                       aria-label={`${t('token_item.delete_button_label')} ${token.token_id}`}
                       className="shrink-0"
                     >
-                      <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" />
+                      {isScimTokenDeleting ? (
+                        <Spinner className="w-4 h-4 mr-2" />
+                      ) : (
+                        <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" />
+                      )}
                       {t('token_item.delete_button_label')}
                     </Button>
                   </div>
@@ -153,24 +214,25 @@ function ProvisioningManageTokenComponent({
               );
             })}
           </CardContent>
-        )}
+        ) : null}
       </Card>
 
       <ProvisioningCreateTokenModal
         open={isCreateModalOpen}
         onOpenChange={(open) => {
           setIsCreateModalOpen(open);
-          if (!open && onCloseCreateModal) {
-            onCloseCreateModal();
+          if (!open) {
+            handleCloseCreateModal();
           }
         }}
         createdToken={createdToken}
         customMessages={customMessages}
+        styling={styling}
       />
 
       <ProvisioningDeleteTokenModal
         open={!!deleteTokenId}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) {
             setDeleteTokenId(null);
           }
@@ -178,6 +240,7 @@ function ProvisioningManageTokenComponent({
         tokenId={deleteTokenId}
         onConfirm={handleDeleteConfirm}
         customMessages={customMessages}
+        styling={styling}
       />
     </div>
   );

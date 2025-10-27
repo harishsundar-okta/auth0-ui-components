@@ -1,0 +1,64 @@
+import type {
+  SharedComponentProps,
+  SsoProvisioningTabMessages,
+  IdentityProvider,
+  CreateIdpProvisioningScimTokenRequestContent,
+  ListIdpProvisioningScimTokensResponseContent,
+  CreateIdpProvisioningScimTokenResponseContent,
+  SsoProvisioningDetailsMessages,
+  GetIdPProvisioningConfigResponseContent,
+  SsoProvisioningDeleteMessages,
+} from '@auth0-web-ui-components/core';
+
+import type { ProvisioningManageTokenClasses } from './provisioning-manage-token-types';
+
+export interface SsoProvisioningTabClasses {
+  'SsoProvisioningTab-root'?: string;
+  'SsoProvisioningDetails-root'?: string;
+  'SsoProvisioningDetails-provisioningMapping'?: string;
+  'SsoProvisioningDetails-provisioningOptional'?: string;
+  'SsoProvisioningDetails-formActions'?: string;
+}
+
+export interface SsoProvisioningTabProps
+  extends SharedComponentProps<SsoProvisioningTabMessages, SsoProvisioningTabClasses> {
+  provider: IdentityProvider;
+  isProvisioningUpdating: boolean;
+  isProvisioningDeleting: boolean;
+  isScimTokensLoading: boolean;
+  isScimTokenCreating: boolean;
+  isScimTokenDeleting: boolean;
+  onCreateProvisioning: () => Promise<void>;
+  onDeleteProvisioning: () => Promise<void>;
+  onListScimTokens: () => Promise<ListIdpProvisioningScimTokensResponseContent | null>;
+  onCreateScimToken: (
+    data: CreateIdpProvisioningScimTokenRequestContent,
+  ) => Promise<CreateIdpProvisioningScimTokenResponseContent | undefined>;
+  onDeleteScimToken: (idpScimTokenId: string) => Promise<void>;
+}
+
+export interface SsoProvisioningDetailsClasses extends ProvisioningManageTokenClasses {
+  'SsoProvisioningDetails-root'?: string;
+  'SsoProvisioningDetails-formActions'?: string;
+}
+
+export interface SsoProvisioningDeleteModalProps
+  extends SharedComponentProps<SsoProvisioningDeleteMessages> {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
+}
+
+export interface SsoProvisioningDetailsProps
+  extends SharedComponentProps<SsoProvisioningDetailsMessages, SsoProvisioningDetailsClasses> {
+  provider: IdentityProvider;
+  provisioningConfig: GetIdPProvisioningConfigResponseContent | null;
+  isScimTokensLoading: boolean;
+  isScimTokenCreating: boolean;
+  isScimTokenDeleting: boolean;
+  onListScimTokens: () => Promise<ListIdpProvisioningScimTokensResponseContent | null>;
+  onCreateScimToken: (
+    data: CreateIdpProvisioningScimTokenRequestContent,
+  ) => Promise<CreateIdpProvisioningScimTokenResponseContent | undefined>;
+  onDeleteScimToken: (idpScimTokenId: string) => Promise<void>;
+}

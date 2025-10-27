@@ -7,7 +7,7 @@ import type {
 import { useCallback, useState, useEffect } from 'react';
 
 import { showToast } from '../../../components/ui/toast';
-import type { UseSsoProviderTableReturn } from '../../../types/my-org/idp-management/sso-provider-table-types';
+import type { UseSsoProviderTableReturn } from '../../../types/my-org/idp-management/sso-provider/sso-provider-table-types';
 import { useCoreClient } from '../../use-core-client';
 import { useTranslator } from '../../use-translator';
 
@@ -103,7 +103,7 @@ export function useSsoProviderTable(
 
         showToast({
           type: 'success',
-          message: t('notifications.update_success', { providerName: selectedIdp.display_name }),
+          message: t('update_success', { providerName: selectedIdp.display_name }),
         });
 
         setProviders((prevProviders) =>
@@ -143,7 +143,7 @@ export function useSsoProviderTable(
 
         showToast({
           type: 'success',
-          message: t('notifications.delete_success', { providerName: selectedIdp.display_name }),
+          message: t('delete_success', { providerName: selectedIdp.display_name }),
         });
 
         await fetchProviders();
@@ -178,7 +178,7 @@ export function useSsoProviderTable(
 
         showToast({
           type: 'success',
-          message: t('notifications.remove_success', {
+          message: t('remove_success', {
             providerName: selectedIdp.display_name,
             organizationName: orgData?.display_name,
           }),

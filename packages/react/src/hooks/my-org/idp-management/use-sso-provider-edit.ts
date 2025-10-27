@@ -4,6 +4,9 @@ import {
   type IdpId,
   type OrganizationPrivate,
   type UpdateIdentityProviderRequestContent,
+  type CreateIdpProvisioningScimTokenRequestContent,
+  type GetIdPProvisioningConfigResponseContent,
+  getStatusCode,
 } from '@auth0-web-ui-components/core';
 import { useCallback, useState, useEffect } from 'react';
 
@@ -11,16 +14,20 @@ import { showToast } from '../../../components/ui/toast';
 import type {
   UseSsoProviderEditOptions,
   UseSsoProviderEditReturn,
-} from '../../../types/my-org/idp-management/sso-provider-edit-types';
+} from '../../../types/my-org/idp-management/sso-provider/sso-provider-edit-types';
 import { useCoreClient } from '../../use-core-client';
 import { useTranslator } from '../../use-translator';
 
 export function useSsoProviderEdit(
   idpId: IdpId,
   {
-    update,
+    update: updateAction,
     deleteAction,
     removeFromOrg,
+    createProvisioning: createProvisioningAction,
+    deleteProvisioning: deleteProvisioningAction,
+    createScimToken: createScimTokenAction,
+    deleteScimToken: deleteScimTokenAction,
     customMessages = {},
   }: Partial<UseSsoProviderEditOptions> = {},
 ): UseSsoProviderEditReturn {
@@ -33,6 +40,14 @@ export function useSsoProviderEdit(
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [isProvisioningUpdating, setIsProvisioningUpdating] = useState(false);
+  const [isProvisioningDeleting, setIsProvisioningDeleting] = useState(false);
+  const [isScimTokensLoading, setIsScimTokensLoading] = useState(false);
+  const [isScimTokenCreating, setIsScimTokenCreating] = useState(false);
+  const [isScimTokenDeleting, setIsScimTokenDeleting] = useState(false);
+  const [isProvisioningLoading, setIsProvisioningLoading] = useState(false);
+  const [provisioningConfig, setProvisioningConfig] =
+    useState<GetIdPProvisioningConfigResponseContent | null>(null);
 
   const fetchProvider = useCallback(async (): Promise<IdentityProvider | null> => {
     if (!coreClient || !idpId) {
@@ -71,8 +86,8 @@ export function useSsoProviderEdit(
     } catch (error) {
       const errorMessage =
         error instanceof Error
-          ? t('notifications.general_error', { message: error.message })
-          : t('notifications.general_error');
+          ? t('general_error', { message: error.message })
+          : t('general_error');
 
       showToast({
         type: 'error',
@@ -83,6 +98,36 @@ export function useSsoProviderEdit(
     }
   }, [coreClient, t]);
 
+  const fetchProvisioning = useCallback(async () => {
+    if (!coreClient || !idpId) {
+      return null;
+    }
+
+    try {
+      setIsProvisioningLoading(true);
+      const result = await coreClient
+        .getMyOrgApiService()
+        .organization.identityProviders.provisioning.get(idpId);
+
+      setProvisioningConfig(result);
+      return result;
+    } catch (error) {
+      const status = getStatusCode(error);
+      if (status === 404) {
+        setProvisioningConfig(null);
+        return null;
+      }
+
+      showToast({
+        type: 'error',
+        message: t('general_error'),
+      });
+      return null;
+    } finally {
+      setIsProvisioningLoading(false);
+    }
+  }, [coreClient, idpId, t]);
+
   const updateProvider = useCallback(
     async (data: UpdateIdentityProviderRequestContent): Promise<void> => {
       if (!coreClient || !provider || !idpId) {
@@ -92,8 +137,8 @@ export function useSsoProviderEdit(
       try {
         setIsUpdating(true);
 
-        if (update?.onBefore) {
-          const canProceed = update.onBefore(provider);
+        if (updateAction?.onBefore) {
+          const canProceed = updateAction.onBefore(provider);
           if (!canProceed) {
             return;
           }
@@ -109,8 +154,8 @@ export function useSsoProviderEdit(
           message: t('update_success', { providerName: provider.display_name }),
         });
 
-        if (update?.onAfter) {
-          await update.onAfter(provider, result);
+        if (updateAction?.onAfter) {
+          await updateAction.onAfter(provider, result);
         }
       } catch (error) {
         showToast({
@@ -122,7 +167,201 @@ export function useSsoProviderEdit(
         setIsUpdating(false);
       }
     },
-    [coreClient, provider, idpId, update, t],
+    [coreClient, provider, idpId, updateAction, t],
+  );
+
+  const createProvisioning = useCallback(async (): Promise<void> => {
+    if (!coreClient || !provider || !idpId) {
+      return;
+    }
+
+    try {
+      setIsProvisioningUpdating(true);
+
+      if (createProvisioningAction?.onBefore) {
+        const canProceed = createProvisioningAction.onBefore(provider);
+        if (!canProceed) {
+          return;
+        }
+      }
+
+      const result = await coreClient
+        .getMyOrgApiService()
+        .organization.identityProviders.provisioning.create(idpId);
+
+      const updatedProvider = await fetchProvider();
+      if (updatedProvider) {
+        setProvider(updatedProvider);
+      }
+
+      showToast({
+        type: 'success',
+        message: t('update_success', { providerName: provider.display_name }),
+      });
+
+      if (createProvisioningAction?.onAfter) {
+        await createProvisioningAction.onAfter(provider, result);
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: t('general_error'),
+      });
+      throw error;
+    } finally {
+      setIsProvisioningUpdating(false);
+    }
+  }, [coreClient, provider, idpId, createProvisioningAction, t, fetchProvider]);
+
+  const deleteProvisioning = useCallback(async (): Promise<void> => {
+    if (!coreClient || !provider || !idpId) {
+      return;
+    }
+
+    try {
+      setIsProvisioningDeleting(true);
+
+      if (deleteProvisioningAction?.onBefore) {
+        const canProceed = deleteProvisioningAction.onBefore(provider);
+        if (!canProceed) {
+          return;
+        }
+      }
+
+      await coreClient
+        .getMyOrgApiService()
+        .organization.identityProviders.provisioning.delete(idpId);
+
+      setProvisioningConfig(null);
+
+      const updatedProvider = await fetchProvider();
+      if (updatedProvider) {
+        setProvider(updatedProvider);
+      }
+
+      showToast({
+        type: 'success',
+        message: t('update_success', { providerName: provider.display_name }),
+      });
+
+      if (deleteProvisioningAction?.onAfter) {
+        await deleteProvisioningAction.onAfter(provider);
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: t('general_error'),
+      });
+      throw error;
+    } finally {
+      setIsProvisioningDeleting(false);
+    }
+  }, [coreClient, provider, idpId, deleteProvisioningAction, t, fetchProvider]);
+
+  const listScimTokens = useCallback(async () => {
+    if (!coreClient || !idpId) {
+      return null;
+    }
+
+    try {
+      setIsScimTokensLoading(true);
+      const result = await coreClient
+        .getMyOrgApiService()
+        .organization.identityProviders.provisioning.listScimTokens(idpId);
+      return result;
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: t('general_error'),
+      });
+      return null;
+    } finally {
+      setIsScimTokensLoading(false);
+    }
+  }, [coreClient, idpId, t]);
+
+  const createScimToken = useCallback(
+    async (data: CreateIdpProvisioningScimTokenRequestContent) => {
+      if (!coreClient || !idpId) {
+        return;
+      }
+
+      try {
+        setIsScimTokenCreating(true);
+
+        if (createScimTokenAction?.onBefore) {
+          const canProceed = createScimTokenAction.onBefore(provider!);
+          if (!canProceed) {
+            return;
+          }
+        }
+
+        const result = await coreClient
+          .getMyOrgApiService()
+          .organization.identityProviders.provisioning.createScimToken(idpId, data);
+
+        showToast({
+          type: 'success',
+          message: t('scim_token_create_success'),
+        });
+
+        if (createScimTokenAction?.onAfter) {
+          await createScimTokenAction.onAfter(provider!, result);
+        }
+
+        return result;
+      } catch (error) {
+        showToast({
+          type: 'error',
+          message: t('general_error'),
+        });
+        throw error;
+      } finally {
+        setIsScimTokenCreating(false);
+      }
+    },
+    [coreClient, idpId, provider, createScimTokenAction, t],
+  );
+
+  const deleteScimToken = useCallback(
+    async (idpScimTokenId: string): Promise<void> => {
+      if (!coreClient || !idpId) {
+        return;
+      }
+
+      try {
+        setIsScimTokenDeleting(true);
+
+        if (deleteScimTokenAction?.onBefore) {
+          const canProceed = deleteScimTokenAction.onBefore(provider!);
+          if (!canProceed) {
+            return;
+          }
+        }
+
+        await coreClient
+          .getMyOrgApiService()
+          .organization.identityProviders.provisioning.deleteScimToken(idpId, idpScimTokenId);
+
+        showToast({
+          type: 'success',
+          message: t('scim_token_delete_sucess'),
+        });
+
+        if (deleteScimTokenAction?.onAfter) {
+          await deleteScimTokenAction.onAfter(provider!);
+        }
+      } catch (error) {
+        showToast({
+          type: 'error',
+          message: t('general_error'),
+        });
+        throw error;
+      } finally {
+        setIsScimTokenDeleting(false);
+      }
+    },
+    [coreClient, idpId, provider, deleteScimTokenAction, t],
   );
 
   const onDeleteConfirm = useCallback(async (): Promise<void> => {
@@ -162,6 +401,13 @@ export function useSsoProviderEdit(
     try {
       setIsRemoving(true);
 
+      if (removeFromOrg?.onBefore) {
+        const canProceed = removeFromOrg.onBefore(provider);
+        if (!canProceed) {
+          return;
+        }
+      }
+
       await fetchOrganizationDetails();
 
       await coreClient.getMyOrgApiService().organization.identityProviders.detach(provider.id);
@@ -199,13 +445,26 @@ export function useSsoProviderEdit(
   return {
     provider,
     organization,
+    provisioningConfig,
     isLoading,
     isUpdating,
     isDeleting,
     isRemoving,
+    isProvisioningUpdating,
+    isProvisioningDeleting,
+    isProvisioningLoading,
+    isScimTokensLoading,
+    isScimTokenCreating,
+    isScimTokenDeleting,
     fetchProvider,
     fetchOrganizationDetails,
+    fetchProvisioning,
     updateProvider,
+    createProvisioning,
+    deleteProvisioning,
+    listScimTokens,
+    createScimToken,
+    deleteScimToken,
     onDeleteConfirm,
     onRemoveConfirm,
   };

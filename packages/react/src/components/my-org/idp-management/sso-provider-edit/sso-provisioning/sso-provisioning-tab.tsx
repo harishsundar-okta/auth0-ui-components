@@ -1,0 +1,134 @@
+import { getComponentStyles } from '@auth0-web-ui-components/core';
+import * as React from 'react';
+
+import { withMyOrgService } from '../../../../../hoc/with-services';
+import { useSsoProviderEdit } from '../../../../../hooks/my-org/idp-management/use-sso-provider-edit';
+import { useTheme } from '../../../../../hooks/use-theme';
+import { useTranslator } from '../../../../../hooks/use-translator';
+import { cn } from '../../../../../lib/theme-utils';
+import type { SsoProvisioningTabProps } from '../../../../../types/my-org/idp-management/sso-provisioning/sso-provisioning-tab-types';
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from '../../../../ui/card';
+import { Spinner } from '../../../../ui/spinner';
+import { Switch } from '../../../../ui/switch';
+
+// import { ProvisioningWarningAlert } from './provisioning-warning-alert';
+import { SsoProvisioningDeleteModal } from './sso-provisioning-delete-modal';
+import { SsoProvisioningDetails } from './sso-provisioning-details';
+
+function SsoProvisioningTabComponent({
+  provider,
+  styling = { variables: { common: {}, light: {}, dark: {} }, classes: {} },
+  customMessages = {},
+}: SsoProvisioningTabProps): React.JSX.Element {
+  const { t } = useTranslator(
+    'idp_management.edit_sso_provider.tabs.provisioning.content',
+    customMessages,
+  );
+
+  const {
+    provisioningConfig,
+    isProvisioningLoading,
+    isProvisioningUpdating,
+    isProvisioningDeleting,
+    isScimTokensLoading,
+    isScimTokenCreating,
+    isScimTokenDeleting,
+    fetchProvisioning,
+    createProvisioning,
+    deleteProvisioning,
+    listScimTokens,
+    createScimToken,
+    deleteScimToken,
+  } = useSsoProviderEdit(provider?.id || '');
+
+  const { isDarkMode } = useTheme();
+  const currentStyles = React.useMemo(
+    () => getComponentStyles(styling, isDarkMode),
+    [styling, isDarkMode],
+  );
+
+  const [isDeleteModalOpen, setDeleteModalOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (provider?.id) {
+      fetchProvisioning();
+    }
+  }, [provider?.id]);
+
+  const handleProvisioningToggle = async (enabled: boolean) => {
+    if (!provider?.id) return;
+
+    if (enabled) {
+      await createProvisioning();
+      await fetchProvisioning();
+    } else {
+      setDeleteModalOpen(true);
+    }
+  };
+
+  const handleDeleteProvisioningConfirm = async () => {
+    await deleteProvisioning();
+    setDeleteModalOpen(false);
+  };
+
+  const isLoading = isProvisioningLoading || isProvisioningUpdating || isProvisioningDeleting;
+  const isProvisioningEnabled = !!provisioningConfig;
+
+  return (
+    <div
+      style={currentStyles.variables}
+      className={cn('space-y-8', currentStyles.classes?.['SsoProvisioningTab-root'])}
+    >
+      {/* <ProvisioningWarningAlert/> */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-medium text-foreground text-left">
+            {t('header.title')}
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground text-left">
+            {t('header.description')}
+          </CardDescription>
+          <CardAction>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {isLoading ? (
+                  <Spinner className="w-4 h-4" />
+                ) : (
+                  <Switch
+                    checked={isProvisioningEnabled}
+                    onCheckedChange={handleProvisioningToggle}
+                    disabled={isLoading || !provider?.id}
+                  />
+                )}
+              </div>
+            </div>
+          </CardAction>
+        </CardHeader>
+      </Card>
+
+      {isProvisioningEnabled && (
+        <SsoProvisioningDetails
+          provider={provider}
+          provisioningConfig={provisioningConfig}
+          isScimTokensLoading={isScimTokensLoading}
+          isScimTokenCreating={isScimTokenCreating}
+          isScimTokenDeleting={isScimTokenDeleting}
+          onListScimTokens={listScimTokens}
+          onCreateScimToken={createScimToken}
+          onDeleteScimToken={deleteScimToken}
+          customMessages={customMessages}
+          styling={styling}
+        />
+      )}
+
+      <SsoProvisioningDeleteModal
+        open={isDeleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        onConfirm={handleDeleteProvisioningConfirm}
+        customMessages={customMessages.delete}
+      />
+    </div>
+  );
+}
+
+export const SsoProvisioningTab = withMyOrgService(SsoProvisioningTabComponent);

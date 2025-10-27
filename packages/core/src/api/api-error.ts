@@ -66,3 +66,14 @@ export function normalizeError(
 
   return new Error(options?.fallbackMessage ?? 'An unknown error occurred');
 }
+
+export function getStatusCode(error: unknown): number | undefined {
+  return typeof error === 'object' && error !== null
+    ? [
+        (error as { status?: unknown }).status,
+        (error as { statusCode?: unknown }).statusCode,
+        (error as { response?: { status?: unknown } }).response?.status,
+        (error as { body?: { status?: unknown } }).body?.status,
+      ].find((s) => typeof s === 'number')
+    : undefined;
+}

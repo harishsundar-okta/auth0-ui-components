@@ -190,6 +190,10 @@ export const COMMON_FIELD_CONFIGS = {
     defaultError: 'Please enter valid metadata',
     regex: undefined as RegExp | undefined,
   },
+  userIdAttribute: {
+    defaultError: 'Please enter a valid user ID attribute',
+    regex: /^[a-zA-Z_][a-zA-Z0-9_]*$/ as RegExp | undefined,
+  },
 } as const;
 
 export type FieldConfig = (typeof COMMON_FIELD_CONFIGS)[keyof typeof COMMON_FIELD_CONFIGS];

@@ -1,21 +1,11 @@
-import type { ProvisioningManageTokenMessages } from '@auth0-web-ui-components/core';
 import { Copy } from 'lucide-react';
 import * as React from 'react';
 
-import { Modal } from '../../../components/ui/modal';
-import { useTranslator } from '../../../hooks';
+import { useTranslator } from '../../../../../hooks';
+import type { ProvisioningCreateTokenModalProps } from '../../../../../types/my-org/idp-management/sso-provisioning/provisioning-manage-token-types';
+import { Modal } from '../../../../ui/modal';
 
 import { ProvisioningCreateTokenModalContent } from './provisioning-create-token-modal-content';
-
-interface ProvisioningCreateTokenModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  createdToken: {
-    token: string;
-    tokenId: string;
-  } | null;
-  customMessages?: Partial<ProvisioningManageTokenMessages>;
-}
 
 export function ProvisioningCreateTokenModal({
   open,
@@ -23,7 +13,10 @@ export function ProvisioningCreateTokenModal({
   createdToken,
   customMessages = {},
 }: ProvisioningCreateTokenModalProps): React.JSX.Element {
-  const { t } = useTranslator('provisioning_management.manage_tokens', customMessages);
+  const { t } = useTranslator(
+    'idp_management.edit_sso_provider.tabs.provisioning.content.manage_tokens',
+    customMessages,
+  );
 
   return (
     <Modal
@@ -33,8 +26,9 @@ export function ProvisioningCreateTokenModal({
       content={
         createdToken && (
           <ProvisioningCreateTokenModalContent
-            token={createdToken.token}
-            tokenId={createdToken.tokenId}
+            token={createdToken.token!}
+            tokenId={createdToken.token_id}
+            customMessages={customMessages.content}
           />
         )
       }
@@ -48,7 +42,7 @@ export function ProvisioningCreateTokenModal({
           icon: <Copy className="w-4 h-4" />,
           onClick: () => {
             if (createdToken) {
-              navigator.clipboard.writeText(createdToken.token);
+              navigator.clipboard.writeText(createdToken.token!);
             }
             onOpenChange(false);
           },

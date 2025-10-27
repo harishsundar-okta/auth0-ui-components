@@ -1,4 +1,4 @@
-import type { IdpStrategy } from '../idp-types';
+import type { IdpStrategy } from './sso-provider-types';
 
 export const STRATEGIES = {
   ADFS: 'adfs',

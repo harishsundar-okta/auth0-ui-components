@@ -442,7 +442,88 @@
           }
         },
         "provisioning": {
-          "name": "Provisioning"
+          "name": "Provisioning",
+          "content": {
+            "header": {
+              "title": "Provisioning",
+              "description": "Set up provisioning to allow user profile syncing to your organization.",
+              "guided_setup_button_label": "Guided Setup"
+            },
+            "warning_alert_message": {
+              "title": "Mappings for provisioning have been updated.",
+              "description": " Please review the attributes and update your identity provider configuration to ensure proper provisioning."
+            },
+            "save_button_label": "Save",
+            "unsaved_changes_text": "Unsaved changes",
+            "notifications": {
+              "provisioning_enabled_message": "Changes to ${providerName} have been saved.",
+              "provisioning_disabled_message": "Provisioning has been disabled."
+            },
+            "delete": {
+              "modal": {
+                "title": "Disable provisioning",
+                "content": {
+                  "description": "Are you sure you want to disable provisioning? This will permanently delete the provisioning configuration and revoke access for any clients using provisioning with this provider."
+                },
+                "actions": {
+                  "cancel_button_label": "Cancel",
+                  "delete_button_label": "Proceed"
+                }
+              }
+            },
+            "manage_tokens": {
+              "title": "Bearer Tokens",
+              "description": "Generate a bearer token to provide your identity provider. You can create up to two tokens.",
+              "generate_button_label": "Generate Token",
+              "max_tokens_tooltip": "Maximum 2 tokens allowed",
+              "empty_state": {
+                "title": "No tokens created yet",
+                "description": "Generate a bearer token to authenticate SCIM requests from your identity provider."
+              },
+              "table": {
+                "token_id_label": "Token ID",
+                "created_label": "Created",
+                "expires_label": "Expires",
+                "actions_label": "Actions"
+              },
+              "token_item": {
+                "token_prefix": "Token",
+                "never_expire": "This token will never expire.",
+                "last_used": "Last used: Never",
+                "status_active": "Active",
+                "status_expired": "Expired",
+                "delete_button_label": "Delete"
+              },
+              "create_modal": {
+                "title": "Bearer Token Information",
+                "copy_and_close_button_label": "Copy and Close",
+                "content": {
+                  "description": "Copy the bearer token to provide your identity provider. It will not be displayed again upon closing this dialog.",
+                  "field": {
+                    "label": "Token"
+                  }
+                }
+              },
+              "delete_modal": {
+                "title": "Delete token ${tokenId}",
+                "cancel_button_label": "Cancel",
+                "delete_button_label": "Delete Token",
+                "content": {
+                  "confirmation": "Are you sure you want to delete token ${tokenId}? This action cannot be undone.",
+                  "description": "To avoid downtime, consider creating a second token and supplying it to your provisioning client before deleting this one."
+                }
+              }
+            },
+            "fields": {
+              "user_id_attribute": {
+                "label": "User ID Attribute",
+                "helper_text": "The attribute that uniquely identifies a user."
+              },
+              "scim_endpoint_url": {
+                "label": "SCIM Endpoint URL"
+              }
+            }
+          }
         },
         "domains": {
           "name": "Domains"
@@ -500,7 +581,10 @@
       "delete_success": "${providerName} has been deleted.",
       "remove_success": "${providerName} has been removed from ${organizationName}",
       "update_success": "Changes to ${providerName} have been saved.",
-      "general_error": "There was an issue processing your request. Please try again or contact support if the issue persists."
+      "general_error": "There was an issue processing your request. Please try again or contact support if the issue persists.",
+      "provisioning_disabled_success": "Provisioning has been disabled.",
+      "scim_token_delete_sucess": "Token has been deleted.",
+      "scim_token_create_success": "Token generated successfully"
     }
   },
   "mfa": {
@@ -637,55 +721,6 @@
         "enter_verify_code": "Enter the 6-digit code we sent to ${verifier}",
         "enter_opt_code": "Enter the code from your authenticator",
         "install_guardian_description": "In order to continue, install the Auth0 Guardian app via the app store from your mobile device"
-      }
-    }
-  },
-  "provisioning_management": {
-    "manage_tokens": {
-      "title": "Bearer Tokens",
-      "description": "Generate a bearer token to provide your identity provider. You can create up to two tokens.",
-      "generate_button_label": "Generate Token",
-      "max_tokens_tooltip": "Maximum 2 tokens allowed",
-      "empty_state": {
-        "title": "No tokens created yet",
-        "description": "Generate a bearer token to authenticate SCIM requests from your identity provider."
-      },
-      "table": {
-        "token_id_label": "Token ID",
-        "created_label": "Created",
-        "expires_label": "Expires",
-        "actions_label": "Actions"
-      },
-      "token_item": {
-        "token_prefix": "Token",
-        "never_expire": "This token will never expire.",
-        "last_used": "Last used: mm/dd/aa hh:mm:ss",
-        "status_active": "Active",
-        "status_expired": "Expired",
-        "delete_button_label": "Delete"
-      },
-      "create_modal": {
-        "title": "Bearer Token Information",
-        "copy_and_close_button_label": "Copy and Close"
-      },
-      "delete_modal": {
-        "title": "Delete token ${tokenId}",
-        "cancel_button_label": "Cancel",
-        "delete_button_label": "Delete Token"
-      }
-    },
-    "create_token": {
-      "modal_content": {
-        "description": "Copy the bearer token to provide your identity provider. It will not be displayed again upon closing this dialog.",
-        "field": {
-          "label": "Token"
-        }
-      }
-    },
-    "delete_token": {
-      "modal_content": {
-        "confirmation": "Are you sure you want to delete token ${tokenId}? This action cannot be undone.",
-        "description": "To avoid downtime, consider creating a second token and supplying it to your provisioning client before deleting this one."
       }
     }
   }

@@ -9,6 +9,17 @@ export interface ProvisioningCreateTokenModalContentMessages {
   };
 }
 
+export interface ProvisioningCreateTokenModalMessages {
+  title?: string;
+  content?: ProvisioningCreateTokenModalContentMessages;
+}
+
 export interface ProvisioningDeleteTokenModalContentMessages {
+  confirmation?: string;
   description?: string;
+}
+
+export interface ProvisioningDeleteTokenModalMessages {
+  title?: string;
+  content?: ProvisioningDeleteTokenModalContentMessages;
 }

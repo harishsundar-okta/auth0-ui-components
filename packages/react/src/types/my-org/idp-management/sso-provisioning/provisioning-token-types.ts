@@ -6,6 +6,7 @@ import type {
 
 export interface ProvisioningTokenClasses {
   'ProvisioningToken-root'?: string;
+  'ProvisioningCreateTokenModal-root'?: string;
 }
 
 /**

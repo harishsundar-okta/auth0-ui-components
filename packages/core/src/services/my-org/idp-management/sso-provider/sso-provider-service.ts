@@ -9,7 +9,7 @@ import type {
   GetIdentityProviderResponseContent,
   UpdateIdentityProviderRequestContent,
   UpdateIdentityProviderResponseContent,
-} from '../idp-types';
+} from './sso-provider-types';
 
 export async function getIdentityProviders(
   baseUrl: string,

@@ -226,7 +226,7 @@ function renderTextColumn<Item>(
     return column.render(item, value);
   }
 
-  return <span className="text-foreground">{String(value)}</span>;
+  return <span className="text-muted-foreground">{String(value)}</span>;
 }
 
 function renderDateColumn<Item>(
@@ -240,7 +240,7 @@ function renderDateColumn<Item>(
   const formattedDate = formatDate(value, column.format);
 
   return (
-    <span className="text-foreground" title={new Date(value).toISOString()}>
+    <span className="text-muted-foreground" title={new Date(value).toISOString()}>
       {formattedDate}
     </span>
   );

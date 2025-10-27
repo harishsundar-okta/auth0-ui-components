@@ -9,7 +9,7 @@ import {
   CardDescription,
 } from '../../../../components/ui/card';
 import { useTheme, useTranslator } from '../../../../hooks';
-import type { SsoProviderTabProps } from '../../../../types/my-org/idp-management/sso-provider-edit-types';
+import type { SsoProviderTabProps } from '../../../../types/my-org/idp-management/sso-provider/sso-provider-edit-types';
 import { SsoProviderDelete } from '../sso-provider-delete/provider-delete';
 import { SsoProviderRemoveFromOrg } from '../sso-provider-remove/provider-remove';
 

@@ -1,3 +1,5 @@
+import type { SsoProvisioningTabMessages } from '../sso-provisioning/sso-provisioning-tab-types';
+
 import type {
   ProviderConfigureFieldsMessages,
   ProviderDetailsMessages,
@@ -18,6 +20,7 @@ export interface SsoProvideEditMessages {
     };
     provisioning?: {
       name?: string;
+      content?: SsoProvisioningTabMessages;
     };
     domains?: {
       name?: string;
@@ -40,4 +43,13 @@ export interface SsoProviderDetailsMessages {
   unsaved_changes_text?: string;
   details_fields?: ProviderDetailsMessages;
   configure_fields?: ProviderConfigureFieldsMessages;
+}
+
+export interface SsoProviderNotificationMessages {
+  delete_success?: string;
+  remove_success?: string;
+  update_success?: string;
+  general_error?: string;
+  provisioning_disabled_success?: string;
+  scim_token_delete_sucess?: string;
 }

@@ -442,7 +442,88 @@
           }
         },
         "provisioning": {
-          "name": "プロビジョニング"
+          "name": "プロビジョニング",
+          "content": {
+            "header": {
+              "title": "プロビジョニング",
+              "description": "ユーザープロファイルを組織に同期するためのプロビジョニングを設定します。",
+              "guided_setup_button_label": "ガイド付きセットアップ"
+            },
+            "warning_alert_message": {
+              "title": "プロビジョニングのマッピングが更新されました。",
+              "description": "属性を確認し、適切なプロビジョニングを確保するためにアイデンティティプロバイダーの設定を更新してください。"
+            },
+            "save_button_label": "保存",
+            "unsaved_changes_text": "未保存の変更",
+            "notifications": {
+              "provisioning_enabled_message": "${providerName}への変更が保存されました。",
+              "provisioning_disabled_message": "プロビジョニングが無効になりました。"
+            },
+            "delete": {
+              "modal": {
+                "title": "Disable provisioning",
+                "content": {
+                  "description": "Are you sure you want to disable provisioning? This will permanently delete the provisioning configuration and revoke access for any clients using provisioning with this provider."
+                },
+                "actions": {
+                  "cancel_button_label": "Cancel",
+                  "delete_button_label": "Proceed"
+                }
+              }
+            },
+            "manage_tokens": {
+              "title": "ベアラートークン",
+              "description": "アイデンティティプロバイダーに提供するベアラートークンを生成します。最大2つのトークンを作成できます。",
+              "generate_button_label": "トークンを生成",
+              "max_tokens_tooltip": "最大2つのトークンが許可されています",
+              "empty_state": {
+                "title": "まだトークンが作成されていません",
+                "description": "アイデンティティプロバイダーからのSCIMリクエストを認証するためのベアラートークンを生成してください。"
+              },
+              "table": {
+                "token_id_label": "トークンID",
+                "created_label": "作成日時",
+                "expires_label": "有効期限",
+                "actions_label": "アクション"
+              },
+              "token_item": {
+                "token_prefix": "トークン",
+                "never_expire": "このトークンに有効期限はありません。",
+                "last_used": "最終使用: なし",
+                "status_active": "有効",
+                "status_expired": "期限切れ",
+                "delete_button_label": "削除"
+              },
+              "create_modal": {
+                "title": "ベアラートークン情報",
+                "copy_and_close_button_label": "コピーして閉じる",
+                "content": {
+                  "description": "ベアラートークンをコピーしてアイデンティティプロバイダーに提供してください。このダイアログを閉じると再表示されません。",
+                  "field": {
+                    "label": "トークン"
+                  }
+                }
+              },
+              "delete_modal": {
+                "title": "トークン${tokenId}を削除",
+                "cancel_button_label": "キャンセル",
+                "delete_button_label": "トークンを削除",
+                "content": {
+                  "confirmation": "トークン${tokenId}を削除してもよろしいですか？この操作は元に戻すことができません。",
+                  "description": "ダウンタイムを避けるために、このトークンを削除する前に2番目のトークンを作成してプロビジョニングクライアントに提供することを検討してください。"
+                }
+              }
+            },
+            "fields": {
+              "user_id_attribute": {
+                "label": "ユーザーID属性",
+                "helper_text": "ユーザーを一意に識別する属性。"
+              },
+              "scim_endpoint_url": {
+                "label": "SCIMエンドポイントURL"
+              }
+            }
+          }
         },
         "domains": {
           "name": "ドメイン"
@@ -501,7 +582,10 @@
       "delete_success": "${providerName}が削除されました。",
       "remove_success": "${providerName}が${organizationName}から削除されました",
       "update_success": "${providerName}への変更が保存されました。",
-      "general_error": "リクエストの処理中に問題が発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。"
+      "general_error": "リクエストの処理中に問題が発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。",
+      "provisioning_disabled_success": "プロビジョニングが無効になりました。",
+      "scim_token_delete_sucess": "トークンが削除されました。",
+      "scim_token_create_success": "トークンが正常に生成されました"
     }
   },
   "mfa": {
@@ -639,55 +723,6 @@
         "enter_verify_code": "${verifier}に送信された6桁のコードを入力してください",
         "enter_opt_code": "認証アプリのコードを入力してください",
         "install_guardian_description": "続行するには、お使いのモバイルデバイスからアプリストア経由でAuth0 Guardianアプリをインストールしてください。"
-      }
-    }
-  },
-  "provisioning_management": {
-    "manage_tokens": {
-      "title": "ベアラートークン",
-      "description": "IDプロバイダーに提供するためのベアラートークンを生成します。最大2つのトークンを作成できます。",
-      "generate_button_label": "トークンを生成",
-      "max_tokens_tooltip": "最大2つのトークンまで許可されます",
-      "empty_state": {
-        "title": "トークンがありません",
-        "description": "開始するには、IDプロバイダーに提供する新しいベアラートークンを生成してください。"
-      },
-      "table": {
-        "token_id_label": "トークンID",
-        "created_label": "作成日時",
-        "expires_label": "有効期限",
-        "actions_label": "アクション"
-      },
-      "token_item": {
-        "token_prefix": "トークン",
-        "never_expire": "このトークンは期限切れになりません。",
-        "last_used": "最終使用: mm/dd/aa hh:mm:ss",
-        "status_active": "有効",
-        "status_expired": "期限切れ",
-        "delete_button_label": "削除"
-      },
-      "create_modal": {
-        "title": "ベアラートークン情報",
-        "copy_and_close_button_label": "コピーして閉じる"
-      },
-      "delete_modal": {
-        "title": "トークン ${tokenId} を削除",
-        "cancel_button_label": "キャンセル",
-        "delete_button_label": "トークンを削除"
-      }
-    },
-    "create_token": {
-      "modal_content": {
-        "description": "ベアラートークンをコピーしてIDプロバイダーに提供してください。このダイアログを閉じると再表示されません。",
-        "field": {
-          "label": "トークン"
-        }
-      }
-    },
-    "delete_token": {
-      "modal_content": {
-        "confirmation": "トークン ${tokenId} を削除してもよろしいですか？この操作は元に戻すことができません。",
-        "description": "ダウンタイムを避けるため、このトークンを削除する前に、2番目のトークンを作成してプロビジョニングクライアントに提供することを検討してください。"
       }
     }
   }

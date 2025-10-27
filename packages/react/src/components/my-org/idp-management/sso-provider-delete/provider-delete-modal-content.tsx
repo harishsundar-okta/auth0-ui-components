@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useTranslator } from '../../../../hooks/use-translator';
 import { cn } from '../../../../lib/theme-utils';
-import type { SsoProviderDeleteModalContentProps } from '../../../../types/my-org/idp-management/sso-provider-delete-types';
+import type { SsoProviderDeleteModalContentProps } from '../../../../types/my-org/idp-management/sso-provider/sso-provider-delete-types';
 import { Label } from '../../../ui/label';
 import { TextField } from '../../../ui/text-field';
 

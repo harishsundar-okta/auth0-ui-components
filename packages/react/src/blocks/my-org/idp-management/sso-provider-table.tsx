@@ -135,7 +135,7 @@ function SsoProviderTableComponent({
         accessorKey: 'name',
         title: t('table.columns.name'),
         width: '25%',
-        render: (idp) => <div className="font-medium">{idp.name}</div>,
+        render: (idp) => <div className="font-medium text-muted-foreground">{idp.name}</div>,
       },
       {
         type: 'text',

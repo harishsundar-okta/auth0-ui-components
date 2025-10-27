@@ -4,7 +4,7 @@ export const MY_ORG_DOMAINS_SCOPES =
 export const MY_ORG_IDPS_SCOPES =
   'read:my_org:identity_providers create:my_org:identity_providers update:my_org:identity_providers delete:my_org:identity_providers update:my_org:identity_providers_detach read:my_org:identity_providers_domains create:my_org:identity_provider_domains delete:my_org:identity_provider_domains';
 export const MY_ORG_PROVISIONING_SCOPES =
-  'read:my_org:scim_tokens create:my_org:scim_tokens delete:my_org:scim_tokens';
+  'read:my_org:scim_tokens create:my_org:scim_tokens delete:my_org:scim_tokens read:my_org:identity_provider_provisioning create:my_org:identity_provider_provisioning delete:my_org:identity_provider_provisioning';
 
 export const MY_ORG_SCOPES = [
   MY_ORG_DETAILS_SCOPES,

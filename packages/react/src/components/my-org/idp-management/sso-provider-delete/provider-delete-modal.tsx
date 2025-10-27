@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Modal } from '../../../../components/ui/modal';
 import { useTranslator } from '../../../../hooks/use-translator';
 import { cn } from '../../../../lib';
-import type { SsoProviderDeleteModalProps } from '../../../../types/my-org/idp-management/sso-provider-delete-types';
+import type { SsoProviderDeleteModalProps } from '../../../../types/my-org/idp-management/sso-provider/sso-provider-delete-types';
 
 import { SsoProviderDeleteModalContent } from './provider-delete-modal-content';
 
@@ -52,7 +52,7 @@ export function SsoProviderDeleteModal({
       title={t('modal.title', { providerName: provider.name })}
       content={
         <div className="space-y-6">
-          <p className={cn('text-sm text-muted-foreground text-(length:--font-size-paragraph')}>
+          <p className={cn('text-sm text-muted-foreground text-(length:--font-size-paragraph)')}>
             {t('modal.description', { providerName: provider.name })}
           </p>
 

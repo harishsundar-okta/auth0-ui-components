@@ -9,11 +9,17 @@ import type {
   UpdateIdentityProviderRequestContentPrivate,
   SsoProviderTabMessages,
   SsoProviderDetailsMessages,
+  CreateIdPProvisioningConfigResponseContent,
+  CreateIdpProvisioningScimTokenResponseContent,
+  CreateIdpProvisioningScimTokenRequestContent,
+  ListIdpProvisioningScimTokensResponseContent,
+  GetIdPProvisioningConfigResponseContent,
 } from '@auth0-web-ui-components/core';
 import type { LucideIcon } from 'lucide-react';
 import type React from 'react';
 
-import type { FormActionsProps } from '../../../components/ui/form-actions';
+import type { FormActionsProps } from '../../../../components/ui/form-actions';
+import type { SsoProvisioningTabClasses } from '../sso-provisioning/sso-provisioning-tab-types';
 
 import type { SsoProviderCreateClasses } from './sso-provider-create-types';
 import type {
@@ -26,7 +32,7 @@ export interface SsoProviderEditBackButton extends Omit<BackButton, 'onClick'> {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export interface SsoProviderEditClasses extends SsoProviderTabClasses {
+export interface SsoProviderEditClasses extends SsoProviderTabClasses, SsoProvisioningTabClasses {
   'SsoProviderEdit-header'?: string;
   'SsoProviderEdit-tabs'?: string;
 }
@@ -36,12 +42,32 @@ export interface SsoProviderEditProps
   idpId: IdpId;
   backButton?: SsoProviderEditBackButton;
   update?: ComponentAction<IdentityProvider, IdentityProvider>;
+  createProvisioning?: ComponentAction<
+    IdentityProvider,
+    CreateIdPProvisioningConfigResponseContent
+  >;
+  deleteProvisioning?: ComponentAction<IdentityProvider, void>;
+  createScimToken?: ComponentAction<
+    IdentityProvider,
+    CreateIdpProvisioningScimTokenResponseContent
+  >;
+  deleteScimToken?: ComponentAction<IdentityProvider, void>;
   delete: ComponentAction<IdentityProvider, void>;
   removeFromOrg: ComponentAction<IdentityProvider, void>;
 }
 
 export interface UseSsoProviderEditOptions extends SharedComponentProps {
   update?: ComponentAction<IdentityProvider, IdentityProvider>;
+  createProvisioning?: ComponentAction<
+    IdentityProvider,
+    CreateIdPProvisioningConfigResponseContent
+  >;
+  deleteProvisioning?: ComponentAction<IdentityProvider, void>;
+  createScimToken?: ComponentAction<
+    IdentityProvider,
+    CreateIdpProvisioningScimTokenResponseContent
+  >;
+  deleteScimToken?: ComponentAction<IdentityProvider, void>;
   deleteAction: ComponentAction<IdentityProvider, void>;
   removeFromOrg: ComponentAction<IdentityProvider, void>;
 }
@@ -49,13 +75,28 @@ export interface UseSsoProviderEditOptions extends SharedComponentProps {
 export interface UseSsoProviderEditReturn {
   provider: IdentityProvider | null;
   organization: OrganizationPrivate | null;
+  provisioningConfig: GetIdPProvisioningConfigResponseContent | null;
   isLoading: boolean;
   isUpdating: boolean;
   isDeleting: boolean;
   isRemoving: boolean;
+  isProvisioningUpdating: boolean;
+  isProvisioningDeleting: boolean;
+  isProvisioningLoading: boolean;
+  isScimTokensLoading: boolean;
+  isScimTokenCreating: boolean;
+  isScimTokenDeleting: boolean;
   fetchProvider: () => Promise<IdentityProvider | null>;
   fetchOrganizationDetails: () => Promise<void>;
+  fetchProvisioning: () => Promise<GetIdPProvisioningConfigResponseContent | null>;
   updateProvider: (data: UpdateIdentityProviderRequestContentPrivate) => Promise<void>;
+  createProvisioning: () => Promise<void>;
+  deleteProvisioning: () => Promise<void>;
+  listScimTokens: () => Promise<ListIdpProvisioningScimTokensResponseContent | null>;
+  createScimToken: (
+    data: CreateIdpProvisioningScimTokenRequestContent,
+  ) => Promise<CreateIdpProvisioningScimTokenResponseContent | undefined>;
+  deleteScimToken: (idpScimTokenId: string) => Promise<void>;
   onDeleteConfirm: () => Promise<void>;
   onRemoveConfirm: () => Promise<void>;
 }
