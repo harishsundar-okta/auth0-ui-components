@@ -729,7 +729,7 @@ packages:
     resolution: {integrity: sha512-YaHHCxiSQxDb+Ju9gXOqcqgXWq8EkUSpZC4g24D3MoEBUaADKwOosrAnmjDZcslBZpnSFFdrl4dLYedAer3xlQ==}
 
   '@auth0/nextjs-auth0@file:examples/next-rwa/dependencies/nextjs-auth0/auth0-nextjs-auth0-4.11.0.tgz':
-    resolution: {integrity: sha512-pDDVA5pHh/6t8L5HCQ6bc685YTPyh5XKfVs5E2vdCDx/x1AyHDrPd8emxDDtUgggHeAIKrpyk0vAAtbDkotPkQ==, tarball: file:examples/next-rwa/dependencies/nextjs-auth0/auth0-nextjs-auth0-4.11.0.tgz}
+    resolution: {integrity: sha512-KKVePMnZ1pTjicfBATdtCD/7NpdKHVGtiAxQ37w8hN8YlyJAv5AMk8kIFsg+yK5eAzM1+sxeSSfJMceFzZ4ltw==, tarball: file:examples/next-rwa/dependencies/nextjs-auth0/auth0-nextjs-auth0-4.11.0.tgz}
     version: 4.11.0
     peerDependencies:
       next: ^14.2.25 || ^15.2.3
