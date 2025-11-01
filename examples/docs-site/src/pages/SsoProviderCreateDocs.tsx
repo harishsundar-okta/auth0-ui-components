@@ -28,6 +28,9 @@ export default function SsoProviderCreateDocs() {
               </svg>
               My Organization
             </span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+              BETA
+            </span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900">SsoProviderCreate Component</h1>
           <p className="text-xl text-gray-600">
@@ -126,7 +129,7 @@ export default function SsoProviderCreateDocs() {
                 title="1. Install Core Package"
               />
               <CodeBlock
-                code="npx shadcn@latest add https://auth0-web-ui-components.vercel.app/r/my-org/sso-provider-create.json"
+                code="npx shadcn@latest add https://auth0-ui-components.vercel.app/r/my-org/sso-provider-create.json"
                 language="bash"
                 title="2. Add Shadcn Block"
               />
@@ -629,8 +632,7 @@ interface ComponentAction<TInput, TOutput = void> {
   styling={{
     variables: {
       common: {
-        '--border-radius': '12px',
-        '--spacing-unit': '1.5rem'
+        '--font-size-title': '1.5rem'
       }
     },
     classes: {

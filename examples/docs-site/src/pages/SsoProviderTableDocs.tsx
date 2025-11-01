@@ -28,6 +28,9 @@ export default function SsoProviderTableDocs() {
               </svg>
               My Organization
             </span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+              BETA
+            </span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900">SsoProviderTable Component</h1>
           <p className="text-xl text-gray-600">
@@ -125,7 +128,7 @@ export default function SsoProviderTableDocs() {
                 title="1. Install Core Package"
               />
               <CodeBlock
-                code="npx shadcn@latest add https://auth0-web-ui-components.vercel.app/r/my-org/sso-provider-table.json"
+                code="npx shadcn@latest add https://auth0-ui-components.vercel.app/r/my-org/sso-provider-table.json"
                 language="bash"
                 title="2. Add Shadcn Block"
               />
@@ -699,12 +702,11 @@ interface ComponentAction<T, U = undefined> {
   styling={{
     variables: {
       common: {
-        '--border-radius': '12px',
-        '--spacing-unit': '1.5rem'
+        '--font-size-title': '1.5rem'
       },
       light: {
-        '--primary-color': '#2563eb',
-        '--background-color': '#ffffff'
+        '--color-primary': '#2563eb',
+        '--color-background': '#ffffff'
       }
     },
     classes: {

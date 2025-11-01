@@ -1,18 +1,9 @@
-import { useAuth0 } from '@auth0/auth0-react';
-import { Menu, LogOut, User } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import type { ReactNode } from 'react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 
 interface LayoutProps {
@@ -21,15 +12,15 @@ interface LayoutProps {
 
 const navigationSections = [
   {
-    title: 'Getting Started',
-    items: [
-      { name: 'Introduction', href: '/' },
-      { name: 'Getting started', href: '/getting-started' },
-    ],
+    title: 'UI Components',
+    items: [{ name: 'Getting Started', href: '/' }],
   },
   {
     title: 'My Account',
-    items: [{ name: 'UserMFAMgmt', href: '/my-account/user-mfa-management' }],
+    items: [
+      { name: 'Introduction', href: '/my-account' },
+      { name: 'UserMFAMgmt', href: '/my-account/user-mfa-management' },
+    ],
   },
   {
     title: 'My Organization',
@@ -47,7 +38,6 @@ const navigationSections = [
 export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const location = useLocation();
-  const { isAuthenticated, isLoading, loginWithRedirect, logout, user } = useAuth0();
 
   const getSectionTitleClasses = (title: string) => {
     switch (title) {
@@ -155,64 +145,10 @@ export default function Layout({ children }: LayoutProps) {
                 UI Components
               </Link>
 
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-sm font-medium bg-yellow-100 text-yellow-800">
+                BETA
+              </span>
               {/* Docs */}
-              <Link to="/" className="text-sm text-gray-600 hover:text-gray-900">
-                Docs
-              </Link>
-            </div>
-
-            {/* Right side - User profile and mobile menu */}
-            <div className="flex items-center space-x-4">
-              {/* User Profile Dropdown */}
-              {isAuthenticated ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={user?.picture} alt={user?.name || 'User'} />
-                        <AvatarFallback>
-                          <User className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <div className="flex items-center justify-start gap-2 p-2">
-                      <div className="flex flex-col space-y-1 leading-none">
-                        {user?.name && <p className="font-medium">{user.name}</p>}
-                        {user?.email && (
-                          <p className="w-[200px] truncate text-sm text-muted-foreground">
-                            {user.email}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => {
-                        localStorage.setItem(
-                          'preLogoutLocation',
-                          window.location.pathname + window.location.hash,
-                        );
-                        logout({ logoutParams: { returnTo: window.location.origin } });
-                      }}
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Sign out</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : !isLoading ? (
-                <Button
-                  onClick={() =>
-                    loginWithRedirect({
-                      appState: { returnTo: window.location.pathname + window.location.hash },
-                    })
-                  }
-                >
-                  Sign In
-                </Button>
-              ) : null}
             </div>
           </div>
         </div>
@@ -240,7 +176,9 @@ export default function Layout({ children }: LayoutProps) {
                         className={getChildItemClasses(section.title, isActive, true)}
                         onClick={() => setSidebarOpen(false)}
                       >
-                        {item.name}
+                        <div className="flex items-center justify-between">
+                          <span>{item.name}</span>
+                        </div>
                       </Link>
                     );
                   })}
@@ -272,7 +210,9 @@ export default function Layout({ children }: LayoutProps) {
                         to={item.href}
                         className={getChildItemClasses(section.title, isActive, false)}
                       >
-                        {item.name}
+                        <div className="flex items-center justify-between">
+                          <span>{item.name}</span>
+                        </div>
                       </Link>
                     );
                   })}

@@ -6,13 +6,13 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import Layout from './components/Layout';
 import DomainTableDocs from './pages/DomainTableDocs';
 import GettingStarted from './pages/GettingStarted';
-import HomePage from './pages/HomePage';
+import MyAccountIntroduction from './pages/MyAccountIntroduction';
 import MyOrgIntroduction from './pages/MyOrgIntroduction';
-import OrgDetailsEdit from './pages/OrgDetailsEdit';
+import OrgDetailsEditDocs from './pages/OrgDetailsEditDocs';
 import SsoProviderCreateDocs from './pages/SsoProviderCreateDocs';
 import SsoProviderEditDocs from './pages/SsoProviderEditDocs';
 import SsoProviderTableDocs from './pages/SsoProviderTableDocs';
-import UserMFA from './pages/UserMFA';
+import UserMFAMgmtDocs from './pages/UserMFAMgmtDocs';
 import '@auth0/web-ui-components-react/dist/index.css';
 
 function AppContent() {
@@ -39,11 +39,12 @@ function AppContent() {
         }}
       >
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<GettingStarted />} />
           <Route path="/getting-started" element={<GettingStarted />} />
-          <Route path="/my-account/user-mfa-management" element={<UserMFA />} />
+          <Route path="/my-account" element={<MyAccountIntroduction />} />
+          <Route path="/my-account/user-mfa-management" element={<UserMFAMgmtDocs />} />
           <Route path="/my-org" element={<MyOrgIntroduction />} />
-          <Route path="/my-org/org-details-edit" element={<OrgDetailsEdit />} />
+          <Route path="/my-org/org-details-edit" element={<OrgDetailsEditDocs />} />
           <Route path="/my-org/domain-table" element={<DomainTableDocs />} />
           <Route path="/my-org/sso-provider-table" element={<SsoProviderTableDocs />} />
           <Route path="/my-org/sso-provider-create" element={<SsoProviderCreateDocs />} />

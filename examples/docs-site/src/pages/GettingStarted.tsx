@@ -6,11 +6,127 @@ export default function GettingStarted() {
   return (
     <div className="max-w-6xl mx-auto space-y-12">
       <div className="space-y-4">
-        <h1 className="text-4xl font-bold text-gray-900">Getting Started</h1>
+        <h1 className="text-4xl font-bold text-gray-900">
+          Auth0 UI Components{' '}
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+            BETA
+          </span>
+        </h1>
         <p className="text-xl text-gray-600">
-          Learn how to integrate Auth0 UI Components into your React application.
+          Professional React components for Auth0 authentication and identity management, designed
+          to help you build secure and user-friendly applications faster.
         </p>
       </div>
+
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <div className="flex items-start">
+          <div className="flex-shrink-0">
+            <svg className="w-6 h-6 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">Ready to Use</h3>
+            <div className="text-blue-800">
+              <p>
+                Pre-built, fully functional components that integrate seamlessly with Auth0's
+                authentication platform. Simply install, configure, and start building secure
+                applications with multi-factor authentication support.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section className="space-y-6">
+        <h2 className="text-2xl font-semibold text-gray-900">What's Included</h2>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 p-6 text-white shadow-xl">
+            <div className="relative z-10">
+              <div className="mb-3">
+                <svg
+                  className="w-8 h-8 text-white/90"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">My Account Components</h3>
+              <p className="text-white/90 mb-4">
+                Multi-factor authentication and user security management components.
+              </p>
+              <a
+                href="/my-account"
+                className="inline-flex items-center px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg font-medium transition-colors"
+              >
+                Learn More
+                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </a>
+            </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700 p-6 text-white shadow-xl">
+            <div className="relative z-10">
+              <div className="mb-3">
+                <svg
+                  className="w-8 h-8 text-white/90"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">My Organization Components</h3>
+              <p className="text-white/90 mb-4">
+                Organization management and administration components.
+              </p>
+              <a
+                href="/my-org"
+                className="inline-flex items-center px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg font-medium transition-colors"
+              >
+                Learn More
+                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </a>
+            </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
+          </div>
+        </div>
+      </section>
 
       {/* Installation */}
       <section className="space-y-6">
@@ -47,7 +163,7 @@ export default function GettingStarted() {
                 title="1. Install Core Package"
               />
               <CodeBlock
-                code="npx shadcn@latest add https://auth0-web-ui-components.vercel.app/r/my-org/org-details-edit.json"
+                code="npx shadcn@latest add https://auth0-ui-components.vercel.app/r/my-org/org-details-edit.json"
                 language="bash"
                 title="2. Add Shadcn Block (e.g., OrgDetailsEdit)"
               />
@@ -81,7 +197,7 @@ export default function GettingStarted() {
                 />
               </svg>
               <div>
-                <strong>Auth0 Account:</strong> Sign up for a free account at{' '}
+                <strong>Auth0 Account:</strong> Sign up at{' '}
                 <a href="https://auth0.com" className="text-blue-600 hover:underline">
                   auth0.com
                 </a>
@@ -340,6 +456,20 @@ function EditOrgPage() {
                   <td className="px-4 py-2 text-sm text-gray-500">
                     URL to your authentication proxy server for server-side authentication (enables
                     Proxy Mode)
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                    contextInterface
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-500">
+                    <code className="text-xs">BasicAuth0ContextInterface</code>
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">No</td>
+                  <td className="px-4 py-2 text-sm text-gray-500">
+                    Custom authentication context interface for frameworks other than
+                    @auth0/auth0-react. Provides authentication functions (getAccessTokenSilently,
+                    loginWithRedirect, etc.) when not using the Auth0 React SDK
                   </td>
                 </tr>
               </tbody>
@@ -725,7 +855,7 @@ function EditOrgPage() {
         <div className="mt-8 bg-white border rounded-lg p-6">
           <h3 className="text-lg font-medium mb-3">Example Implementation</h3>
           <p className="text-gray-600 mb-4">
-            See complete working examples in the `react-spa-npm` or `react-spa-shadcn` sample
+            See complete working examples in the "react-spa-npm" or "react-spa-shadcn" sample
             applications.
           </p>
           <a

@@ -28,6 +28,9 @@ export default function MyOrgIntroduction() {
               </svg>
               My Organization
             </span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+              BETA
+            </span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900">My Organization Components</h1>
           <p className="text-xl text-gray-600">

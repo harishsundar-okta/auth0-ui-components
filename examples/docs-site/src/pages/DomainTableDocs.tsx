@@ -28,6 +28,11 @@ export default function DomainTableDocs() {
               </svg>
               My Organization
             </span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mr-3">
+                BETA
+              </span>
+            </span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900">DomainTable Component</h1>
           <p className="text-xl text-gray-600">
@@ -125,7 +130,7 @@ export default function DomainTableDocs() {
                 title="1. Install Core Package"
               />
               <CodeBlock
-                code="npx shadcn@latest add https://auth0-web-ui-components.vercel.app/r/my-org/domain-table.json"
+                code="npx shadcn@latest add https://auth0-ui-components.vercel.app/r/my-org/domain-table.json"
                 language="bash"
                 title="2. Add Shadcn Block"
               />
@@ -644,8 +649,8 @@ interface ComponentAction<T, U = undefined> {
               code={`<DomainTable
   styling={{
     variables: {
-      common: { '--spacing-unit': '1rem' },
-      light: { '--primary-color': '#4f46e5' },
+      common: { '--font-size-title': '1rem' },
+      light: { '--color-primary': '#4f46e5' },
     },
     classes: {
       'DomainTable-header': 'mb-6',

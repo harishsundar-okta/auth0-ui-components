@@ -1,7 +1,6 @@
 import React from 'react';
 
 import CodeBlock from '../components/CodeBlock';
-import { ComponentDemo } from '../components/ComponentDemo';
 
 export default function UserMFA() {
   return (
@@ -31,6 +30,9 @@ export default function UserMFA() {
               </svg>
               My Account
             </span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+              BETA
+            </span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900">UserMFAMgmt Component</h1>
           <p className="text-xl text-gray-600">
@@ -40,142 +42,69 @@ export default function UserMFA() {
         </div>
       </div>
 
-      {/* Overview */}
+      {/* Component preview */}
       <section className="space-y-6">
-        <h2 className="text-2xl font-semibold text-gray-900">Overview</h2>
-        <div className="max-w-none">
-          <p>
-            The <code>UserMFAMgmt</code> component provides a complete solution for managing user
-            Multi-Factor Authentication factors. It handles fetching, enrolling, and deleting MFA
-            factors while supporting both Single Page Application (SPA) and Regular Web Application
-            (RWA) authentication modes.
-          </p>
+        <h2 className="text-2xl font-semibold text-gray-900">Component preview</h2>
+        <div className="max-w-none flex justify-center">
+          <img
+            src="/img/my-account/UserMFAMgmt.png"
+            alt="UserMFAMgmt Component"
+            width={700}
+            height={500}
+          />
         </div>
       </section>
 
-      {/* Features */}
+      {/* Setup Requirements */}
       <section className="space-y-6">
-        <h2 className="text-2xl font-semibold text-gray-900">Features</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white border rounded-lg p-6">
-            <h3 className="text-lg font-medium mb-3">Factor Management</h3>
-            <ul className="space-y-2 text-gray-600">
-              <li>• View existing MFA factors</li>
-              <li>• Enroll new factors</li>
-              <li>• Remove unwanted factors</li>
-              <li>• Filter active factors</li>
-            </ul>
-          </div>
-          <div className="bg-white border rounded-lg p-6">
-            <h3 className="text-lg font-medium mb-3">Supported Factor Types</h3>
-            <ul className="space-y-2 text-gray-600">
-              <li>• Phone Message</li>
-              <li>• One-Time Password</li>
-              <li>• Email</li>
-              <li>• Push Notification using Auth0 Guardian</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Prerequisites */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-semibold text-gray-900">Prerequisites</h2>
-        <div className="space-y-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="text-lg font-medium text-blue-900 mb-3">
-              Auth0 Application Configuration
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium text-blue-800 mb-2">1. Enable MFA Grant Types</h4>
-                <p className="text-blue-700 text-sm mb-2">
-                  In your Auth0 Dashboard, navigate to Applications → [Your App] → Settings →
-                  Advanced Settings → Grant Types and ensure the following are enabled:
-                </p>
-                <div className="bg-white rounded-lg p-3 space-y-1">
-                  <p className="text-sm text-gray-700">• MFA (mfa)</p>
-                  <p className="text-sm text-gray-700">• Authorization Code</p>
-                  <p className="text-sm text-gray-700">• Refresh Token</p>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-blue-800 mb-2">2. Configure MFA Policies</h4>
-                <p className="text-blue-700 text-sm mb-2">
-                  Navigate to Security → Multi-factor Auth and configure:
-                </p>
-                <div className="bg-white rounded-lg p-3 space-y-1">
-                  <p className="text-sm text-gray-700">
-                    • Enable desired MFA factors (Phone Message, One-Time Password, Email)
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    • Set up MFA policies for your application
-                  </p>
-                  <p className="text-sm text-gray-700">• Configure factor settings and templates</p>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-blue-800 mb-2">3. Environment Variables</h4>
-                <p className="text-blue-700 text-sm mb-2">
-                  Create a <code>.env</code> file in your project root:
-                </p>
-                <div className="bg-white rounded-lg p-3">
-                  <CodeBlock
-                    code={`VITE_AUTH0_DOMAIN=your-domain.auth0.com
-VITE_AUTH0_CLIENT_ID=your-client-id
-VITE_AUTH0_AUDIENCE=your-api-audience # Optional`}
-                    language="bash"
-                    title=".env"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-            <div className="flex items-start">
-              <svg
-                className="w-6 h-6 text-amber-600 mt-0.5 mr-3 flex-shrink-0"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <div>
-                <h3 className="text-lg font-medium text-amber-900 mb-2">Important Notes</h3>
-                <ul className="space-y-2 text-amber-800 text-sm">
-                  <li>• The user must be authenticated before using this component</li>
+        <h2 className="text-2xl font-semibold text-gray-900">Setup Requirements</h2>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="flex items-start">
+            <svg
+              className="w-6 h-6 text-blue-600 mt-0.5 mr-3 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div>
+              <h3 className="text-lg font-medium text-blue-900 mb-2">
+                Auth0 Configuration Required
+              </h3>
+              <p className="text-blue-800 mb-4">
+                Before using the <b>UserMFAMgmt</b> component, you need to configure your Auth0
+                tenant with the proper applications, MFA settings, and permissions.
+              </p>
+              <p className="text-blue-800 mb-4">
+                <strong>Complete setup guide:</strong>{' '}
+                <a
+                  href="/my-account"
+                  className="text-blue-700 hover:text-blue-900 underline font-medium"
+                >
+                  My Account Components Introduction →
+                </a>
+              </p>
+              <div className="mt-4 pt-4 border-t border-blue-200">
+                <h4 className="text-md font-medium text-blue-900 mb-2">
+                  MFA-Specific Requirements
+                </h4>
+                <ul className="space-y-2 text-blue-800 text-sm list-disc list-inside">
                   <li>
-                    • MFA configuration may take a few minutes to propagate across Auth0's systems
+                    <strong>Enable MFA Methods:</strong> In Auth0 Dashboard, go to Security →
+                    Multi-factor Auth and enable the MFA methods you want to use (One-time Password,
+                    Push Notification using Auth0 Guardian, Phone Message, Email, Recovery Code)
                   </li>
-                  <li>
-                    • Test MFA enrollment in a development environment before deploying to
-                    production
-                  </li>
-                  <li>• Consider implementing fallback authentication methods</li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Interactive Demo */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-semibold text-gray-900">Interactive Demo</h2>
-        <div className="max-w-none">
-          <p>
-            Experience the <code>UserMFAMgmt</code> component in action. Use the controls below to
-            see how different configuration options affect the component's appearance and behavior.
-          </p>
-        </div>
-        <ComponentDemo />
       </section>
 
       {/* Installation */}
@@ -203,8 +132,8 @@ VITE_AUTH0_AUDIENCE=your-api-audience # Optional`}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3">Option 2: Shadcn CLI</h3>
             <p className="text-gray-600 mb-4">
-              If you're using Shadcn, you can add the UserMFA block directly to your project. You'll
-              still need to install the core package separately:
+              If you're using Shadcn, you can add the UserMFAMgmt block directly to your project.
+              You'll still need to install the core package separately:
             </p>
             <div className="space-y-3">
               <CodeBlock
@@ -213,7 +142,7 @@ VITE_AUTH0_AUDIENCE=your-api-audience # Optional`}
                 title="1. Install Core Package"
               />
               <CodeBlock
-                code="npx shadcn@latest add https://auth0-web-ui-components.vercel.app/r/my-account/user-mfa-management.json"
+                code="npx shadcn@latest add https://auth0-ui-components.vercel.app/r/my-account/user-mfa-management.json"
                 language="bash"
                 title="2. Add Shadcn Block"
               />
@@ -272,12 +201,46 @@ export function SecurityPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               <tr>
                 <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                  schema
+                </td>
+                <td className="px-4 py-2 text-sm text-gray-500">
+                  {'{'}email?: RegExp; phone?: RegExp{'}'}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">-</td>
+                <td className="px-4 py-2 text-sm text-gray-500">
+                  Custom validation patterns for email and phone inputs
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                   customMessages
                 </td>
-                <td className="px-4 py-2 text-sm text-gray-500">Partial&lt;MFALocaleContent&gt;</td>
+                <td className="px-4 py-2 text-sm text-gray-500">Partial&lt;MFAMessages&gt;</td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{}</td>
                 <td className="px-4 py-2 text-sm text-gray-500">
-                  customMessages object for i18n support
+                  Custom messages object for i18n support
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                  styling
+                </td>
+                <td className="px-4 py-2 text-sm text-gray-500">
+                  {'{'}variables?: CSSProperties; classes?: UserMFAMgmtClasses{'}'}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">-</td>
+                <td className="px-4 py-2 text-sm text-gray-500">
+                  Custom styling configuration for component theming and CSS classes
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                  readOnly
+                </td>
+                <td className="px-4 py-2 text-sm text-gray-500">boolean</td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">false</td>
+                <td className="px-4 py-2 text-sm text-gray-500">
+                  Whether the component is in read-only mode
                 </td>
               </tr>
               <tr>
@@ -318,28 +281,6 @@ export function SecurityPage() {
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">false</td>
                 <td className="px-4 py-2 text-sm text-gray-500">
                   Whether to disable deletion of factors
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  readOnly
-                </td>
-                <td className="px-4 py-2 text-sm text-gray-500">boolean</td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">false</td>
-                <td className="px-4 py-2 text-sm text-gray-500">
-                  Whether the component is in read-only mode
-                </td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  schemaValidation
-                </td>
-                <td className="px-4 py-2 text-sm text-gray-500">
-                  {'{'}email?: RegExp; phone?: RegExp{'}'}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">-</td>
-                <td className="px-4 py-2 text-sm text-gray-500">
-                  Custom validation patterns for email and phone inputs
                 </td>
               </tr>
               <tr>
@@ -463,39 +404,238 @@ export function SecurityPage() {
           </div>
 
           <div>
-            <h3 className="text-lg font-medium mb-4">customMessages</h3>
-            <p className="text-gray-600 mb-4">Customize text and translations:</p>
+            <h3 className="text-lg font-medium mb-4">Custom Messages</h3>
+            <p className="text-gray-600 mb-4">
+              Customize all text and translations. All fields are optional and use defaults if not
+              provided:
+            </p>
+
+            {/* Available Message Fields */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <h4 className="font-medium text-blue-900 mb-2">Available Message Fields</h4>
+              <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
+                <div>
+                  <strong>General Messages</strong>
+                  <ul className="ml-4 list-disc space-y-1 mt-2">
+                    <li>
+                      <code>title</code> - Component header title
+                    </li>
+                    <li>
+                      <code>description</code> - Component description text
+                    </li>
+                    <li>
+                      <code>no_active_mfa</code> - Message when no factors are enrolled
+                    </li>
+                    <li>
+                      <code>enroll</code> - Enroll button text
+                    </li>
+                    <li>
+                      <code>delete</code> - Delete button text
+                    </li>
+                    <li>
+                      <code>enrolled</code> - Status text for enrolled factors
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <strong>Action Messages</strong>
+                  <ul className="ml-4 list-disc space-y-1 mt-2">
+                    <li>
+                      <code>enroll_factor</code> - Success message after enrollment
+                    </li>
+                    <li>
+                      <code>remove_factor</code> - Success message after deletion
+                    </li>
+                    <li>
+                      <code>delete_mfa_title</code> - Delete confirmation modal title
+                    </li>
+                    <li>
+                      <code>delete_mfa_content</code> - Delete confirmation modal content
+                    </li>
+                    <li>
+                      <code>cancel</code> - Cancel button text
+                    </li>
+                    <li>
+                      <code>deleting</code> - Deleting in progress text
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <strong>Factor-Specific Messages</strong>
+                  <ul className="ml-4 list-disc space-y-1 mt-2">
+                    <li>
+                      <code>sms</code> - SMS factor title and description
+                    </li>
+                    <li>
+                      <code>otp</code> - Authenticator app factor messages
+                    </li>
+                    <li>
+                      <code>email</code> - Email factor messages
+                    </li>
+                    <li>
+                      <code>push-notification</code> - Push notification messages
+                    </li>
+                    <li>
+                      <code>webauthn-platform</code> - Platform authenticator messages
+                    </li>
+                    <li>
+                      <code>webauthn-roaming</code> - Security key messages
+                    </li>
+                    <li>
+                      <code>recovery-code</code> - Recovery code messages
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <strong>Error Messages</strong>
+                  <ul className="ml-4 list-disc space-y-1 mt-2">
+                    <li>
+                      <code>errors.factors_loading_error</code> - Factor loading error
+                    </li>
+                    <li>
+                      <code>errors.delete_factor</code> - Factor deletion error
+                    </li>
+                    <li>
+                      <code>errors.failed</code> - Generic failure message
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             <CodeBlock
               code={`<UserMFAMgmt
   customMessages={{
-    title: 'Manage MFA Factors',
-    description: 'Secure your account with multi-factor authentication.',
-    no_active_mfa: 'No MFA factors configured',
-    enroll_factor: 'MFA factor enrolled successfully',
-    remove_factor: 'MFA factor removed successfully',
+    title: 'Manage Multi-Factor Authentication',
+    description: 'Add extra layers of security to protect your account',
+    no_active_mfa: 'You have not enrolled any MFA factors yet',
+    enroll: 'Add Factor',
+    enroll_factor: 'Factor successfully enrolled!',
+    remove_factor: 'Factor successfully removed',
+    delete_mfa_title: 'Remove MFA Factor?',
+    delete_mfa_content: 'Are you sure you want to remove this factor? You will no longer be able to use it for authentication.',
     sms: {
       title: 'SMS Authentication',
-      description: 'Receive codes via text message'
+      description: 'Receive verification codes via text message'
     },
-    totp: {
+    otp: {
       title: 'Authenticator App',
-      description: 'Use an authenticator app like Google Authenticator'
+      description: 'Use apps like Google Authenticator or Authy'
+    },
+  }}
+/>`}
+              language="tsx"
+              title="Custom messages example"
+            />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-medium mb-4">Custom Styling</h3>
+            <p className="text-gray-600 mb-4">
+              Customize appearance with CSS variables and classes. Supports theme-aware styling:
+            </p>
+
+            {/* Available Styling Options */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <h4 className="font-medium text-blue-900 mb-2">Available Styling Options</h4>
+              <div className="space-y-4 text-sm text-blue-800">
+                <div>
+                  <strong>CSS Variables (styling.variables)</strong>
+                  <ul className="ml-4 list-disc space-y-1 mt-2">
+                    <li>
+                      <code>common</code> - Variables applied to both light and dark modes
+                    </li>
+                    <li>
+                      <code>light</code> - Variables specific to light mode
+                    </li>
+                    <li>
+                      <code>dark</code> - Variables specific to dark mode
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <strong>CSS Classes (styling.classes)</strong>
+                  <ul className="ml-4 list-disc space-y-1 mt-2">
+                    <li>
+                      <code>UserMFAMgmt-card</code> - Main component card container
+                    </li>
+                    <li>
+                      <code>UserMFASetupForm-dialogContent</code> - Enrollment dialog content
+                    </li>
+                    <li>
+                      <code>DeleteFactorConfirmation-dialogContent</code> - Delete confirmation
+                      dialog
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <CodeBlock
+              code={`<UserMFAMgmt
+  styling={{
+    variables: {
+      common: {
+        '--font-size-title': '1.5rem',
+      },
+      light: {
+        '--color-primary': '#2563eb',
+        '--color-background': '#ffffff',
+      },
+      dark: {
+        '--color-primary': '#3b82f6',
+        '--color-background': '#1f2937',
+      }
+    },
+    classes: {
+      'UserMFAMgmt-card': 'shadow-2xl rounded-2xl border-2 p-8',
+      'UserMFASetupForm-dialogContent': 'max-w-2xl',
+      'DeleteFactorConfirmation-dialogContent': 'max-w-md'
     }
   }}
 />`}
               language="tsx"
-              title="customMessages configuration"
+              title="Custom styling example"
             />
           </div>
 
           <div>
             <h3 className="text-lg font-medium mb-4">Schema Validation</h3>
             <p className="text-gray-600 mb-4">
-              Customize validation patterns for email and phone number inputs:
+              Set up custom validation rules with the <code>schema</code> prop. All fields are
+              optional and override defaults:
             </p>
+
+            {/* Available Schema Fields */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <h4 className="font-medium text-blue-900 mb-2">Available Schema Fields</h4>
+              <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
+                <div>
+                  <strong>email</strong> - Email address validation
+                  <ul className="ml-4 list-disc">
+                    <li>
+                      <code>RegExp</code> - Custom regex pattern
+                    </li>
+                    <li>Default pattern validates standard email format</li>
+                    <li>Used for email-based MFA enrollment</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong>phone</strong> - Phone number validation
+                  <ul className="ml-4 list-disc">
+                    <li>
+                      <code>RegExp</code> - Custom regex pattern
+                    </li>
+                    <li>Default pattern accepts international formats</li>
+                    <li>Used for SMS-based MFA enrollment</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             <CodeBlock
               code={`<UserMFAMgmt
-  schemaValidation={{
+  schema={{
     // Custom email validation (more restrictive)
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/,
     
@@ -504,7 +644,7 @@ export function SecurityPage() {
   }}
 />`}
               language="tsx"
-              title="Custom schema validation"
+              title="Schema validation example"
             />
             <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-sm text-yellow-800">
