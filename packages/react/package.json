@@ -1,8 +1,11 @@
 {
   "name": "@auth0/web-ui-components-react",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.5",
   "private": false,
   "sideEffects": true,
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
