@@ -17,6 +17,11 @@
     },
     "./dist/index.css": "./dist/index.css"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build:ts": "tsup",
     "build": "pnpm build:ts",
@@ -67,6 +72,8 @@
     "tw-animate-css": "^1.3.2",
     "zod": "^3.25.56"
   },
+  "author": "Auth0",
+  "license": "MIT",
   "devDependencies": {
     "@auth0/auth0-react": "^2.0.0",
     "@tailwindcss/postcss": "^4.1.10",
