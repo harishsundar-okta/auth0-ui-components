@@ -41,7 +41,6 @@ export default function DomainTableDocs() {
           </p>
         </div>
       </div>
-
       {/* Component Preview */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Component Preview</h2>
@@ -54,7 +53,6 @@ export default function DomainTableDocs() {
           />
         </div>
       </section>
-
       {/* Setup Requirements */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Setup Requirements</h2>
@@ -94,7 +92,6 @@ export default function DomainTableDocs() {
           </div>
         </div>
       </section>
-
       {/* Installation */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Installation</h2>
@@ -102,9 +99,9 @@ export default function DomainTableDocs() {
           {/* NPM Installation */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3">Option 1: NPM Package</h3>
-            <p className="text-gray-600 mb-4">Install both the core and React packages:</p>
+            <p className="text-gray-600 mb-4">Install the React package:</p>
             <CodeBlock
-              code="npm install @auth0/web-ui-components-core @auth0/web-ui-components-react"
+              code="npm install @auth0/web-ui-components-react"
               language="bash"
               title="npm"
             />
@@ -145,7 +142,6 @@ export default function DomainTableDocs() {
           </div>
         </div>
       </section>
-
       {/* Basic Usage */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Basic Usage</h2>
@@ -163,7 +159,6 @@ export function DomainsPage() {
           title="Basic implementation"
         />
       </section>
-
       {/* Props Overview */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Props</h2>
@@ -242,7 +237,7 @@ export function DomainsPage() {
               </tr>
               <tr>
                 <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  create
+                  createAction
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-500">ComponentAction&lt;Domain&gt;</td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">-</td>
@@ -252,7 +247,7 @@ export function DomainsPage() {
               </tr>
               <tr>
                 <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  verify
+                  verifyAction
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-500">ComponentAction&lt;Domain&gt;</td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">-</td>
@@ -262,7 +257,7 @@ export function DomainsPage() {
               </tr>
               <tr>
                 <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  delete
+                  deleteAction
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-500">ComponentAction&lt;Domain&gt;</td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">-</td>
@@ -272,7 +267,7 @@ export function DomainsPage() {
               </tr>
               <tr>
                 <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  associateToProvider
+                  associateToProviderAction
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-500">
                   ComponentAction&lt;Domain, IdentityProvider&gt;
@@ -284,7 +279,7 @@ export function DomainsPage() {
               </tr>
               <tr>
                 <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  deleteFromProvider
+                  deleteFromProviderAction
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-500">
                   ComponentAction&lt;Domain, IdentityProvider&gt;
@@ -321,19 +316,50 @@ export function DomainsPage() {
         </div>
 
         {/* TypeScript Definitions */}
-        <div className="space-y-4 mt-8">
-          <h3 className="text-lg font-medium text-gray-900">TypeScript Definitions</h3>
-          <p className="text-gray-600">
-            Complete TypeScript interface definitions for all prop types:
-          </p>
-          <CodeBlock
-            code={`// Main component props interface
+        <details className="mt-8 border-2 border-blue-200 rounded-lg overflow-hidden shadow-sm bg-blue-50">
+          <summary className="cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 px-6 py-4 font-semibold text-gray-900 flex items-center justify-between transition-colors">
+            <div className="flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+              <span className="text-lg">TypeScript Definitions</span>
+            </div>
+            <svg
+              className="w-5 h-5 text-blue-600 transform transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </summary>
+          <div className="p-6 space-y-4 bg-white border-t-2 border-blue-100">
+            <p className="text-gray-600">
+              Complete TypeScript interface definitions for all prop types:
+            </p>
+            <CodeBlock
+              code={`// Main component props interface
 interface DomainTableProps {
-  create?: ComponentAction<Domain>;
-  verify?: ComponentAction<Domain>;
-  delete?: ComponentAction<Domain>;
-  associateToProvider?: ComponentAction<Domain, IdentityProvider>;
-  deleteFromProvider?: ComponentAction<Domain, IdentityProvider>;
+  createAction?: ComponentAction<Domain>;
+  verifyAction?: ComponentAction<Domain>;
+  deleteAction?: ComponentAction<Domain>;
+  associateToProviderAction?: ComponentAction<Domain, IdentityProvider>;
+  deleteFromProviderAction?: ComponentAction<Domain, IdentityProvider>;
   onOpenProvider?: (provider: IdentityProvider) => void;
   onCreateProvider?: () => void;
   readOnly?: boolean;
@@ -349,14 +375,13 @@ interface ComponentAction<T, U = undefined> {
   onBefore?: (data: T, extra?: U) => boolean | Promise<boolean>;
   onAfter?: (data: T, extra?: U) => void | Promise<void>;
 }`}
-            language="typescript"
-            title="Complete TypeScript definitions"
-          />
-        </div>
-      </section>
-
+              language="typescript"
+              title="Complete TypeScript definitions"
+            />
+          </div>
+        </details>
+      </section>{' '}
       <hr />
-
       {/* Advanced Configuration */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Advanced Configuration</h2>
@@ -372,7 +397,7 @@ interface ComponentAction<T, U = undefined> {
               <h4 className="font-medium text-blue-900 mb-2">Available Action Properties</h4>
               <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
                 <div>
-                  <strong>create</strong> - Domain creation lifecycle
+                  <strong>createAction</strong> - Domain creation lifecycle
                   <ul className="ml-4 list-disc">
                     <li>
                       <code>disabled</code> - Disable create button
@@ -386,7 +411,7 @@ interface ComponentAction<T, U = undefined> {
                   </ul>
                 </div>
                 <div>
-                  <strong>verify</strong> - Domain verification lifecycle
+                  <strong>verifyAction</strong> - Domain verification lifecycle
                   <ul className="ml-4 list-disc">
                     <li>
                       <code>disabled</code> - Disable verify button
@@ -400,7 +425,7 @@ interface ComponentAction<T, U = undefined> {
                   </ul>
                 </div>
                 <div>
-                  <strong>delete</strong> - Domain deletion lifecycle
+                  <strong>deleteAction</strong> - Domain deletion lifecycle
                   <ul className="ml-4 list-disc">
                     <li>
                       <code>disabled</code> - Disable delete button
@@ -414,7 +439,7 @@ interface ComponentAction<T, U = undefined> {
                   </ul>
                 </div>
                 <div>
-                  <strong>associateToProvider</strong> - Provider association
+                  <strong>associateToProviderAction</strong> - Provider association
                   <ul className="ml-4 list-disc">
                     <li>
                       <code>disabled</code> - Disable associate action
@@ -428,7 +453,7 @@ interface ComponentAction<T, U = undefined> {
                   </ul>
                 </div>
                 <div>
-                  <strong>deleteFromProvider</strong> - Provider disassociation
+                  <strong>deleteFromProviderAction</strong> - Provider disassociation
                   <ul className="ml-4 list-disc">
                     <li>
                       <code>disabled</code> - Disable disassociate action
@@ -450,19 +475,19 @@ interface ComponentAction<T, U = undefined> {
 
             <CodeBlock
               code={`<DomainTable
-  create={{
+  createAction={{
     onBefore: (domain) => domain.domain.length >= 3,
     onAfter: (domain) => analytics.track('Domain Created', { domain: domain.domain })
   }}
-  verify={{
+  verifyAction={{
     onBefore: (domain) => confirm('Verify ' + domain.domain + '?'),
     onAfter: (domain) => console.log('Verified domain', domain.domain)
   }}
-  delete={{
+  deleteAction={{
     onBefore: (domain) => confirm('Delete ' + domain.domain + '?'),
     onAfter: (domain) => toast.success('Domain deleted')
   }}
-  associateToProvider={{
+  associateToProviderAction={{
     onBefore: (domain, provider) => !!provider.id,
     onAfter: (domain, provider) => console.log('Associated', domain.domain, '->', provider.name)
   }}
@@ -710,7 +735,6 @@ interface ComponentAction<T, U = undefined> {
           </div>
         </div>
       </section>
-
       {/* Integration Example */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Complete Integration Example</h2>
@@ -719,20 +743,90 @@ interface ComponentAction<T, U = undefined> {
 import { DomainTable } from '@auth0/web-ui-components-react';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { Auth0ComponentProvider } from '@auth0/web-ui-components-react';
+import { useNavigate } from 'react-router-dom';
 
-function DomainsScreen() {
+function DomainsManagementPage() {
+  const navigate = useNavigate();
+
+  const handleDomainCreated = (domain) => {
+    console.log('Domain created:', domain);
+  };
+
+  const handleDomainVerified = (domain) => {
+    console.log('Domain verified:', domain.domain);
+  };
+
+  const handleDomainDeleted = (domain) => {
+    console.log('Domain deleted:', domain.domain);
+  };
+
   return (
-    <div className='max-w-5xl mx-auto p-6'>
+    <div className="max-w-6xl mx-auto p-6">
       <DomainTable
-        create={{
-          onBefore: (domain) => domain.domain.length > 0,
-          onAfter: (domain) => console.log('Created', domain.domain)
+        schema={{
+          create: {
+            domain: {
+              regex: /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,}$/i,
+              errorMessage: 'Please enter a valid domain (e.g., example.com or subdomain.example.com)'
+            }
+          },
         }}
-        verify={{
-          onBefore: (domain) => confirm('Verify ' + domain.domain + '?')
+        createAction={{
+          onBefore: (domain) => {
+            if (!domain.domain.includes('.')) {
+              alert('Please enter a valid domain with a TLD');
+              return false;
+            }
+            return true;
+          },
+          onAfter: handleDomainCreated
         }}
-        delete={{
-          onBefore: (domain) => confirm('Delete ' + domain.domain + '?')
+        onOpenProvider={(provider) => {
+          navigate(\`/providers/\${provider.id}\`);
+        }}
+        onCreateProvider={() => {
+          navigate('/providers/create');
+        }}
+        customMessages={{
+          header: {
+            title: 'Domain Management',
+            description: 'Add and verify domains for your organization',
+            create_button_text: 'Add New Domain'
+          },
+          notifications: {
+            domain_create: {
+              success: 'Domain added successfully! Check your DNS settings to verify.',
+              error: 'Failed to add domain. Please try again.'
+            },
+            domain_verify: {
+              success: 'Domain verified successfully!',
+              error: 'Domain verification failed. Please check your DNS records.'
+            },
+            domain_delete: {
+              success: 'Domain removed from your organization.',
+              error: 'Failed to remove domain.'
+            }
+          },
+        }}
+        styling={{
+          variables: {
+            common: {
+              '--font-size-label': '12px'
+            },
+            light: {
+              '--color-primary': '#0066cc',
+              '--color-background': '#ffffff'
+            },
+            dark: {
+              '--color-primary': '#4da3ff',
+              '--color-background': '#1a1a1a'
+            }
+          },
+          classes: {
+            'DomainTable-header': 'shadow-lg rounded-xl border-b-2 border-blue-100',
+            'DomainTable-table': 'min-w-full divide-y divide-gray-200',
+            'DomainTable-createButton': 'bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg'
+          }
         }}
       />
     </div>
@@ -751,18 +845,16 @@ export default function App() {
       redirectUri={window.location.origin}
     >
       <Auth0ComponentProvider authDetails={authDetails}>
-        <DomainsScreen />
+        <DomainsManagementPage />
       </Auth0ComponentProvider>
     </Auth0Provider>
   );
 }`}
           language="tsx"
-          title="Complete implementation"
+          title="Complete implementation example"
         />
       </section>
-
       <hr />
-
       {/* Advanced Customization */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Advanced Customization</h2>

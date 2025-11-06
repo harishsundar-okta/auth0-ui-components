@@ -39,7 +39,6 @@ export default function SsoProviderTableDocs() {
           </p>
         </div>
       </div>
-
       {/* Component Preview */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Component Preview</h2>
@@ -52,7 +51,6 @@ export default function SsoProviderTableDocs() {
           />
         </div>
       </section>
-
       {/* Setup Requirements */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Setup Requirements</h2>
@@ -92,7 +90,6 @@ export default function SsoProviderTableDocs() {
           </div>
         </div>
       </section>
-
       {/* Installation */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Installation</h2>
@@ -100,9 +97,9 @@ export default function SsoProviderTableDocs() {
           {/* NPM Installation */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3">Option 1: NPM Package</h3>
-            <p className="text-gray-600 mb-4">Install both the core and React packages:</p>
+            <p className="text-gray-600 mb-4">Install the React package:</p>
             <CodeBlock
-              code="npm install @auth0-web-ui-components/core @auth0-web-ui-components/react"
+              code="npm install @auth0/web-ui-components-react"
               language="bash"
               title="npm"
             />
@@ -123,7 +120,7 @@ export default function SsoProviderTableDocs() {
             </p>
             <div className="space-y-3">
               <CodeBlock
-                code="npm install @auth0-web-ui-components/core"
+                code="npm install @auth0/web-ui-components-core"
                 language="bash"
                 title="1. Install Core Package"
               />
@@ -143,12 +140,11 @@ export default function SsoProviderTableDocs() {
           </div>
         </div>
       </section>
-
       {/* Basic Usage */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Basic Usage</h2>
         <CodeBlock
-          code={`import { SsoProviderTable } from '@auth0-web-ui-components/react';
+          code={`import { SsoProviderTable } from '@auth0/web-ui-components-react';
 import { useNavigate } from 'react-router-dom';
 
 export function ProvidersPage() {
@@ -171,7 +167,6 @@ export function ProvidersPage() {
           title="Basic implementation"
         />
       </section>
-
       {/* Props Overview */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Props</h2>
@@ -355,13 +350,44 @@ export function ProvidersPage() {
         </div>
 
         {/* TypeScript Definitions */}
-        <div className="space-y-4 mt-8">
-          <h3 className="text-lg font-medium text-gray-900">TypeScript Definitions</h3>
-          <p className="text-gray-600">
-            Complete TypeScript interface definitions for all prop types:
-          </p>
-          <CodeBlock
-            code={`// Main component props interface
+        <details className="mt-8 border-2 border-blue-200 rounded-lg overflow-hidden shadow-sm bg-blue-50">
+          <summary className="cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 px-6 py-4 font-semibold text-gray-900 flex items-center justify-between transition-colors">
+            <div className="flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+              <span className="text-lg">TypeScript Definitions</span>
+            </div>
+            <svg
+              className="w-5 h-5 text-blue-600 transform transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </summary>
+          <div className="p-6 space-y-4 bg-white border-t-2 border-blue-100">
+            <p className="text-gray-600">
+              Complete TypeScript interface definitions for all prop types:
+            </p>
+            <CodeBlock
+              code={`// Main component props interface
 interface SsoProviderTableProps {
   schema?: SsoProviderTableSchema;
   customMessages?: Partial<SsoProviderTableMessages>;
@@ -381,14 +407,13 @@ interface ComponentAction<T, U = undefined> {
   onBefore?: (data: T, extra?: U) => boolean | Promise<boolean>;
   onAfter?: (data: T, extra?: U) => void | Promise<void>;
 }`}
-            language="typescript"
-            title="Complete TypeScript definitions"
-          />
-        </div>
-      </section>
-
+              language="typescript"
+              title="Complete TypeScript definitions"
+            />
+          </div>
+        </details>
+      </section>{' '}
       <hr />
-
       {/* Advanced Configuration */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Advanced Configuration</h2>
@@ -794,15 +819,14 @@ interface ComponentAction<T, U = undefined> {
           </div>
         </div>
       </section>
-
       {/* Integration Example */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Complete Integration Example</h2>
         <CodeBlock
           code={`import React from 'react';
-import { SsoProviderTable } from '@auth0-web-ui-components/react';
+import { SsoProviderTable } from '@auth0/web-ui-components-react';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { Auth0ComponentProvider } from '@auth0-web-ui-components/react';
+import { Auth0ComponentProvider } from '@auth0/web-ui-components-react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import * as analytics from './analytics'; // Your analytics service
@@ -871,15 +895,15 @@ function ProvidersListPage() {
         styling={{
           variables: {
             common: {
-              '--border-radius': '12px'
+              '--font-size-label': '12px'
             },
             light: {
-              '--primary-color': '#2563eb',
-              '--background-color': '#ffffff'
+              '--color-primary': '#2563eb',
+              '--color-background': '#ffffff'
             },
             dark: {
-              '--primary-color': '#3b82f6',
-              '--background-color': '#1f2937'
+              '--color-primary': '#3b82f6',
+              '--color-background': '#1f2937'
             }
           },
           classes: {
@@ -913,9 +937,7 @@ export default function App() {
           title="Complete implementation example"
         />
       </section>
-
       <hr />
-
       {/* Advanced Customization */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Advanced Customization</h2>

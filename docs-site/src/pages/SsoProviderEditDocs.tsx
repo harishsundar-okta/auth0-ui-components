@@ -40,7 +40,6 @@ export default function SsoProviderEditDocs() {
           </p>
         </div>
       </div>
-
       {/* Component Preview */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Component Preview</h2>
@@ -53,7 +52,6 @@ export default function SsoProviderEditDocs() {
           />
         </div>
       </section>
-
       {/* Setup Requirements */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Setup Requirements</h2>
@@ -93,7 +91,6 @@ export default function SsoProviderEditDocs() {
           </div>
         </div>
       </section>
-
       {/* Installation */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Installation</h2>
@@ -101,9 +98,9 @@ export default function SsoProviderEditDocs() {
           {/* NPM Installation */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3">Option 1: NPM Package</h3>
-            <p className="text-gray-600 mb-4">Install both the core and React packages:</p>
+            <p className="text-gray-600 mb-4">Install the React package:</p>
             <CodeBlock
-              code="npm install @auth0-web-ui-components/core @auth0-web-ui-components/react"
+              code="npm install @auth0/web-ui-components-react"
               language="bash"
               title="npm"
             />
@@ -124,7 +121,7 @@ export default function SsoProviderEditDocs() {
             </p>
             <div className="space-y-3">
               <CodeBlock
-                code="npm install @auth0-web-ui-components/core"
+                code="npm install @auth0/web-ui-components-core"
                 language="bash"
                 title="1. Install Core Package"
               />
@@ -144,12 +141,11 @@ export default function SsoProviderEditDocs() {
           </div>
         </div>
       </section>
-
       {/* Basic Usage */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Basic Usage</h2>
         <CodeBlock
-          code={`import { SsoProviderEdit } from '@auth0-web-ui-components/react';
+          code={`import { SsoProviderEdit } from '@auth0/web-ui-components-react';
 import { useNavigate } from 'react-router-dom';
 
 export function ProviderEditPage({ providerId }: { providerId: string }) {
@@ -174,7 +170,6 @@ export function ProviderEditPage({ providerId }: { providerId: string }) {
           title="Basic implementation"
         />
       </section>
-
       {/* Props Overview */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Props</h2>
@@ -339,13 +334,44 @@ export function ProviderEditPage({ providerId }: { providerId: string }) {
         </div>
 
         {/* TypeScript Definitions */}
-        <div className="space-y-4 mt-8">
-          <h3 className="text-lg font-medium text-gray-900">TypeScript Definitions</h3>
-          <p className="text-gray-600">
-            Complete TypeScript interface definitions for all prop types:
-          </p>
-          <CodeBlock
-            code={`// Main component props interface
+        <details className="mt-8 border-2 border-blue-200 rounded-lg overflow-hidden shadow-sm bg-blue-50">
+          <summary className="cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 px-6 py-4 font-semibold text-gray-900 flex items-center justify-between transition-colors">
+            <div className="flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+              <span className="text-lg">TypeScript Definitions</span>
+            </div>
+            <svg
+              className="w-5 h-5 text-blue-600 transform transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </summary>
+          <div className="p-6 space-y-4 bg-white border-t-2 border-blue-100">
+            <p className="text-gray-600">
+              Complete TypeScript interface definitions for all prop types:
+            </p>
+            <CodeBlock
+              code={`// Main component props interface
 interface SsoProviderEditProps {
   customMessages?: Partial<SsoProviderEditMessages>;
   styling?: ComponentStyling<SsoProviderEditClasses>;
@@ -357,21 +383,21 @@ interface SsoProviderEditProps {
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   };
   sso?: {
-    update?: ComponentAction<IdentityProvider, IdentityProvider>;
-    delete: ComponentAction<IdentityProvider>;
-    removeFromOrg: ComponentAction<IdentityProvider>;
+    updateAction?: ComponentAction<IdentityProvider, IdentityProvider>;
+    deleteAction?: ComponentAction<IdentityProvider>;
+    removeFromOrgAction?: ComponentAction<IdentityProvider>;
   };
   provisioning?: {
-    createProvisioning?: ComponentAction<
+    createAction?: ComponentAction<
       IdentityProvider,
       CreateIdPProvisioningConfigResponseContent
     >;
-    deleteProvisioning?: ComponentAction<IdentityProvider>;
-    createScimToken?: ComponentAction<
+    deleteAction?: ComponentAction<IdentityProvider>;
+    createScimTokenAction?: ComponentAction<
       IdentityProvider,
       CreateIdpProvisioningScimTokenResponseContent
     >;
-    deleteScimToken?: ComponentAction<IdentityProvider>;
+    deleteScimTokenAction?: ComponentAction<IdentityProvider>;
   };
   domains?: {
     createAction?: ComponentAction<Domain>;
@@ -388,14 +414,13 @@ interface ComponentAction<T, U = undefined> {
   onBefore?: (data: T, extra?: U) => boolean | Promise<boolean>;
   onAfter?: (data: T, extra?: U) => void | Promise<void>;
 }`}
-            language="typescript"
-            title="Complete TypeScript definitions"
-          />
-        </div>
-      </section>
-
+              language="typescript"
+              title="Complete TypeScript definitions"
+            />
+          </div>
+        </details>
+      </section>{' '}
       <hr />
-
       {/* Advanced Configuration */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Advanced Configuration</h2>
@@ -416,7 +441,7 @@ interface ComponentAction<T, U = undefined> {
                 <h5 className="font-semibold text-blue-900 mb-3">SSO Tab Actions (sso prop)</h5>
                 <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
                   <div>
-                    <h6 className="font-semibold mb-2">update</h6>
+                    <h6 className="font-semibold mb-2">sso.updateAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable provider updates
@@ -430,7 +455,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">delete</h6>
+                    <h6 className="font-semibold mb-2">sso.deleteAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable provider deletion
@@ -444,7 +469,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">removeFromOrg</h6>
+                    <h6 className="font-semibold mb-2">sso.deleteFromOrgAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable provider removal from organization
@@ -467,7 +492,7 @@ interface ComponentAction<T, U = undefined> {
                 </h5>
                 <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
                   <div>
-                    <h6 className="font-semibold mb-2">createProvisioning</h6>
+                    <h6 className="font-semibold mb-2">provisioning.createAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable provisioning creation
@@ -482,7 +507,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">deleteProvisioning</h6>
+                    <h6 className="font-semibold mb-2">provisioning.deleteAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable provisioning deletion
@@ -496,7 +521,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">createScimToken</h6>
+                    <h6 className="font-semibold mb-2">provisioning.createScimTokenAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable SCIM token creation
@@ -510,7 +535,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">deleteScimToken</h6>
+                    <h6 className="font-semibold mb-2">provisioning.deleteScimTokenAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable SCIM token deletion
@@ -533,7 +558,7 @@ interface ComponentAction<T, U = undefined> {
                 </h5>
                 <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
                   <div>
-                    <h6 className="font-semibold mb-2">createAction</h6>
+                    <h6 className="font-semibold mb-2">domains.createAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable domain creation
@@ -548,7 +573,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">verifyAction</h6>
+                    <h6 className="font-semibold mb-2">domains.verifyAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable domain verification
@@ -562,7 +587,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">deleteAction</h6>
+                    <h6 className="font-semibold mb-2">domains.deleteAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable domain deletion
@@ -576,7 +601,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">associateToProviderAction</h6>
+                    <h6 className="font-semibold mb-2">domains.associateToProviderAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable associating domains to provider
@@ -590,7 +615,7 @@ interface ComponentAction<T, U = undefined> {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-semibold mb-2">deleteFromProviderAction</h6>
+                    <h6 className="font-semibold mb-2">domains.deleteFromProviderAction</h6>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>
                         <code>disabled</code> – Disable removing domains from provider
@@ -616,7 +641,7 @@ interface ComponentAction<T, U = undefined> {
               code={`<SsoProviderEdit
   providerId={providerId}
   sso={{
-    delete: {
+    deleteAction: {
       onBefore: (provider) => confirm('Delete ' + provider.name + '?'),
       onAfter: (provider) => {
         // Track provider delete event 
@@ -628,7 +653,7 @@ interface ComponentAction<T, U = undefined> {
     },
   }}
   provisioning={{
-    createProvisioning: {
+    createAction: {
       onBefore: (provider) => !!provider.id,
       onAfter: (provider, config) => console.log('Provisioning enabled', config)
     },
@@ -1161,7 +1186,7 @@ interface ComponentAction<T, U = undefined> {
             {/* Provider Schema (SSO Tab) */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <h4 className="font-medium text-blue-900 mb-3">
-                Provider Schema (SSO Tab - schema.provider)
+                Provider Schema (SSO Tab - <strong>schema.provider</strong>)
               </h4>
 
               <div className="space-y-4 text-sm text-blue-800">
@@ -1169,7 +1194,7 @@ interface ComponentAction<T, U = undefined> {
                   <h5 className="font-semibold mb-2">Provider Details Fields</h5>
                   <div className="ml-4 space-y-2">
                     <div>
-                      <strong>name</strong> - Provider name validation
+                      <strong>provider.name</strong> - Provider name validation
                       <ul className="ml-4 list-disc text-xs">
                         <li>
                           <code>required?: boolean</code>
@@ -1189,8 +1214,8 @@ interface ComponentAction<T, U = undefined> {
                       </ul>
                     </div>
                     <div>
-                      <strong>displayName</strong> - Display name validation (same properties as
-                      name)
+                      <strong>provider.displayName</strong> - Display name validation (same
+                      properties as name)
                     </div>
                   </div>
                 </div>
@@ -1205,7 +1230,7 @@ interface ComponentAction<T, U = undefined> {
 
                   <div className="ml-4 space-y-3">
                     <div>
-                      <strong>okta</strong> - Okta Workforce configuration
+                      <strong>provider.okta</strong> - Okta Workforce configuration
                       <div className="text-xs ml-4">
                         Fields: <code>domain</code>, <code>client_id</code>,{' '}
                         <code>client_secret</code>, <code>icon_url</code>, <code>callback_url</code>
@@ -1213,7 +1238,7 @@ interface ComponentAction<T, U = undefined> {
                     </div>
 
                     <div>
-                      <strong>google-apps</strong> - Google Workspace configuration
+                      <strong>provider.google-apps</strong> - Google Workspace configuration
                       <div className="text-xs ml-4">
                         Fields: <code>domain</code>, <code>client_id</code>,{' '}
                         <code>client_secret</code>, <code>icon_url</code>, <code>callback_url</code>
@@ -1221,7 +1246,7 @@ interface ComponentAction<T, U = undefined> {
                     </div>
 
                     <div>
-                      <strong>waad</strong> - Azure Active Directory configuration
+                      <strong>provider.waad</strong> - Azure Active Directory configuration
                       <div className="text-xs ml-4">
                         Fields: <code>domain</code>, <code>client_id</code>,{' '}
                         <code>client_secret</code>, <code>icon_url</code>, <code>callback_url</code>
@@ -1229,7 +1254,7 @@ interface ComponentAction<T, U = undefined> {
                     </div>
 
                     <div>
-                      <strong>oidc</strong> - OpenID Connect configuration
+                      <strong>provider.oidc</strong> - OpenID Connect configuration
                       <div className="text-xs ml-4">
                         Fields: <code>type</code>, <code>client_id</code>,{' '}
                         <code>client_secret</code>, <code>discovery_url</code>,{' '}
@@ -1238,7 +1263,7 @@ interface ComponentAction<T, U = undefined> {
                     </div>
 
                     <div>
-                      <strong>samlp</strong> - SAML configuration
+                      <strong>provider.samlp</strong> - SAML configuration
                       <div className="text-xs ml-4">
                         Fields: <code>meta_data_source</code>, <code>single_sign_on_login_url</code>
                         , <code>signatureAlgorithm</code>, <code>digestAlgorithm</code>,{' '}
@@ -1249,7 +1274,7 @@ interface ComponentAction<T, U = undefined> {
                     </div>
 
                     <div>
-                      <strong>adfs</strong> - ADFS configuration
+                      <strong>provider.adfs</strong> - ADFS configuration
                       <div className="text-xs ml-4">
                         Fields: <code>meta_data_source</code>, <code>meta_data_location_url</code>,{' '}
                         <code>adfs_server</code>, <code>fedMetadataXml</code>
@@ -1257,7 +1282,7 @@ interface ComponentAction<T, U = undefined> {
                     </div>
 
                     <div>
-                      <strong>pingfederate</strong> - PingFederate configuration
+                      <strong>provider.pingfederate</strong> - PingFederate configuration
                       <div className="text-xs ml-4">
                         Fields: <code>signatureAlgorithm</code>, <code>digestAlgorithm</code>,{' '}
                         <code>signSAMLRequest</code>, <code>metadataUrl</code>,{' '}
@@ -1272,7 +1297,7 @@ interface ComponentAction<T, U = undefined> {
             {/* Domains Schema */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <h4 className="font-medium text-blue-900 mb-3">
-                Domains Schema (Domains Tab - schema.domains)
+                Domains Schema (Domains Tab - <strong>schema.domains</strong>)
               </h4>
 
               <div className="space-y-2 text-sm text-blue-800">
@@ -1318,7 +1343,6 @@ interface ComponentAction<T, U = undefined> {
           </div>
         </div>
       </section>
-
       {/* Integration Example */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Complete Integration Example</h2>
@@ -1328,9 +1352,9 @@ interface ComponentAction<T, U = undefined> {
         </p>
         <CodeBlock
           code={`import React from 'react';
-import { SsoProviderEdit } from '@auth0-web-ui-components/react';
+import { SsoProviderEdit } from '@auth0/web-ui-components-react';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { Auth0ComponentProvider } from '@auth0-web-ui-components/react';
+import { Auth0ComponentProvider } from '@auth0/web-ui-components-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
@@ -1358,7 +1382,7 @@ function ProviderEditScreen() {
           },
         }}
         sso={{
-          update: {
+          updateAction: {
             onBefore: (provider) => {
               // Validate before updating
               if (!provider.name?.trim()) {
@@ -1397,17 +1421,15 @@ function ProviderEditScreen() {
         styling={{
           variables: {
             common: {
-              '--border-radius': '12px',
+              '--font-size-label': '12px',
             },
             light: {
-              '--primary-color': '#2563eb',
-              '--background-color': '#ffffff',
-              '--text-color': '#1f2937'
+              '--color-primary': '#2563eb',
+              '--color-background': '#ffffff',
             },
             dark: {
-              '--primary-color': '#3b82f6',
-              '--background-color': '#1f2937',
-              '--text-color': '#f9fafb'
+              '--color-primary': '#3b82f6',
+              '--color-background': '#1f2937',
             }
           },
           classes: {
@@ -1442,9 +1464,7 @@ export default function App() {
           title="Complete implementation with all features"
         />
       </section>
-
       <hr />
-
       {/* Advanced Customization */}
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Advanced Customization</h2>

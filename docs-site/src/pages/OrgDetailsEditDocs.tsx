@@ -100,9 +100,9 @@ export default function OrgDetailsEdit() {
           {/* NPM Installation */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3">Option 1: NPM Package</h3>
-            <p className="text-gray-600 mb-4">Install both the core and React packages:</p>
+            <p className="text-gray-600 mb-4">Install the React package:</p>
             <CodeBlock
-              code="npm install @auth0/web-ui-components-core @auth0/web-ui-components-react"
+              code="npm install @auth0/web-ui-components-react"
               language="bash"
               title="npm"
             />
@@ -279,13 +279,44 @@ export function OrganizationSettingsPage() {
         </div>
 
         {/* TypeScript Definitions */}
-        <div className="space-y-4 mt-8">
-          <h3 className="text-lg font-medium text-gray-900">TypeScript Definitions</h3>
-          <p className="text-gray-600">
-            Complete TypeScript interface definitions for all prop types:
-          </p>
-          <CodeBlock
-            code={`// Main component props interface
+        <details className="mt-8 border-2 border-blue-200 rounded-lg overflow-hidden shadow-sm bg-blue-50">
+          <summary className="cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 px-6 py-4 font-semibold text-gray-900 flex items-center justify-between transition-colors">
+            <div className="flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+              <span className="text-lg">TypeScript Definitions</span>
+            </div>
+            <svg
+              className="w-5 h-5 text-blue-600 transform transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </summary>
+          <div className="p-6 space-y-4 bg-white border-t-2 border-blue-100">
+            <p className="text-gray-600">
+              Complete TypeScript interface definitions for all prop types:
+            </p>
+            <CodeBlock
+              code={`// Main component props interface
 interface OrgDetailsEditProps {
   schema?: OrgDetailsEditSchemas;
   customMessages?: Partial<OrgDetailsEditMessages>;
@@ -306,10 +337,11 @@ interface ComponentAction<T> {
   onBefore?: (data: T) => boolean | Promise<boolean>;
   onAfter?: (data: T) => void | Promise<void>;
 }`}
-            language="typescript"
-            title="Complete TypeScript definitions"
-          />
-        </div>
+              language="typescript"
+              title="Complete TypeScript definitions"
+            />
+          </div>
+        </details>
       </section>
 
       <hr />
@@ -722,7 +754,7 @@ function OrganizationEditPage() {
         styling={{
           variables: {
             common: {
-              '--primary-color': '#059669'
+              '--color-primary': '#059669'
             }
           },
           classes: {
