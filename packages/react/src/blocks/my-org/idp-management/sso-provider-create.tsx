@@ -7,7 +7,6 @@ import {
   MY_ORG_SSO_PROVIDER_CREATE_SCOPES,
 } from '@auth0/web-ui-components-core';
 import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { Toaster } from 'sonner';
 
 import ProviderConfigure, {
   type ProviderConfigureHandle,
@@ -176,7 +175,6 @@ export function SsoProviderCreateComponent({
 
   return (
     <div style={currentStyles.variables} className="w-full">
-      <Toaster position="top-right" />
       <Header
         title={t('header.title')}
         backButton={

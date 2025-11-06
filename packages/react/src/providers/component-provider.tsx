@@ -80,7 +80,6 @@ export const Auth0ComponentProvider = ({
 }: Auth0ComponentProviderProps & { children: React.ReactNode }) => {
   return (
     <>
-      <Toaster position="top-right" />
       <ThemeProvider
         themeSettings={{
           mode: themeSettings.mode,
@@ -89,6 +88,7 @@ export const Auth0ComponentProvider = ({
           theme: themeSettings.theme,
         }}
       >
+        <Toaster position="top-right" />
         <React.Suspense
           fallback={
             loader || (
