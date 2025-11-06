@@ -22,6 +22,8 @@ import {
 } from '../../../../ui/form';
 import { TextField } from '../../../../ui/text-field';
 
+import { CommonConfigureFields } from './common-configure-fields';
+
 export interface WaadConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => WaadConfigureFormValues;
@@ -32,7 +34,7 @@ interface WaadConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'str
 
 export const WaadProviderForm = React.forwardRef<WaadConfigureFormHandle, WaadConfigureFormProps>(
   function WaadProviderForm(
-    { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
+    { initialData, readOnly = false, customMessages = {}, className, onFormDirty, idpConfig },
     ref,
   ) {
     const { t } = useTranslator(
@@ -188,6 +190,12 @@ export const WaadProviderForm = React.forwardRef<WaadConfigureFormHandle, WaadCo
                 </FormDescription>
               </FormItem>
             )}
+          />
+
+          <CommonConfigureFields
+            idpConfig={idpConfig}
+            readOnly={readOnly}
+            customMessages={customMessages}
           />
         </div>
       </Form>

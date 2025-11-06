@@ -23,6 +23,8 @@ import {
 import { Link } from '../../../../ui/link';
 import { TextField } from '../../../../ui/text-field';
 
+import { CommonConfigureFields } from './common-configure-fields';
+
 const OKTA_HELP_LINKS = {
   domain: 'https://developer.okta.com/docs/guides/find-your-domain/main/',
   client_id: 'https://developer.okta.com/docs/guides/find-your-app-credentials/main',
@@ -39,7 +41,7 @@ interface OktaConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'str
 
 export const OktaProviderForm = React.forwardRef<OktaConfigureFormHandle, OktaConfigureFormProps>(
   function OktaProviderForm(
-    { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
+    { initialData, readOnly = false, customMessages = {}, className, onFormDirty, idpConfig },
     ref,
   ) {
     const { t } = useTranslator(
@@ -238,6 +240,12 @@ export const OktaProviderForm = React.forwardRef<OktaConfigureFormHandle, OktaCo
                 </FormDescription>
               </FormItem>
             )}
+          />
+
+          <CommonConfigureFields
+            idpConfig={idpConfig}
+            readOnly={readOnly}
+            customMessages={customMessages}
           />
         </div>
       </Form>

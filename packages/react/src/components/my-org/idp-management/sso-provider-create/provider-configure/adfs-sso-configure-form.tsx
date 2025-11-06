@@ -25,6 +25,8 @@ import { Label } from '../../../../ui/label';
 import { RadioGroup, RadioGroupItem } from '../../../../ui/radio-group';
 import { TextField } from '../../../../ui/text-field';
 
+import { CommonConfigureFields } from './common-configure-fields';
+
 export interface AdfsConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => AdfsConfigureFormValues;
@@ -35,7 +37,7 @@ interface AdfsConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'str
 
 export const AdfsProviderForm = React.forwardRef<AdfsConfigureFormHandle, AdfsConfigureFormProps>(
   function AdfsProviderForm(
-    { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
+    { initialData, readOnly = false, customMessages = {}, className, onFormDirty, idpConfig },
     ref,
   ) {
     const { t } = useTranslator(
@@ -217,6 +219,12 @@ export const AdfsProviderForm = React.forwardRef<AdfsConfigureFormHandle, AdfsCo
               )}
             />
           )}
+
+          <CommonConfigureFields
+            idpConfig={idpConfig}
+            readOnly={readOnly}
+            customMessages={customMessages}
+          />
         </div>
       </Form>
     );

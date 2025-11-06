@@ -23,6 +23,8 @@ import { Label } from '../../../../ui/label';
 import { RadioGroup, RadioGroupItem } from '../../../../ui/radio-group';
 import { TextField } from '../../../../ui/text-field';
 
+import { CommonConfigureFields } from './common-configure-fields';
+
 export interface OidcConfigureFormHandle {
   validate: () => Promise<boolean>;
   getData: () => OidcConfigureFormValues;
@@ -33,7 +35,7 @@ interface OidcConfigureFormProps extends Omit<ProviderConfigureFieldsProps, 'str
 
 export const OidcProviderForm = React.forwardRef<OidcConfigureFormHandle, OidcConfigureFormProps>(
   function OidcProviderForm(
-    { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
+    { initialData, readOnly = false, customMessages = {}, className, onFormDirty, idpConfig },
     ref,
   ) {
     const { t } = useTranslator(
@@ -214,6 +216,12 @@ export const OidcProviderForm = React.forwardRef<OidcConfigureFormHandle, OidcCo
               )}
             />
           )}
+
+          <CommonConfigureFields
+            idpConfig={idpConfig}
+            readOnly={readOnly}
+            customMessages={customMessages}
+          />
         </div>
       </Form>
     );

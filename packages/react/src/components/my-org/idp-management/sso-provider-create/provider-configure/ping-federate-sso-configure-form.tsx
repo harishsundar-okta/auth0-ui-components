@@ -37,6 +37,8 @@ import {
 } from '../../../../ui/select';
 import { TextField } from '../../../../ui/text-field';
 
+import { CommonConfigureFields } from './common-configure-fields';
+
 const PING_FEDERATE_HELP_LINKS = {
   sign_request: 'domain/pem?cert=connection',
 } as const;
@@ -63,7 +65,7 @@ export const PingFederateProviderForm = React.forwardRef<
   PingFederateConfigureFormHandle,
   PingFederateConfigureFormProps
 >(function PingFederateProviderForm(
-  { initialData, readOnly = false, customMessages = {}, className, onFormDirty },
+  { initialData, readOnly = false, customMessages = {}, className, onFormDirty, idpConfig },
   ref,
 ) {
   const { t } = useTranslator(
@@ -298,6 +300,12 @@ export const PingFederateProviderForm = React.forwardRef<
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+
+        <CommonConfigureFields
+          idpConfig={idpConfig}
+          readOnly={readOnly}
+          customMessages={customMessages}
+        />
       </div>
     </Form>
   );

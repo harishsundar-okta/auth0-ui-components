@@ -103,6 +103,8 @@ const STRATEGY_BUILDERS = {
         ...options.callback_url,
         required: false,
       }),
+      show_as_button: z.boolean().optional(),
+      assign_membership_on_login: z.boolean().optional(),
     }),
 
   adfs: (options: AdfsOptions = {}) =>
@@ -128,6 +130,8 @@ const STRATEGY_BUILDERS = {
           { ...options.fedMetadataXml, required: false },
           'Please enter valid Federation Metadata XML',
         ),
+        show_as_button: z.boolean().optional(),
+        assign_membership_on_login: z.boolean().optional(),
       })
       .refine((data) => data.adfs_server || data.fedMetadataXml, {
         message: 'Either ADFS server URL or Federation Metadata XML is required',
@@ -157,6 +161,8 @@ const STRATEGY_BUILDERS = {
         ...options.callback_url,
         required: false,
       }),
+      show_as_button: z.boolean().optional(),
+      assign_membership_on_login: z.boolean().optional(),
     }),
 
   oidc: (options: OidcOptions = {}) => {
@@ -179,6 +185,8 @@ const STRATEGY_BUILDERS = {
         { ...options.discovery_url, required: true },
         'Please enter a valid discovery URL',
       ),
+      show_as_button: z.boolean().optional(),
+      assign_membership_on_login: z.boolean().optional(),
     });
 
     // Add conditional validation for client_secret
@@ -241,6 +249,8 @@ const STRATEGY_BUILDERS = {
         ...options.icon_url,
         required: false,
       }),
+      show_as_button: z.boolean().optional(),
+      assign_membership_on_login: z.boolean().optional(),
     }),
 
   samlp: (options: SamlpOptions = {}) =>
@@ -301,6 +311,8 @@ const STRATEGY_BUILDERS = {
         ...options.icon_url,
         required: false,
       }),
+      show_as_button: z.boolean().optional(),
+      assign_membership_on_login: z.boolean().optional(),
     }),
 
   waad: (options: WaadOptions = {}) =>
@@ -326,6 +338,8 @@ const STRATEGY_BUILDERS = {
         ...options.callback_url,
         required: false,
       }),
+      show_as_button: z.boolean().optional(),
+      assign_membership_on_login: z.boolean().optional(),
     }),
 } as const;
 

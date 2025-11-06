@@ -29,6 +29,17 @@ export interface ProviderDetailsMessages {
  * Interface for provider configuration field messages
  */
 export interface ProviderConfigureFieldsMessages {
+  common?: {
+    show_as_button?: {
+      label?: string;
+      helper_text?: string;
+    };
+    assign_membership_on_login?: {
+      label?: string;
+      helper_text?: string;
+    };
+  };
+
   okta?: {
     domain?: {
       label?: string;
