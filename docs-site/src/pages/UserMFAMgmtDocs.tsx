@@ -163,6 +163,8 @@ export default function UserMFA() {
         <h2 className="text-2xl font-semibold text-gray-900">Basic Usage</h2>
         <CodeBlock
           code={`import { UserMFAMgmt } from '@auth0/ui-components-react';
+// For shadcn users:
+// import { UserMFAMgmt } from '@/auth0-ui-components/blocks/my-account/mfa/user-mfa-management';
 
 export function SecurityPage() {
   return (

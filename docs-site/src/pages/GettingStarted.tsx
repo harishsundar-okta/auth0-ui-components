@@ -344,8 +344,10 @@ function App() {
               2. Add an Auth0 UI component (e.g. UserMFAMgmt)
             </h3>
             <CodeBlock
-              code={`import { OrgDetailsEdit } from '@auth0/ui-components-react';
-import { useAuth0 } from '@auth0/auth0-react';
+              code={`import { useAuth0 } from '@auth0/auth0-react';
+import { OrgDetailsEdit } from '@auth0/ui-components-react';
+// For shadcn users:
+// import { OrgDetailsEdit } from '@/auth0-ui-components/blocks/my-org/org-management/org-details-edit';
 
 function EditOrgPage() {
   const { isAuthenticated, isLoading } = useAuth0();

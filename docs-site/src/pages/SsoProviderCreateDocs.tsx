@@ -146,6 +146,8 @@ export default function SsoProviderCreateDocs() {
         <h2 className="text-2xl font-semibold text-gray-900">Basic Usage</h2>
         <CodeBlock
           code={`import { SsoProviderCreate } from '@auth0/ui-components-react';
+// For shadcn users:
+// import { SsoProviderCreate } from '@/auth0-ui-components/blocks/my-org/idp-management/sso-provider-create';
 
 export function CreateProviderPage() {
   return (

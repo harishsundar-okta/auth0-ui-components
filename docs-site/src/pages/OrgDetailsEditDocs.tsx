@@ -149,7 +149,8 @@ export default function OrgDetailsEdit() {
         <h2 className="text-2xl font-semibold text-gray-900">Basic Usage</h2>
         <CodeBlock
           code={`import { OrgDetailsEdit } from '@auth0/ui-components-react';
-
+// For shadcn users:
+// import { OrgDetailsEdit } from '@/auth0-ui-components/blocks/my-org/org-management/org-details-edit';
 export function OrganizationSettingsPage() {
   return (
     <div>
