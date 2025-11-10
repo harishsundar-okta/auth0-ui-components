@@ -1,4 +1,4 @@
-# @auth0/web-ui-components-react
+![Auth0 React Web UI Components SDK for JavaScript/TypeScript](https://cdn.auth0.com/website/sdks/banners/web-ui-components-react.png)
 
 React component library for Auth0 integrations. Built with TypeScript, Radix UI, and Tailwind CSS.
 
