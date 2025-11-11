@@ -70,7 +70,7 @@ export function SsoProviderTab({
       </Card>
 
       <div className="space-y-4">
-        {provider && organization && shouldAllowDeletion && (
+        {provider && organization && (
           <SsoProviderRemoveFromOrg
             provider={provider}
             organizationName={organization?.name}
