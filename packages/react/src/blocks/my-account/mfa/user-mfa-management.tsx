@@ -377,6 +377,7 @@ function UserMFAMgmtComponent({
                               isDeletingFactor={isDeletingFactor}
                               disableDelete={disableDelete}
                               styling={styling}
+                              customMessages={customMessages}
                             />
                           )}
                         </ListItem>
@@ -400,6 +401,7 @@ function UserMFAMgmtComponent({
           onError={handleEnrollError}
           schema={schema}
           styling={styling}
+          customMessages={customMessages}
         />
       )}
       <DeleteFactorConfirmation
@@ -410,6 +412,7 @@ function UserMFAMgmtComponent({
         onConfirm={handleConfirmDelete}
         onCancel={() => setIsDeleteDialogOpen(false)}
         styling={styling}
+        customMessages={customMessages}
       />
     </div>
   );
