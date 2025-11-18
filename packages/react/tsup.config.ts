@@ -4,7 +4,6 @@ export default defineConfig({
   entry: {
     spa: 'src/spa.ts',
     rwa: 'src/rwa.ts',
-    styles: 'src/styles/globals.css',
   },
   format: ['esm', 'cjs'],
   dts: true,
