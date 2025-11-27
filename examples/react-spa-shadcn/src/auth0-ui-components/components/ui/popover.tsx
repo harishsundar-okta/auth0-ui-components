@@ -132,7 +132,6 @@ function PopoverTrigger({ className, onClick, asChild, children, ...props }: Pop
     }
 
     return React.cloneElement(children as React.ReactElement, {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       ref: triggerRef as React.Ref<HTMLElement | null> | undefined,
       'data-slot': 'popover-trigger',

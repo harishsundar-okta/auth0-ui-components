@@ -36,7 +36,7 @@ export function useSsoDomainTab(
   const fetchProviderfromDomain = useCallback(
     async (domainId: string): Promise<string | undefined> => {
       if (!coreClient) {
-        return;
+        return undefined;
       }
 
       const response = await coreClient
@@ -49,9 +49,12 @@ export function useSsoDomainTab(
         setIdpDomains((prevIdpDomains) =>
           prevIdpDomains.includes(domainId) ? prevIdpDomains : [...prevIdpDomains, domainId],
         );
+        return domainId;
       }
+
+      return undefined;
     },
-    [coreClient],
+    [coreClient, idpId],
   );
 
   const getAllProviderDomains = useCallback(
@@ -70,7 +73,7 @@ export function useSsoDomainTab(
         setIsLoading(false);
       }
     },
-    [domainsList],
+    [domainsList, fetchProviderfromDomain, handleError, t],
   );
 
   const listDomains = useCallback(async (): Promise<void> => {
@@ -291,7 +294,7 @@ export function useSsoDomainTab(
         setIsVerifying(false);
       }
     },
-    [onVerifyDomain, t],
+    [onVerifyDomain, t, handleError, onAssociateToProvider],
   );
 
   const handleDeleteClick = useCallback((domain: Domain) => {
@@ -360,7 +363,7 @@ export function useSsoDomainTab(
         setIsUpdatingId(null);
       }
     },
-    [onVerifyDomain, t],
+    [onVerifyDomain, t, handleError, onAssociateToProvider],
   );
 
   const handleToggleSwitch = useCallback(
@@ -408,7 +411,7 @@ export function useSsoDomainTab(
         }
       }
     },
-    [onAssociateToProvider, t, provider],
+    [onAssociateToProvider, t, provider, handleError, onDeleteFromProvider],
   );
 
   useEffect(() => {
@@ -418,7 +421,7 @@ export function useSsoDomainTab(
     Promise.allSettled([listDomains()]).finally(() => {
       setIsLoading(false);
     });
-  }, [idpId]);
+  }, [idpId, listDomains]);
 
   return {
     isLoading,

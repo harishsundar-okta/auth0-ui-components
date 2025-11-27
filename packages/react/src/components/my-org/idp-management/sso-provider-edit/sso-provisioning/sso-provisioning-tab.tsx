@@ -59,7 +59,7 @@ export function SsoProvisioningTab({
     if (provider?.id) {
       fetchProvisioning();
     }
-  }, [provider?.id]);
+  }, [provider?.id, fetchProvisioning]);
 
   const handleProvisioningToggle = async (enabled: boolean) => {
     if (!provider?.id) return;
