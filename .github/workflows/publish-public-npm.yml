@@ -259,11 +259,13 @@ jobs:
           fi
 
       - name: Generate Summary
+        env:
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           echo "## Public NPM Publication Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+          if [ "$DRY_RUN" = "true" ]; then
             echo "### DRY RUN MODE" >> $GITHUB_STEP_SUMMARY
             echo "No packages were published. This was a test run." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
