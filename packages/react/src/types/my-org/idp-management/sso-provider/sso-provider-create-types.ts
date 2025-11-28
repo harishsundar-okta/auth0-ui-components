@@ -50,6 +50,7 @@ export interface ProviderDetailsProps
   initialData?: Partial<ProviderDetailsFormValues>;
   className?: string;
   hideHeader?: boolean;
+  mode: 'edit' | 'create';
   onFormDirty?: (isDirty: boolean) => void;
 }
 

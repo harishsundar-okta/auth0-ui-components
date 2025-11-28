@@ -85,6 +85,7 @@ export function SsoProviderDetails({
     <div style={currentStyles.variables} className={cn('space-y-8')}>
       <div className="space-y-4">
         <ProviderDetails
+          mode="edit"
           ref={providerDetailsRef}
           initialData={providerDetailsData}
           readOnly={readOnly}
