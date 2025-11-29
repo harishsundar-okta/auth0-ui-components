@@ -460,8 +460,8 @@ importers:
         specifier: ^1.0.0-beta.0
         version: 1.0.0-beta.0
       '@auth0/myorganization-js':
-        specifier: ^1.0.0-beta.0
-        version: 1.0.0-beta.0
+        specifier: ^1.0.0-beta.2
+        version: 1.0.0-beta.2
       zod:
         specifier: ^3.22.4
         version: 3.25.76
@@ -638,6 +638,10 @@ packages:
 
   '@auth0/myorganization-js@1.0.0-beta.0':
     resolution: {integrity: sha512-UGyhOw+eSiV0GzH3zJEUVpdjeK9KfWIEDtgwppI9W+vgg0xj1qMD+DlKTAwChaGGmOOtRjnTgxVudmfLKVmS+g==}
+    engines: {node: '>=18.0.0'}
+
+  '@auth0/myorganization-js@1.0.0-beta.2':
+    resolution: {integrity: sha512-JkTWs564hDPjYK91jvfDD4TtZgpmqoVV4ekn+CExbgCuuciyTLWNbtrY2VtDGZ0EfIdPFCeLaKw3eH7xvSYJig==}
     engines: {node: '>=18.0.0'}
 
   '@auth0/nextjs-auth0@4.13.1':
@@ -6362,6 +6366,10 @@ snapshots:
   '@auth0/myaccount-js@1.0.0-beta.0': {}
 
   '@auth0/myorganization-js@1.0.0-beta.0':
+    dependencies:
+      '@auth0/auth0-auth-js': 1.2.0
+
+  '@auth0/myorganization-js@1.0.0-beta.2':
     dependencies:
       '@auth0/auth0-auth-js': 1.2.0
 

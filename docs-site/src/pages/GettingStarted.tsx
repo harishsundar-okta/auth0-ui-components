@@ -10,7 +10,7 @@ export default function GettingStarted() {
     <div className="max-w-6xl mx-auto space-y-12">
       <div className="space-y-4">
         <h1 className="text-4xl font-bold text-gray-900">
-          Auth0 UI Components{' '}
+          Auth0 Universal Components{' '}
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
             BETA
           </span>
@@ -476,13 +476,13 @@ function App() {
 
             <div>
               <h4 className="text-lg font-medium text-gray-900 mb-3">
-                2. Use an Auth0 UI Component
+                2. Use an Auth0 Universal Component
               </h4>
               <CodeBlock
                 code={`import { useAuth0 } from '@auth0/auth0-react';
-import { UserMFAMgmt } from '@auth0/web-ui-components-react/spa';
+import { OrgDetailsEdit } from '@auth0/web-ui-components-react/spa';
 
-function SecurityPage() {
+function OrganizationManagementPage() {
   const { isAuthenticated, isLoading } = useAuth0();
 
   if (isLoading) return <div>Loading...</div>;
@@ -490,12 +490,12 @@ function SecurityPage() {
 
   return (
     <div>
-      <UserMFAMgmt />
+      <OrgDetailsEdit />
     </div>
   );
 }`}
                 language="tsx"
-                title="SecurityPage.tsx"
+                title="OrganizationManagementPage.tsx"
               />
             </div>
           </div>
@@ -545,14 +545,14 @@ export default function RootLayout({
 
             <div>
               <h4 className="text-lg font-medium text-gray-900 mb-3">
-                2. Use an Auth0 UI Component in a Page
+                2. Use an Auth0 Universal Component in a Page
               </h4>
               <CodeBlock
                 code={`'use client';
 
 import { OrgDetailsEdit } from '@auth0/web-ui-components-react/rwa';
 
-export default function OrgSettingsPage() {
+export default function OrganizationManagementPage() {
   return (
     <div>
       <OrgDetailsEdit />
@@ -560,7 +560,7 @@ export default function OrgSettingsPage() {
   );
 }`}
                 language="tsx"
-                title="app/org/settings/page.tsx"
+                title="OrganizationManagementPage.tsx"
               />
             </div>
           </div>

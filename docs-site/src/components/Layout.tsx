@@ -106,7 +106,9 @@ export default function Layout({ children }: LayoutProps) {
             {/* Auth0 Logo */}
             <div className="flex items-center gap-2 px-2">
               <img src="/img/auth0_light_mode.png" alt="Auth0" className="h-6 w-auto" />
-              <span className="text-xs font-semibold text-muted-foreground">UI Components</span>
+              <span className="text-xs font-semibold text-muted-foreground">
+                Universal Components
+              </span>
             </div>
 
             {/* Tech Stack Selector */}
@@ -226,7 +228,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="flex flex-1 items-center justify-between">
                 <div className="flex items-center gap-3">
                   <h1 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                    Auth0 UI Components
+                    Universal Components
                   </h1>
                   <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm">
                     <Sparkles className="h-3 w-3" />

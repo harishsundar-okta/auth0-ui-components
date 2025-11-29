@@ -12,7 +12,7 @@ i18n.use(initReactI18next).init({
         'nav-bar.sign-in-button': 'Sign In',
         'nav-bar.sign-out-button': 'Sign Out',
         'nav-bar.profile-button': 'Profile',
-        'hero-section.title': 'Welcome to Auth0 UI Components',
+        'hero-section.title': 'Welcome to Auth0 Universal Components',
         'hero-section.description':
           'A Next.js sample application showcasing modern authentication with multi-factor authentication management.',
         'hero-section.get-started-button': 'Get Started',
