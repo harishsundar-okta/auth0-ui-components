@@ -2,7 +2,7 @@ import type {
   Domain,
   IdentityProvider,
   IdentityProviderAssociatedWithDomain,
-} from '@auth0/web-ui-components-core';
+} from '@auth0/universal-components-core';
 
 export const createMockDomain = (overrides?: Partial<Domain>): Domain => ({
   id: 'domain_abc123xyz456',
