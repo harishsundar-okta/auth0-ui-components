@@ -217,7 +217,7 @@ export const AdfsProviderForm = React.forwardRef<AdfsConfigureFormHandle, AdfsCo
                   <FormControl>
                     <div className="space-y-3">
                       <FileUpload
-                        accept=".pem"
+                        accept=".xml"
                         onChange={handleFileUpload}
                         value={uploadedFiles}
                         maxFiles={1}
