@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createI18nService } from '../../i18n';
 import { createMockI18nService } from '../../i18n/__mocks__/i18n-service.mocks';
-import { createMockMyAccountClient } from '../../services/my-account/__mocks__/my-account-api-service.mocks';
+import { createMockMyAccountClient } from '../../services/my-account/__tests__/__mocks__/my-account-api-service.mocks';
 import { createMockMyOrgClient } from '../../services/my-org/__mocks__/my-org-api-service.mocks';
 import { createMockTokenManager } from '../__mocks__/token-manager.mocks';
 import type { AuthDetails } from '../auth-types';
@@ -30,10 +30,13 @@ describe('createCoreClient', () => {
   const initializeMyOrgClientMock = vi.mocked(initializeMyOrgClient);
   const initializeMyAccountClientMock = vi.mocked(initializeMyAccountClient);
 
-  const baseAuth: AuthDetails = {
-    domain: 'example.auth0.com',
-    authProxyUrl: undefined,
-    contextInterface: {} as AuthDetails['contextInterface'],
+  const createAuthDetails = (overrides: Partial<AuthDetails> = {}): AuthDetails => {
+    return {
+      domain: 'example.auth0.com',
+      authProxyUrl: undefined,
+      contextInterface: {} as AuthDetails['contextInterface'],
+      ...overrides,
+    };
   };
 
   beforeEach(() => {
@@ -51,7 +54,8 @@ describe('createCoreClient', () => {
 
   describe('i18n initialization', () => {
     it('initializes i18n with default options when none are provided', async () => {
-      await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      await createCoreClient(authDetails);
 
       expect(createI18nServiceMock).toHaveBeenCalledWith({
         currentLanguage: 'en-US',
@@ -61,14 +65,15 @@ describe('createCoreClient', () => {
 
     it('initializes i18n with provided options', async () => {
       const i18nOptions = { currentLanguage: 'es', fallbackLanguage: 'en' };
-
-      await createCoreClient(baseAuth, i18nOptions);
+      const authDetails = createAuthDetails();
+      await createCoreClient(authDetails, i18nOptions);
 
       expect(createI18nServiceMock).toHaveBeenCalledWith(i18nOptions);
     });
 
     it('exposes i18nService on the client', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(client.i18nService).toBe(mockI18nService);
     });
@@ -76,19 +81,22 @@ describe('createCoreClient', () => {
 
   describe('isProxyMode', () => {
     it('returns false when authProxyUrl is undefined', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(client.isProxyMode()).toBe(false);
     });
 
     it('returns true when authProxyUrl is set', async () => {
-      const client = await createCoreClient({ ...baseAuth, authProxyUrl: 'https://proxy' });
+      const authDetails = createAuthDetails({ authProxyUrl: 'https://proxy.auth0.com' });
+      const client = await createCoreClient(authDetails);
 
       expect(client.isProxyMode()).toBe(true);
     });
 
     it('returns false when authProxyUrl is empty string', async () => {
-      const client = await createCoreClient({ ...baseAuth, authProxyUrl: '' });
+      const authDetails = createAuthDetails({ authProxyUrl: '' });
+      const client = await createCoreClient(authDetails);
 
       expect(client.isProxyMode()).toBe(false);
     });
@@ -96,7 +104,8 @@ describe('createCoreClient', () => {
 
   describe('getToken', () => {
     it('delegates to token manager with all parameters', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       await client.getToken('read:org', 'my-org', true);
 
@@ -104,7 +113,8 @@ describe('createCoreClient', () => {
     });
 
     it('delegates to token manager with default ignoreCache', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       await client.getToken('read:me', 'me');
 
@@ -112,8 +122,9 @@ describe('createCoreClient', () => {
     });
 
     it('returns the token from token manager', async () => {
+      const authDetails = createAuthDetails();
       vi.mocked(mockTokenManager.getToken).mockResolvedValueOnce('specific-token-value');
-      const client = await createCoreClient(baseAuth);
+      const client = await createCoreClient(authDetails);
 
       const token = await client.getToken('read:me', 'me');
 
@@ -123,7 +134,8 @@ describe('createCoreClient', () => {
 
   describe('ensureScopes - proxy mode', () => {
     it('sets org scopes without token fetch in proxy mode', async () => {
-      const client = await createCoreClient({ ...baseAuth, authProxyUrl: 'https://proxy' });
+      const authDetails = createAuthDetails({ authProxyUrl: 'https://proxy.auth0.com' });
+      const client = await createCoreClient(authDetails);
 
       await client.ensureScopes('read:org', 'my-org');
 
@@ -132,7 +144,8 @@ describe('createCoreClient', () => {
     });
 
     it('sets account scopes without token fetch in proxy mode', async () => {
-      const client = await createCoreClient({ ...baseAuth, authProxyUrl: 'https://proxy' });
+      const authDetails = createAuthDetails({ authProxyUrl: 'https://proxy.auth0.com' });
+      const client = await createCoreClient(authDetails);
 
       await client.ensureScopes('read:me', 'me');
 
@@ -141,7 +154,8 @@ describe('createCoreClient', () => {
     });
 
     it('does not set scopes for unknown audience in proxy mode', async () => {
-      const client = await createCoreClient({ ...baseAuth, authProxyUrl: 'https://proxy' });
+      const authDetails = createAuthDetails({ authProxyUrl: 'https://proxy.auth0.com' });
+      const client = await createCoreClient(authDetails);
 
       await client.ensureScopes('read:something', 'unknown-audience');
 
@@ -153,7 +167,8 @@ describe('createCoreClient', () => {
 
   describe('ensureScopes - non-proxy mode', () => {
     it('throws when domain is missing in non-proxy mode', async () => {
-      const client = await createCoreClient({ ...baseAuth, domain: undefined });
+      const authDetails = createAuthDetails({ domain: undefined });
+      const client = await createCoreClient(authDetails);
 
       await expect(client.ensureScopes('read:org', 'my-org')).rejects.toThrow(
         'Authentication domain is missing, cannot initialize SPA service.',
@@ -163,7 +178,8 @@ describe('createCoreClient', () => {
     });
 
     it('sets org scopes and fetches token in non-proxy mode', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       await client.ensureScopes('read:org', 'my-org');
 
@@ -172,7 +188,8 @@ describe('createCoreClient', () => {
     });
 
     it('sets account scopes and fetches token in non-proxy mode', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       await client.ensureScopes('read:me', 'me');
 
@@ -182,7 +199,8 @@ describe('createCoreClient', () => {
 
     it('throws when token retrieval returns undefined in non-proxy mode', async () => {
       vi.mocked(mockTokenManager.getToken).mockResolvedValueOnce(undefined);
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       await expect(client.ensureScopes('read:me', 'me')).rejects.toThrow(
         'Failed to retrieve token for audience: me',
@@ -190,7 +208,8 @@ describe('createCoreClient', () => {
     });
 
     it('does not set scopes for unknown audience in non-proxy mode', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       await client.ensureScopes('read:something', 'unknown-audience');
 
@@ -207,45 +226,52 @@ describe('createCoreClient', () => {
 
   describe('API client initialization', () => {
     it('initializes token manager with auth details', async () => {
-      await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      await createCoreClient(authDetails);
 
-      expect(createTokenManagerMock).toHaveBeenCalledWith(baseAuth);
+      expect(createTokenManagerMock).toHaveBeenCalledWith(authDetails);
     });
 
     it('initializes MyOrg client with auth and token manager', async () => {
-      await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      await createCoreClient(authDetails);
 
-      expect(initializeMyOrgClientMock).toHaveBeenCalledWith(baseAuth, mockTokenManager);
+      expect(initializeMyOrgClientMock).toHaveBeenCalledWith(authDetails, mockTokenManager);
     });
 
     it('initializes MyAccount client with auth and token manager', async () => {
-      await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      await createCoreClient(authDetails);
 
-      expect(initializeMyAccountClientMock).toHaveBeenCalledWith(baseAuth, mockTokenManager);
+      expect(initializeMyAccountClientMock).toHaveBeenCalledWith(authDetails, mockTokenManager);
     });
   });
 
   describe('API client access', () => {
     it('exposes myAccountApiClient directly on the client', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(client.myAccountApiClient).toBe(mockMyAccountClient.client);
     });
 
     it('exposes myOrgApiClient directly on the client', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(client.myOrgApiClient).toBe(mockMyOrgClient.client);
     });
 
     it('returns myAccountApiClient when available via getter', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(client.getMyAccountApiClient()).toBe(mockMyAccountClient.client);
     });
 
     it('returns myOrgApiClient when available via getter', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(client.getMyOrgApiClient()).toBe(mockMyOrgClient.client);
     });
@@ -256,7 +282,8 @@ describe('createCoreClient', () => {
         setLatestScopes: vi.fn(),
       });
 
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(() => client.getMyAccountApiClient()).toThrow(
         'myAccountApiClient is not enabled. Please use it within Auth0ComponentProvider.',
@@ -268,8 +295,8 @@ describe('createCoreClient', () => {
         client: undefined as any,
         setLatestScopes: vi.fn(),
       });
-
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(() => client.getMyOrgApiClient()).toThrow(
         'myOrgApiClient is not enabled. Please ensure you are in an Auth0 Organization context.',
@@ -279,28 +306,36 @@ describe('createCoreClient', () => {
 
   describe('client properties', () => {
     it('exposes auth details on the client', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
-      expect(client.auth).toEqual(baseAuth);
+      expect(client.auth).toEqual(authDetails);
     });
 
     it('preserves authProxyUrl in auth details', async () => {
-      const authWithProxy = { ...baseAuth, authProxyUrl: 'https://custom-proxy.com' };
-      const client = await createCoreClient(authWithProxy);
+      const authDetails = createAuthDetails({ authProxyUrl: 'https://custom-proxy.com' });
+      const client = await createCoreClient(authDetails);
 
       expect(client.auth.authProxyUrl).toBe('https://custom-proxy.com');
     });
 
     it('preserves domain in auth details', async () => {
-      const client = await createCoreClient(baseAuth);
+      const authDetails = createAuthDetails();
+      const client = await createCoreClient(authDetails);
 
       expect(client.auth.domain).toBe('example.auth0.com');
     });
 
     it('preserves contextInterface in auth details', async () => {
-      const customContext = { custom: 'context' } as any;
-      const authWithContext = { ...baseAuth, contextInterface: customContext };
-      const client = await createCoreClient(authWithContext);
+      const customContext: AuthDetails['contextInterface'] = {
+        user: { name: 'Test User' },
+        isAuthenticated: true,
+        getAccessTokenSilently: vi.fn(),
+        getAccessTokenWithPopup: vi.fn(),
+        loginWithRedirect: vi.fn(),
+      };
+      const authDetails = createAuthDetails({ contextInterface: customContext });
+      const client = await createCoreClient(authDetails);
 
       expect(client.auth.contextInterface).toBe(customContext);
     });

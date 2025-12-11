@@ -1,7 +1,19 @@
+import type { MyAccountClient } from '@auth0/myaccount-js';
 import { vi } from 'vitest';
 
 import type { AuthDetails } from '../../../../auth/auth-types';
 import type { createTokenManager } from '../../../../auth/token-manager';
+import type { initializeMyAccountClient } from '../../my-account-api-service';
+
+/**
+ * Creates a mock MyAccount API client
+ */
+export const createMockMyAccountClient = (): ReturnType<typeof initializeMyAccountClient> => {
+  return {
+    client: {} as MyAccountClient,
+    setLatestScopes: vi.fn(),
+  };
+};
 
 /**
  * Mock data for testing my-account-api-service
