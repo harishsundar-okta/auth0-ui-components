@@ -16,8 +16,8 @@ export function initializeMyOrganizationClient(
   };
 
   if (auth.authProxyUrl) {
-    const myOrgProxyPath = 'my-org';
-    const myOrgProxyBaseUrl = `${auth.authProxyUrl.replace(/\/$/, '')}/${myOrgProxyPath}`;
+    const myOrganizationProxyPath = 'my-org';
+    const myOrganizationProxyBaseUrl = `${auth.authProxyUrl.replace(/\/$/, '')}/${myOrganizationProxyPath}`;
     const fetcher = async (url: string, init?: RequestInit) => {
       return fetch(url, {
         ...init,
@@ -31,7 +31,7 @@ export function initializeMyOrganizationClient(
     return {
       client: new MyOrganizationClient({
         domain: '',
-        baseUrl: myOrgProxyBaseUrl.trim(),
+        baseUrl: myOrganizationProxyBaseUrl.trim(),
         telemetry: false,
         fetcher,
       }),
