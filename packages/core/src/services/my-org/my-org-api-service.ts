@@ -2,7 +2,7 @@ import { MyOrganizationClient } from '@auth0/myorganization-js';
 import type { AuthDetails } from '@core/auth/auth-types';
 import type { createTokenManager } from '@core/auth/token-manager';
 
-export function initializeMyOrgClient(
+export function initializeMyOrganizationClient(
   auth: AuthDetails,
   tokenManagerService: ReturnType<typeof createTokenManager>,
 ): {
@@ -62,5 +62,5 @@ export function initializeMyOrgClient(
       setLatestScopes,
     };
   }
-  throw new Error('Missing domain or proxy URL for MyOrgClient');
+  throw new Error('Missing domain or proxy URL for MyOrganizationClient');
 }
