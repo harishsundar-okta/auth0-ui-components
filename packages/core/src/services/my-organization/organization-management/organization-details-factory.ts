@@ -1,7 +1,7 @@
-import { DEFAULT_COLORS } from './org-details-constants';
-import type { OrganizationPrivate } from './org-details-types';
+import { DEFAULT_COLORS } from './organization-details-constants';
+import type { OrganizationPrivate } from './organization-details-types';
 
-export const OrgDetailsFactory = {
+export const OrganizationDetailsFactory = {
   create: (): OrganizationPrivate => {
     return {
       id: '',

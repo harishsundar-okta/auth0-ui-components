@@ -1,19 +1,19 @@
 import { describe, it, expect } from 'vitest';
 
-import { DEFAULT_COLORS } from '../org-details-constants';
-import { OrgDetailsMappers } from '../org-details-mappers';
+import { DEFAULT_COLORS } from '../organization-details-constants';
+import { OrganizationDetailsMappers } from '../organization-details-mappers';
 import type {
   GetOrganizationDetailsResponseContent,
   OrganizationPrivate,
-} from '../org-details-types';
+} from '../organization-details-types';
 
-describe('OrgDetailsMappers', () => {
+describe('OrganizationDetailsMappers', () => {
   describe('fromAPI', () => {
     it('should map complete API response correctly', () => {
       const apiResponse: GetOrganizationDetailsResponseContent = {
-        id: 'org_123',
-        name: 'test-org',
-        display_name: 'Test Organization',
+        id: 'organization_123',
+        name: 'test-organization',
+        display_name: 'Test Organizationanization',
         branding: {
           logo_url: 'https://example.com/logo.png',
           colors: {
@@ -23,12 +23,12 @@ describe('OrgDetailsMappers', () => {
         },
       };
 
-      const result = OrgDetailsMappers.fromAPI(apiResponse);
+      const result = OrganizationDetailsMappers.fromAPI(apiResponse);
 
       expect(result).toEqual({
-        id: 'org_123',
-        name: 'test-org',
-        display_name: 'Test Organization',
+        id: 'organization_123',
+        name: 'test-organization',
+        display_name: 'Test Organizationanization',
         branding: {
           logo_url: 'https://example.com/logo.png',
           colors: {
@@ -47,13 +47,13 @@ describe('OrgDetailsMappers', () => {
       ])('when $field is missing', ({ field, expected }) => {
         it(`should default ${field} to "${expected}"`, () => {
           const apiResponse = {
-            id: 'org_123',
-            name: 'test-org',
-            display_name: 'Test Org',
+            id: 'organization_123',
+            name: 'test-organization',
+            display_name: 'Test Organization',
           } as GetOrganizationDetailsResponseContent;
           delete (apiResponse as Record<string, unknown>)[field];
 
-          const result = OrgDetailsMappers.fromAPI(apiResponse);
+          const result = OrganizationDetailsMappers.fromAPI(apiResponse);
 
           expect(result[field as keyof typeof result]).toBe(expected);
         });
@@ -61,12 +61,12 @@ describe('OrgDetailsMappers', () => {
 
       it('should use default branding when branding is missing', () => {
         const apiResponse = {
-          id: 'org_123',
-          name: 'test-org',
-          display_name: 'Test Org',
+          id: 'organization_123',
+          name: 'test-organization',
+          display_name: 'Test Organization',
         } as GetOrganizationDetailsResponseContent;
 
-        const result = OrgDetailsMappers.fromAPI(apiResponse);
+        const result = OrganizationDetailsMappers.fromAPI(apiResponse);
 
         expect(result.branding).toEqual({
           logo_url: '',
@@ -79,13 +79,13 @@ describe('OrgDetailsMappers', () => {
 
       it('should use default colors when colors object is missing', () => {
         const apiResponse = {
-          id: 'org_123',
-          name: 'test-org',
-          display_name: 'Test Org',
+          id: 'organization_123',
+          name: 'test-organization',
+          display_name: 'Test Organization',
           branding: { logo_url: '' },
         } as GetOrganizationDetailsResponseContent;
 
-        const result = OrgDetailsMappers.fromAPI(apiResponse);
+        const result = OrganizationDetailsMappers.fromAPI(apiResponse);
 
         expect(result.branding.colors.primary).toBe(DEFAULT_COLORS.UL_PRIMARY);
         expect(result.branding.colors.page_background).toBe(DEFAULT_COLORS.UL_PAGE_BG);
@@ -100,13 +100,13 @@ describe('OrgDetailsMappers', () => {
           delete (colors as Record<string, unknown>)[color];
 
           const apiResponse = {
-            id: 'org_123',
-            name: 'test-org',
-            display_name: 'Test Org',
+            id: 'organization_123',
+            name: 'test-organization',
+            display_name: 'Test Organization',
             branding: { logo_url: '', colors },
           } as GetOrganizationDetailsResponseContent;
 
-          const result = OrgDetailsMappers.fromAPI(apiResponse);
+          const result = OrganizationDetailsMappers.fromAPI(apiResponse);
 
           expect(result.branding.colors[color as keyof typeof result.branding.colors]).toBe(
             defaultValue,
@@ -118,13 +118,13 @@ describe('OrgDetailsMappers', () => {
           (colors as Record<string, unknown>)[color] = '';
 
           const apiResponse: GetOrganizationDetailsResponseContent = {
-            id: 'org_123',
-            name: 'test-org',
-            display_name: 'Test Org',
+            id: 'organization_123',
+            name: 'test-organization',
+            display_name: 'Test Organization',
             branding: { logo_url: '', colors },
           };
 
-          const result = OrgDetailsMappers.fromAPI(apiResponse);
+          const result = OrganizationDetailsMappers.fromAPI(apiResponse);
 
           expect(result.branding.colors[color as keyof typeof result.branding.colors]).toBe(
             defaultValue,
@@ -136,32 +136,32 @@ describe('OrgDetailsMappers', () => {
     describe('edge cases', () => {
       it('should handle special characters and unicode in display_name', () => {
         const apiResponse: GetOrganizationDetailsResponseContent = {
-          id: 'org_123',
-          name: 'test-org',
-          display_name: 'Test Org™ © 日本語 🚀',
+          id: 'organization_123',
+          name: 'test-organization',
+          display_name: 'Test Organization™ © 日本語 🚀',
           branding: {
             logo_url: '',
             colors: { primary: '#000', page_background: '#fff' },
           },
         };
 
-        const result = OrgDetailsMappers.fromAPI(apiResponse);
+        const result = OrganizationDetailsMappers.fromAPI(apiResponse);
 
-        expect(result.display_name).toBe('Test Org™ © 日本語 🚀');
+        expect(result.display_name).toBe('Test Organization™ © 日本語 🚀');
       });
 
       it('should handle various hex color formats', () => {
         const apiResponse: GetOrganizationDetailsResponseContent = {
-          id: 'org_123',
-          name: 'test-org',
-          display_name: 'Test Org',
+          id: 'organization_123',
+          name: 'test-organization',
+          display_name: 'Test Organization',
           branding: {
             logo_url: '',
             colors: { primary: '#F00', page_background: '#FFFFFF' },
           },
         };
 
-        const result = OrgDetailsMappers.fromAPI(apiResponse);
+        const result = OrganizationDetailsMappers.fromAPI(apiResponse);
 
         expect(result.branding.colors.primary).toBe('#F00');
         expect(result.branding.colors.page_background).toBe('#FFFFFF');
@@ -172,20 +172,20 @@ describe('OrgDetailsMappers', () => {
   describe('toAPI', () => {
     it('should map form values to API payload correctly with logo', () => {
       const formValues: OrganizationPrivate = {
-        id: 'org_123',
-        name: 'test-org',
-        display_name: 'Test Organization',
+        id: 'organization_123',
+        name: 'test-organization',
+        display_name: 'Test Organizationanization',
         branding: {
           logo_url: 'https://example.com/logo.png',
           colors: { primary: '#ff0000', page_background: '#ffffff' },
         },
       };
 
-      const result = OrgDetailsMappers.toAPI(formValues);
+      const result = OrganizationDetailsMappers.toAPI(formValues);
 
       expect(result).toEqual({
-        name: 'test-org',
-        display_name: 'Test Organization',
+        name: 'test-organization',
+        display_name: 'Test Organizationanization',
         branding: {
           logo_url: 'https://example.com/logo.png',
           colors: { primary: '#ff0000', page_background: '#ffffff' },
@@ -195,8 +195,8 @@ describe('OrgDetailsMappers', () => {
 
     it('should not include id in API payload', () => {
       const formValues: OrganizationPrivate = {
-        id: 'org_123',
-        name: 'test-org',
+        id: 'organization_123',
+        name: 'test-organization',
         display_name: 'Test',
         branding: {
           logo_url: 'https://example.com/logo.png',
@@ -204,7 +204,7 @@ describe('OrgDetailsMappers', () => {
         },
       };
 
-      const result = OrgDetailsMappers.toAPI(formValues);
+      const result = OrganizationDetailsMappers.toAPI(formValues);
 
       expect(result).not.toHaveProperty('id');
     });
@@ -218,8 +218,8 @@ describe('OrgDetailsMappers', () => {
       ])('when logo_url is $description', ({ value }) => {
         it('should not include logo_url in payload', () => {
           const formValues: OrganizationPrivate = {
-            id: 'org_123',
-            name: 'test-org',
+            id: 'organization_123',
+            name: 'test-organization',
             display_name: 'Test',
             branding: {
               logo_url: value as unknown as string,
@@ -227,7 +227,7 @@ describe('OrgDetailsMappers', () => {
             },
           };
 
-          const result = OrgDetailsMappers.toAPI(formValues);
+          const result = OrganizationDetailsMappers.toAPI(formValues);
 
           expect(result.branding).not.toHaveProperty('logo_url');
         });
@@ -235,8 +235,8 @@ describe('OrgDetailsMappers', () => {
 
       it('should preserve logo_url with leading/trailing whitespace', () => {
         const formValues: OrganizationPrivate = {
-          id: 'org_123',
-          name: 'test-org',
+          id: 'organization_123',
+          name: 'test-organization',
           display_name: 'Test',
           branding: {
             logo_url: '  https://example.com/logo.png  ',
@@ -244,7 +244,7 @@ describe('OrgDetailsMappers', () => {
           },
         };
 
-        const result = OrgDetailsMappers.toAPI(formValues);
+        const result = OrganizationDetailsMappers.toAPI(formValues);
 
         expect(result.branding?.logo_url).toBe('  https://example.com/logo.png  ');
       });
@@ -261,7 +261,7 @@ describe('OrgDetailsMappers', () => {
           },
         };
 
-        const result = OrgDetailsMappers.toAPI(formValues);
+        const result = OrganizationDetailsMappers.toAPI(formValues);
 
         expect(result.name).toBe('');
         expect(result.display_name).toBe('');
@@ -269,17 +269,17 @@ describe('OrgDetailsMappers', () => {
 
       it('should handle special characters and unicode', () => {
         const formValues: OrganizationPrivate = {
-          name: 'test-org',
-          display_name: 'Test Org™ © 日本語 🚀',
+          name: 'test-organization',
+          display_name: 'Test Organization™ © 日本語 🚀',
           branding: {
             logo_url: '',
             colors: { primary: '#000', page_background: '#fff' },
           },
         };
 
-        const result = OrgDetailsMappers.toAPI(formValues);
+        const result = OrganizationDetailsMappers.toAPI(formValues);
 
-        expect(result.display_name).toBe('Test Org™ © 日本語 🚀');
+        expect(result.display_name).toBe('Test Organization™ © 日本語 🚀');
       });
     });
   });
@@ -287,17 +287,17 @@ describe('OrgDetailsMappers', () => {
   describe('roundtrip (fromAPI -> toAPI)', () => {
     it('should maintain data integrity with logo', () => {
       const original: GetOrganizationDetailsResponseContent = {
-        id: 'org_123',
-        name: 'test-org',
-        display_name: 'Test Organization',
+        id: 'organization_123',
+        name: 'test-organization',
+        display_name: 'Test Organizationanization',
         branding: {
           logo_url: 'https://example.com/logo.png',
           colors: { primary: '#ff0000', page_background: '#ffffff' },
         },
       };
 
-      const mapped = OrgDetailsMappers.fromAPI(original);
-      const result = OrgDetailsMappers.toAPI(mapped);
+      const mapped = OrganizationDetailsMappers.fromAPI(original);
+      const result = OrganizationDetailsMappers.toAPI(mapped);
 
       expect(result.name).toBe(original.name);
       expect(result.display_name).toBe(original.display_name);
@@ -307,13 +307,13 @@ describe('OrgDetailsMappers', () => {
 
     it('should apply defaults for missing colors', () => {
       const original = {
-        id: 'org_123',
-        name: 'test-org',
-        display_name: 'Test Organization',
+        id: 'organization_123',
+        name: 'test-organization',
+        display_name: 'Test Organizationanization',
       } as GetOrganizationDetailsResponseContent;
 
-      const mapped = OrgDetailsMappers.fromAPI(original);
-      const result = OrgDetailsMappers.toAPI(mapped);
+      const mapped = OrganizationDetailsMappers.fromAPI(original);
+      const result = OrganizationDetailsMappers.toAPI(mapped);
 
       expect(result.branding?.colors?.primary).toBe(DEFAULT_COLORS.UL_PRIMARY);
       expect(result.branding?.colors?.page_background).toBe(DEFAULT_COLORS.UL_PAGE_BG);
