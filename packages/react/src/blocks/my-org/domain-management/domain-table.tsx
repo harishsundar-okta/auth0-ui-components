@@ -1,7 +1,7 @@
 import {
   type Domain,
   getComponentStyles,
-  MY_ORG_DOMAIN_SCOPES,
+  MY_ORGANIZATION_DOMAIN_SCOPES,
 } from '@auth0/universal-components-core';
 import { Plus } from 'lucide-react';
 import * as React from 'react';
@@ -221,4 +221,4 @@ function DomainTableComponent({
   );
 }
 
-export const DomainTable = withMyOrgService(DomainTableComponent, MY_ORG_DOMAIN_SCOPES);
+export const DomainTable = withMyOrgService(DomainTableComponent, MY_ORGANIZATION_DOMAIN_SCOPES);

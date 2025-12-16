@@ -3,7 +3,7 @@ import {
   type IdpStrategy,
   type ProviderDetailsFormValues,
   type ProviderConfigureFormValues,
-  MY_ORG_SSO_PROVIDER_CREATE_SCOPES,
+  MY_ORGANIZATION_SSO_PROVIDER_CREATE_SCOPES,
 } from '@auth0/universal-components-core';
 import React, { useState, useRef, useCallback, useMemo } from 'react';
 
@@ -212,5 +212,5 @@ export function SsoProviderCreateComponent({
 
 export const SsoProviderCreate = withMyOrgService(
   SsoProviderCreateComponent,
-  MY_ORG_SSO_PROVIDER_CREATE_SCOPES,
+  MY_ORGANIZATION_SSO_PROVIDER_CREATE_SCOPES,
 );

@@ -1,4 +1,7 @@
-import { getComponentStyles, MY_ORG_DETAILS_EDIT_SCOPES } from '@auth0/universal-components-core';
+import {
+  getComponentStyles,
+  MY_ORGANIZATION_DETAILS_EDIT_SCOPES,
+} from '@auth0/universal-components-core';
 import * as React from 'react';
 
 import { OrgDetails } from '../../../components/my-org/org-management/org-details/org-details';
@@ -92,4 +95,7 @@ function OrgDetailsEditComponent({
   );
 }
 
-export const OrgDetailsEdit = withMyOrgService(OrgDetailsEditComponent, MY_ORG_DETAILS_EDIT_SCOPES);
+export const OrgDetailsEdit = withMyOrgService(
+  OrgDetailsEditComponent,
+  MY_ORGANIZATION_DETAILS_EDIT_SCOPES,
+);

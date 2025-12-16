@@ -2,7 +2,7 @@
 
 import {
   getComponentStyles,
-  MY_ORG_SSO_PROVIDER_EDIT_SCOPES,
+  MY_ORGANIZATION_SSO_PROVIDER_EDIT_SCOPES,
 } from '@auth0/universal-components-core';
 import React, { useState } from 'react';
 
@@ -207,5 +207,5 @@ export function SsoProviderEditComponent({
 
 export const SsoProviderEdit = withMyOrgService(
   SsoProviderEditComponent,
-  MY_ORG_SSO_PROVIDER_EDIT_SCOPES,
+  MY_ORGANIZATION_SSO_PROVIDER_EDIT_SCOPES,
 );
