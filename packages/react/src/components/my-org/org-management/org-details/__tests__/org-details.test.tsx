@@ -138,7 +138,7 @@ describe('OrgDetails', () => {
         const customStyling = {
           variables: { common: {}, light: {}, dark: {} },
           classes: {
-            OrgDetails_Card: 'custom-card-class',
+            OrganizationDetails_Card: 'custom-card-class',
           },
         };
 
