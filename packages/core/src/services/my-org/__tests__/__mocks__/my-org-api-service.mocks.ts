@@ -1,3 +1,8 @@
+import type { MyOrganizationClient } from '@auth0/myorganization-js';
+import { vi } from 'vitest';
+
+import type { initializeMyOrgClient } from '../../my-org-api-service';
+
 // Re-export shared API service mocks
 export {
   // Auth Details Mocks
@@ -31,7 +36,7 @@ export {
 // MyOrg-specific Test Data
 // =============================================================================
 
-// Expected Proxy URL helper (service-specific path)
+// Expected URLs
 export const getExpectedProxyBaseUrl = (proxyUrl: string): string => {
   const cleanUrl = proxyUrl.replace(/\/$/, '');
   return `${cleanUrl}/my-org`;
@@ -90,3 +95,13 @@ export const mockMyOrgClientMethods = {
   listMembers: 'listMembers',
   listRoles: 'listRoles',
 } as const;
+
+/**
+ * Creates a mock MyOrg API client
+ */
+export const createMockMyOrgClient = (): ReturnType<typeof initializeMyOrgClient> => {
+  return {
+    client: {} as MyOrganizationClient,
+    setLatestScopes: vi.fn(),
+  };
+};
