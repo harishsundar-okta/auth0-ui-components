@@ -9,7 +9,7 @@ import {
   getFetcherFromMockCalls,
   getHeadersFromFetchCall,
 } from '../../../internals/__mocks__/shared/sdk-client.mocks';
-import { initializeMyOrgClient } from '../my-org-api-service';
+import { initializeMyOrganizationClient } from '../my-organization-api-service';
 
 import {
   mockAuthWithDomain,
@@ -28,7 +28,7 @@ import {
   mockTokens,
   mockRequestInits,
   expectedErrors,
-} from './__mocks__/my-org-api-service.mocks';
+} from './__mocks__/my-organization-api-service.mocks';
 
 const TEST_URL = 'https://api.example.com/test';
 
@@ -39,7 +39,7 @@ vi.mock('@auth0/myorganization-js', () => ({
   MyOrganizationClient: mockMyOrganizationClient,
 }));
 
-describe('initializeMyOrgClient', () => {
+describe('initializeMyOrganizationClient', () => {
   let mockFetch: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -62,14 +62,14 @@ describe('initializeMyOrgClient', () => {
     describe('basic functionality', () => {
       it('should create MyOrganizationClient with proxy URL', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         expect(mockMyOrganizationClient).toHaveBeenCalledTimes(1);
       });
 
       it('should construct correct base URL from proxy URL', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.baseUrl).toBe('https://proxy.example.com/my-org');
@@ -77,7 +77,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should remove trailing slash from proxy URL', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrlTrailingSlash, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrlTrailingSlash, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.baseUrl).toBe('https://proxy.example.com/my-org');
@@ -86,7 +86,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should set domain to empty string in proxy mode', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.domain).toBe('');
@@ -94,7 +94,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should disable telemetry in proxy mode', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.telemetry).toBe(false);
@@ -102,7 +102,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should provide custom fetcher in proxy mode', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.fetcher).toBeDefined();
@@ -113,7 +113,10 @@ describe('initializeMyOrgClient', () => {
     describe('setLatestScopes function', () => {
       it('should provide setLatestScopes function', () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithProxyUrl,
+          tokenManager,
+        );
 
         expect(setLatestScopes).toBeDefined();
         expect(typeof setLatestScopes).toBe('function');
@@ -121,21 +124,30 @@ describe('initializeMyOrgClient', () => {
 
       it('should accept scope strings without throwing', () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithProxyUrl,
+          tokenManager,
+        );
 
         expect(() => setLatestScopes(mockScopes.orgRead)).not.toThrow();
       });
 
       it('should handle empty scope string', () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithProxyUrl,
+          tokenManager,
+        );
 
         expect(() => setLatestScopes(mockScopes.empty)).not.toThrow();
       });
 
       it('should handle complex scope strings', () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithProxyUrl,
+          tokenManager,
+        );
 
         expect(() => setLatestScopes(mockScopes.complex)).not.toThrow();
       });
@@ -144,7 +156,7 @@ describe('initializeMyOrgClient', () => {
     describe('custom fetcher behavior in proxy mode', () => {
       it('should create fetcher that calls fetch', async () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -155,7 +167,10 @@ describe('initializeMyOrgClient', () => {
 
       it('should add scope header when scopes are set', async () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithProxyUrl,
+          tokenManager,
+        );
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -168,7 +183,10 @@ describe('initializeMyOrgClient', () => {
 
       it('should add Content-Type header when body is present', async () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithProxyUrl,
+          tokenManager,
+        );
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -181,7 +199,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should not add scope header when scope is empty', async () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -193,7 +211,10 @@ describe('initializeMyOrgClient', () => {
 
       it('should preserve existing headers', async () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithProxyUrl,
+          tokenManager,
+        );
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -207,7 +228,10 @@ describe('initializeMyOrgClient', () => {
 
       it('should update scope header when scopes change', async () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithProxyUrl,
+          tokenManager,
+        );
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -230,7 +254,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should not add Content-Type header for GET requests without body', async () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -242,7 +266,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should handle requests without init parameter', async () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -264,7 +288,7 @@ describe('initializeMyOrgClient', () => {
         const authWithPath = {
           authProxyUrl: 'https://proxy.example.com/api/v1',
         };
-        initializeMyOrgClient(authWithPath, tokenManager);
+        initializeMyOrganizationClient(authWithPath, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.baseUrl).toBe('https://proxy.example.com/api/v1/my-org');
@@ -275,7 +299,7 @@ describe('initializeMyOrgClient', () => {
         const authWithPort = {
           authProxyUrl: 'https://proxy.example.com:8080',
         };
-        initializeMyOrgClient(authWithPort, tokenManager);
+        initializeMyOrganizationClient(authWithPort, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.baseUrl).toBe('https://proxy.example.com:8080/my-org');
@@ -286,7 +310,7 @@ describe('initializeMyOrgClient', () => {
         const authWithQuery = {
           authProxyUrl: 'https://proxy.example.com?param=value',
         };
-        initializeMyOrgClient(authWithQuery, tokenManager);
+        initializeMyOrganizationClient(authWithQuery, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.baseUrl).toBe('https://proxy.example.com?param=value/my-org');
@@ -294,7 +318,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should trim baseUrl after construction', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithProxyUrlWhitespace, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithProxyUrlWhitespace, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         // The trim() is applied to the final baseUrl
@@ -307,14 +331,14 @@ describe('initializeMyOrgClient', () => {
     describe('basic functionality', () => {
       it('should create MyOrganizationClient with domain', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         expect(mockMyOrganizationClient).toHaveBeenCalledTimes(1);
       });
 
       it('should trim whitespace from domain', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithDomainWhitespace, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomainWhitespace, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.domain).toBe('test.auth0.com');
@@ -322,7 +346,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should not set baseUrl in domain mode', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.baseUrl).toBeUndefined();
@@ -330,7 +354,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should not set telemetry in domain mode', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.telemetry).toBeUndefined();
@@ -338,7 +362,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should provide custom fetcher in domain mode', () => {
         const tokenManager = createMockTokenManager();
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const config = getConfigFromMockCalls(mockMyOrganizationClient);
         expect(config.fetcher).toBeDefined();
@@ -347,7 +371,10 @@ describe('initializeMyOrgClient', () => {
 
       it('should provide setLatestScopes function', () => {
         const tokenManager = createMockTokenManager();
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithDomain,
+          tokenManager,
+        );
 
         expect(setLatestScopes).toBeDefined();
         expect(typeof setLatestScopes).toBe('function');
@@ -357,7 +384,10 @@ describe('initializeMyOrgClient', () => {
     describe('custom fetcher behavior in domain mode', () => {
       it('should call tokenManager.getToken with correct parameters', async () => {
         const tokenManager = createMockTokenManagerWithScopes(mockTokens.standard);
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithDomain,
+          tokenManager,
+        );
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -372,7 +402,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should add Authorization header with token', async () => {
         const tokenManager = createMockTokenManager(mockTokens.standard);
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -384,7 +414,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should add Content-Type header when body is present', async () => {
         const tokenManager = createMockTokenManager(mockTokens.standard);
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -399,7 +429,7 @@ describe('initializeMyOrgClient', () => {
         const tokenManagerUndefined: ReturnType<typeof createTokenManager> = {
           getToken: vi.fn(async () => undefined),
         };
-        initializeMyOrgClient(mockAuthWithDomain, tokenManagerUndefined);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManagerUndefined);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -411,7 +441,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should not override existing Content-Type header', async () => {
         const tokenManager = createMockTokenManager(mockTokens.standard);
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -423,7 +453,10 @@ describe('initializeMyOrgClient', () => {
 
       it('should handle scope updates correctly', async () => {
         const tokenManager = createMockTokenManagerWithScopes(mockTokens.standard);
-        const { setLatestScopes } = initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        const { setLatestScopes } = initializeMyOrganizationClient(
+          mockAuthWithDomain,
+          tokenManager,
+        );
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -444,7 +477,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should use Headers object for headers', async () => {
         const tokenManager = createMockTokenManager(mockTokens.standard);
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -456,7 +489,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should handle requests without init parameter', async () => {
         const tokenManager = createMockTokenManager(mockTokens.standard);
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -468,7 +501,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should handle empty scope string', async () => {
         const tokenManager = createMockTokenManagerWithScopes(mockTokens.standard);
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -480,7 +513,7 @@ describe('initializeMyOrgClient', () => {
 
       it('should not add Content-Type for GET requests without body', async () => {
         const tokenManager = createMockTokenManager(mockTokens.standard);
-        initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
         const fetcher = getFetcherFromMockCalls(mockMyOrganizationClient);
 
@@ -495,7 +528,7 @@ describe('initializeMyOrgClient', () => {
   describe('priority and mode selection', () => {
     it('should prioritize proxy URL over domain when both are present', () => {
       const tokenManager = createMockTokenManager();
-      initializeMyOrgClient(mockAuthWithBothDomainAndProxy, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithBothDomainAndProxy, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -505,7 +538,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should use domain mode when only domain is provided', () => {
       const tokenManager = createMockTokenManager();
-      initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -515,7 +548,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should use proxy mode when only proxy URL is provided', () => {
       const tokenManager = createMockTokenManager();
-      initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -529,7 +562,7 @@ describe('initializeMyOrgClient', () => {
       const tokenManager = createMockTokenManager();
 
       expect(() => {
-        initializeMyOrgClient(mockAuthWithNeither, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithNeither, tokenManager);
       }).toThrow(expectedErrors.missingDomainOrProxy);
     });
 
@@ -537,7 +570,7 @@ describe('initializeMyOrgClient', () => {
       const tokenManager = createMockTokenManager();
 
       expect(() => {
-        initializeMyOrgClient(mockAuthWithEmptyDomain, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithEmptyDomain, tokenManager);
       }).toThrow(expectedErrors.missingDomainOrProxy);
     });
 
@@ -545,13 +578,13 @@ describe('initializeMyOrgClient', () => {
       const tokenManager = createMockTokenManager();
 
       expect(() => {
-        initializeMyOrgClient(mockAuthWithEmptyProxyUrl, tokenManager);
+        initializeMyOrganizationClient(mockAuthWithEmptyProxyUrl, tokenManager);
       }).toThrow(expectedErrors.missingDomainOrProxy);
     });
 
     it('should handle token manager errors gracefully', async () => {
       const tokenManager = createMockTokenManagerWithError();
-      initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -566,7 +599,10 @@ describe('initializeMyOrgClient', () => {
   describe('edge cases', () => {
     it('should handle very long scope strings', async () => {
       const tokenManager = createMockTokenManager();
-      const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      const { setLatestScopes } = initializeMyOrganizationClient(
+        mockAuthWithProxyUrl,
+        tokenManager,
+      );
 
       const longScope = 'read:organization '.repeat(100).trim();
       const calls = mockMyOrganizationClient.mock.calls;
@@ -583,7 +619,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle very long tokens', async () => {
       const tokenManager = createMockTokenManager(mockTokens.long);
-      initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -598,7 +634,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle tokens with special characters', async () => {
       const tokenManager = createMockTokenManager(mockTokens.withSpecialChars);
-      initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -613,7 +649,10 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle multiple rapid scope changes', async () => {
       const tokenManager = createMockTokenManager();
-      const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      const { setLatestScopes } = initializeMyOrganizationClient(
+        mockAuthWithProxyUrl,
+        tokenManager,
+      );
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -631,7 +670,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle Headers object in init.headers', async () => {
       const tokenManager = createMockTokenManager(mockTokens.standard);
-      initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -654,7 +693,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle array-based headers in init.headers for proxy mode', async () => {
       const tokenManager = createMockTokenManager();
-      initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -675,7 +714,10 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle scope strings with leading/trailing whitespace', async () => {
       const tokenManager = createMockTokenManager();
-      const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      const { setLatestScopes } = initializeMyOrganizationClient(
+        mockAuthWithProxyUrl,
+        tokenManager,
+      );
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -691,7 +733,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle PATCH requests with body', async () => {
       const tokenManager = createMockTokenManager(mockTokens.standard);
-      initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -707,7 +749,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle undefined body', async () => {
       const tokenManager = createMockTokenManager();
-      initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -725,7 +767,7 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle null body', async () => {
       const tokenManager = createMockTokenManager();
-      initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
       const calls = mockMyOrganizationClient.mock.calls;
       const config = calls[0]![0];
@@ -745,7 +787,7 @@ describe('initializeMyOrgClient', () => {
   describe('return value structure', () => {
     it('should return object with client and setLatestScopes', () => {
       const tokenManager = createMockTokenManager();
-      const result = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      const result = initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
       expect(result).toHaveProperty('client');
       expect(result).toHaveProperty('setLatestScopes');
@@ -753,28 +795,31 @@ describe('initializeMyOrgClient', () => {
 
     it('should return MyOrganizationClient instance as client', () => {
       const tokenManager = createMockTokenManager();
-      const { client } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      const { client } = initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
       expect(client).toBeInstanceOf(mockMyOrganizationClient);
     });
 
     it('should return function as setLatestScopes', () => {
       const tokenManager = createMockTokenManager();
-      const { setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      const { setLatestScopes } = initializeMyOrganizationClient(
+        mockAuthWithProxyUrl,
+        tokenManager,
+      );
 
       expect(typeof setLatestScopes).toBe('function');
     });
 
     it('should have consistent return structure for proxy mode', () => {
       const tokenManager = createMockTokenManager();
-      const result = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      const result = initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager);
 
       expect(Object.keys(result).sort()).toEqual(['client', 'setLatestScopes'].sort());
     });
 
     it('should have consistent return structure for domain mode', () => {
       const tokenManager = createMockTokenManager();
-      const result = initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+      const result = initializeMyOrganizationClient(mockAuthWithDomain, tokenManager);
 
       expect(Object.keys(result).sort()).toEqual(['client', 'setLatestScopes'].sort());
     });
@@ -783,7 +828,10 @@ describe('initializeMyOrgClient', () => {
   describe('integration scenarios', () => {
     it('should handle complete proxy mode workflow', async () => {
       const tokenManager = createMockTokenManager();
-      const { client, setLatestScopes } = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager);
+      const { client, setLatestScopes } = initializeMyOrganizationClient(
+        mockAuthWithProxyUrl,
+        tokenManager,
+      );
 
       expect(client).toBeInstanceOf(mockMyOrganizationClient);
 
@@ -802,7 +850,10 @@ describe('initializeMyOrgClient', () => {
 
     it('should handle complete domain mode workflow', async () => {
       const tokenManager = createMockTokenManagerWithScopes(mockTokens.standard);
-      const { client, setLatestScopes } = initializeMyOrgClient(mockAuthWithDomain, tokenManager);
+      const { client, setLatestScopes } = initializeMyOrganizationClient(
+        mockAuthWithDomain,
+        tokenManager,
+      );
 
       expect(client).toBeInstanceOf(mockMyOrganizationClient);
 
@@ -821,8 +872,8 @@ describe('initializeMyOrgClient', () => {
       const tokenManager1 = createMockTokenManager();
       const tokenManager2 = createMockTokenManager();
 
-      const proxyClient = initializeMyOrgClient(mockAuthWithProxyUrl, tokenManager1);
-      const domainClient = initializeMyOrgClient(mockAuthWithDomain, tokenManager2);
+      const proxyClient = initializeMyOrganizationClient(mockAuthWithProxyUrl, tokenManager1);
+      const domainClient = initializeMyOrganizationClient(mockAuthWithDomain, tokenManager2);
 
       expect(proxyClient.client).toBeInstanceOf(mockMyOrganizationClient);
       expect(domainClient.client).toBeInstanceOf(mockMyOrganizationClient);

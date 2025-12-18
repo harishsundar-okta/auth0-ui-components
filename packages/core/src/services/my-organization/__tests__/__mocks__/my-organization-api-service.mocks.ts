@@ -1,7 +1,7 @@
 import type { MyOrganizationClient } from '@auth0/myorganization-js';
 import { vi } from 'vitest';
 
-import type { initializeMyOrgClient } from '../../my-org-api-service';
+import type { initializeMyOrganizationClient } from '../../my-organization-api-service';
 
 // Re-export shared API service mocks
 export {
@@ -83,12 +83,12 @@ export const mockRequestInits = {
 
 // Error Messages (MyOrg-specific)
 export const expectedErrors = {
-  missingDomainOrProxy: 'Missing domain or proxy URL for MyOrgClient',
+  missingDomainOrProxy: 'Missing domain or proxy URL for MyOrganizationClient',
   tokenManagerError: 'Token retrieval failed',
 };
 
 // MyOrganizationClient Mock Methods
-export const mockMyOrgClientMethods = {
+export const mockMyOrganizationClientMethods = {
   listOrganizations: 'listOrganizations',
   getOrganization: 'getOrganization',
   updateOrganization: 'updateOrganization',
@@ -99,7 +99,9 @@ export const mockMyOrgClientMethods = {
 /**
  * Creates a mock MyOrg API client
  */
-export const createMockMyOrgClient = (): ReturnType<typeof initializeMyOrgClient> => {
+export const createMockMyOrganizationClient = (): ReturnType<
+  typeof initializeMyOrganizationClient
+> => {
   return {
     client: {} as MyOrganizationClient,
     setLatestScopes: vi.fn(),
