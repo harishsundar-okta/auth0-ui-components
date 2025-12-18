@@ -9,7 +9,7 @@ import { Header } from '../../../../components/ui/header';
 import { useSsoDomainTab } from '../../../../hooks/my-organization/idp-management/use-sso-domain-tab';
 import { useTheme } from '../../../../hooks/use-theme';
 import { useTranslator } from '../../../../hooks/use-translator';
-import { getStatusBadgeVariant } from '../../../../lib/my-org/domain-management';
+import { getStatusBadgeVariant } from '../../../../lib/my-organization/domain-management';
 import type { SsoDomainsTabProps } from '../../../../types/my-org/idp-management/sso-domain/sso-domain-tab-types';
 import { DomainCreateModal } from '../../domain-management/domain-create/domain-create-modal';
 import { DomainDeleteModal } from '../../domain-management/domain-delete/domain-delete-modal';

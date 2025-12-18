@@ -19,7 +19,7 @@ import { useDomainTable } from '../../../hooks/my-organization/domain-management
 import { useDomainTableLogic } from '../../../hooks/my-organization/domain-management/use-domain-table-logic';
 import { useTheme } from '../../../hooks/use-theme';
 import { useTranslator } from '../../../hooks/use-translator';
-import { getStatusBadgeVariant } from '../../../lib/my-org/domain-management';
+import { getStatusBadgeVariant } from '../../../lib/my-organization/domain-management';
 import type { DomainTableProps } from '../../../types/my-org/domain-management/domain-table-types';
 
 /**
