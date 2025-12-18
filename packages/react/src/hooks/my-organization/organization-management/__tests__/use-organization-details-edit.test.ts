@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { createMockOrganization, mockCore, mockToast } from '../../../../internals';
 import * as useCoreClientModule from '../../../use-core-client';
-import { useOrgDetailsEdit } from '../use-org-details-edit';
+import { useOrganizationDetailsEdit } from '../use-organization-details-edit';
 
 // ===== Mock packages =====
 
@@ -36,7 +36,7 @@ describe('useOrgDetailsEdit', () => {
 
   describe('when loading organization data', () => {
     it('should fetch organization details automatically on mount', async () => {
-      renderHook(() => useOrgDetailsEdit({}));
+      renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(
@@ -46,7 +46,7 @@ describe('useOrgDetailsEdit', () => {
     });
 
     it('should return organization details after successful load', async () => {
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.organization).toEqual(mockOrganization);
@@ -54,7 +54,7 @@ describe('useOrgDetailsEdit', () => {
     });
 
     it('should show loading indicator while fetching', async () => {
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       // Initially loading
       expect(result.current.isFetchLoading).toBe(true);
@@ -66,7 +66,7 @@ describe('useOrgDetailsEdit', () => {
     });
 
     it('should allow manual refetch of organization data', async () => {
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.organization).toEqual(mockOrganization);
@@ -91,7 +91,7 @@ describe('useOrgDetailsEdit', () => {
         new Error('Network error'),
       );
 
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.isFetchLoading).toBe(false);
@@ -107,7 +107,7 @@ describe('useOrgDetailsEdit', () => {
 
   describe('when saving changes', () => {
     it('should update organization successfully', async () => {
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.organization).toEqual(mockOrganization);
@@ -126,7 +126,7 @@ describe('useOrgDetailsEdit', () => {
     });
 
     it('should show loading state during save', async () => {
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.organization).toEqual(mockOrganization);
@@ -147,7 +147,7 @@ describe('useOrgDetailsEdit', () => {
     });
 
     it('should show success toast on successful save', async () => {
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.organization).toEqual(mockOrganization);
@@ -170,7 +170,7 @@ describe('useOrgDetailsEdit', () => {
     it('should call onBefore callback and allow validation', async () => {
       const onBefore = vi.fn(() => true);
       const { result } = renderHook(() =>
-        useOrgDetailsEdit({
+        useOrganizationDetailsEdit({
           saveAction: { onBefore },
         }),
       );
@@ -192,7 +192,7 @@ describe('useOrgDetailsEdit', () => {
     it('should allow onBefore callback to cancel save operation', async () => {
       const onBefore = vi.fn(() => false);
       const { result } = renderHook(() =>
-        useOrgDetailsEdit({
+        useOrganizationDetailsEdit({
           saveAction: { onBefore },
         }),
       );
@@ -215,7 +215,7 @@ describe('useOrgDetailsEdit', () => {
     it('should call onAfter callback after successful save', async () => {
       const onAfter = vi.fn();
       const { result } = renderHook(() =>
-        useOrgDetailsEdit({
+        useOrganizationDetailsEdit({
           saveAction: { onBefore: () => true, onAfter },
         }),
       );
@@ -245,7 +245,7 @@ describe('useOrgDetailsEdit', () => {
         new Error('Save failed'),
       );
 
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.organization).toEqual(mockOrganization);
@@ -271,7 +271,7 @@ describe('useOrgDetailsEdit', () => {
     it('should call cancelAction.onAfter callback when cancel is triggered', async () => {
       const onAfter = vi.fn();
       const { result } = renderHook(() =>
-        useOrgDetailsEdit({
+        useOrganizationDetailsEdit({
           cancelAction: { onAfter },
         }),
       );
@@ -292,7 +292,7 @@ describe('useOrgDetailsEdit', () => {
     it('should not call the API when canceling', async () => {
       const onAfter = vi.fn();
       const { result } = renderHook(() =>
-        useOrgDetailsEdit({
+        useOrganizationDetailsEdit({
           cancelAction: { onAfter },
         }),
       );
@@ -316,7 +316,7 @@ describe('useOrgDetailsEdit', () => {
 
   describe('when form actions are disabled', () => {
     it('should enable actions after data loads successfully', async () => {
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.organization).toEqual(mockOrganization);
@@ -339,7 +339,7 @@ describe('useOrgDetailsEdit', () => {
         updatePromise,
       );
 
-      const { result } = renderHook(() => useOrgDetailsEdit({}));
+      const { result } = renderHook(() => useOrganizationDetailsEdit({}));
 
       await waitFor(() => {
         expect(result.current.organization).toEqual(mockOrganization);
@@ -368,7 +368,7 @@ describe('useOrgDetailsEdit', () => {
 
     it('should disable both actions in readOnly mode', async () => {
       const { result } = renderHook(() =>
-        useOrgDetailsEdit({
+        useOrganizationDetailsEdit({
           readOnly: true,
         }),
       );
@@ -383,7 +383,7 @@ describe('useOrgDetailsEdit', () => {
 
     it('should respect custom disabled prop for save action', async () => {
       const { result } = renderHook(() =>
-        useOrgDetailsEdit({
+        useOrganizationDetailsEdit({
           saveAction: { disabled: true },
         }),
       );
@@ -397,7 +397,7 @@ describe('useOrgDetailsEdit', () => {
 
     it('should respect custom disabled prop for cancel action', async () => {
       const { result } = renderHook(() =>
-        useOrgDetailsEdit({
+        useOrganizationDetailsEdit({
           cancelAction: { disabled: true, onAfter: vi.fn() },
         }),
       );

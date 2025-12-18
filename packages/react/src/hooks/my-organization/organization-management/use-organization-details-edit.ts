@@ -17,7 +17,7 @@ import { useTranslator } from '../../use-translator';
 /**
  * Custom hook for managing organization details form logic.
  */
-export function useOrgDetailsEdit({
+export function useOrganizationDetailsEdit({
   saveAction,
   cancelAction,
   readOnly = false,
@@ -36,7 +36,7 @@ export function useOrgDetailsEdit({
   /**
    * Fetch organization details from the API.
    */
-  const fetchOrgDetails = useCallback(async (): Promise<void> => {
+  const fetchOrganizationDetails = useCallback(async (): Promise<void> => {
     if (!coreClient) {
       return;
     }
@@ -65,7 +65,7 @@ export function useOrgDetailsEdit({
   /**
    * Update organization details in the API.
    */
-  const updateOrgDetails = useCallback(
+  const updateOrganizationDetails = useCallback(
     async (data: OrganizationPrivate): Promise<boolean> => {
       if (!coreClient) {
         return false;
@@ -130,11 +130,11 @@ export function useOrgDetailsEdit({
       nextAction: {
         disabled:
           saveAction?.disabled || readOnly || !organization || isSaveLoading || isInitializing,
-        onClick: updateOrgDetails,
+        onClick: updateOrganizationDetails,
       },
     }),
     [
-      updateOrgDetails,
+      updateOrganizationDetails,
       readOnly,
       cancelAction,
       saveAction?.disabled,
@@ -146,7 +146,7 @@ export function useOrgDetailsEdit({
 
   // Fetch when page loads
   useEffect(() => {
-    fetchOrgDetails();
+    fetchOrganizationDetails();
   }, []);
 
   return {
@@ -155,7 +155,7 @@ export function useOrgDetailsEdit({
     isSaveLoading,
     isInitializing,
     formActions,
-    fetchOrgDetails,
-    updateOrgDetails,
+    fetchOrgDetails: fetchOrganizationDetails,
+    updateOrgDetails: updateOrganizationDetails,
   };
 }

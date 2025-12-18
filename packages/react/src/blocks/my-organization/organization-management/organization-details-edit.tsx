@@ -8,7 +8,7 @@ import { OrganizationDetails } from '../../../components/my-organization/organiz
 import { Header } from '../../../components/ui/header';
 import { Spinner } from '../../../components/ui/spinner';
 import { withMyOrganizationService } from '../../../hoc/with-services';
-import { useOrgDetailsEdit } from '../../../hooks/my-org/org-management/use-org-details-edit';
+import { useOrganizationDetailsEdit } from '../../../hooks/my-organization/organization-management/use-organization-details-edit';
 import { useTheme } from '../../../hooks/use-theme';
 import { useTranslator } from '../../../hooks/use-translator';
 import type { OrganizationDetailsEditProps } from '../../../types/my-org/org-management/org-details-edit-types';
@@ -40,7 +40,7 @@ function OrganizationDetailsEditComponent({
     organization,
     isFetchLoading,
     formActions: enhancedFormActions,
-  } = useOrgDetailsEdit({
+  } = useOrganizationDetailsEdit({
     saveAction,
     cancelAction,
     readOnly,
