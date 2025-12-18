@@ -91,7 +91,7 @@ export function useOrganizationDetailsEdit({
         showToast({
           type: 'success',
           message: t('save_organization_changes_message', {
-            orgName: data.display_name || data.name,
+            organizationName: data.display_name || data.name,
           }),
         });
 

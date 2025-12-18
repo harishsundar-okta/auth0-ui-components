@@ -517,7 +517,7 @@ interface ComponentAction<T> {
               code={`<OrgDetailsEdit
   customMessages={{
     header: {
-      title: 'Configure {orgName}',
+      title: 'Configure {organizationName}',
       back_button_text: 'Back to Dashboard'
     },
     details: {
@@ -771,7 +771,7 @@ function OrganizationEditPage() {
         }}
         customMessages={{
           header: {
-            title: 'Edit Organization: {orgName}'
+            title: 'Edit Organization: {organizationName}'
           },
           save_organization_changes_message: 'Organization details updated successfully!',
           organization_changes_error_message: 'Failed to update organization. Please try again.'

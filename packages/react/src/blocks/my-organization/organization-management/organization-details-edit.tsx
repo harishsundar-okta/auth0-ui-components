@@ -69,7 +69,7 @@ function OrganizationDetailsEditComponent({
         <div className="mb-8">
           <Header
             title={t('header.title', {
-              orgName: organization.display_name || organization.name || '',
+              organizationName: organization.display_name || organization.name || '',
             })}
             backButton={
               backButton && {
