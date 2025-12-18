@@ -11,7 +11,7 @@ import type {
   OrganizationDetailsEditProps,
   OrganizationEditBackButton,
 } from '../../../../types/my-org/org-management';
-import { OrgDetailsEdit } from '../org-details-edit';
+import { OrganizationDetailsEdit } from '../organization-details-edit';
 
 // ===== Mock packages =====
 
@@ -20,7 +20,7 @@ const { initMockCoreClient } = mockCore();
 
 // ===== Local mock creators =====
 
-const createMockOrgDetailsEditProps = (
+const createMockOrganizationDetailsEditProps = (
   overrides?: Partial<OrganizationDetailsEditProps>,
 ): OrganizationDetailsEditProps => ({
   schema: undefined,
@@ -104,7 +104,9 @@ describe('OrgDetailsEdit', () => {
         };
 
         renderWithProviders(
-          <OrgDetailsEdit {...createMockOrgDetailsEditProps({ schema: customSchema })} />,
+          <OrganizationDetailsEdit
+            {...createMockOrganizationDetailsEditProps({ schema: customSchema })}
+          />,
         );
 
         const displayNameInput = await waitForComponentToLoad();
@@ -135,7 +137,9 @@ describe('OrgDetailsEdit', () => {
         };
 
         renderWithProviders(
-          <OrgDetailsEdit {...createMockOrgDetailsEditProps({ customMessages })} />,
+          <OrganizationDetailsEdit
+            {...createMockOrganizationDetailsEditProps({ customMessages })}
+          />,
         );
 
         await waitForComponentToLoad();
@@ -157,7 +161,9 @@ describe('OrgDetailsEdit', () => {
           };
 
           renderWithProviders(
-            <OrgDetailsEdit {...createMockOrgDetailsEditProps({ styling: customStyling })} />,
+            <OrganizationDetailsEdit
+              {...createMockOrganizationDetailsEditProps({ styling: customStyling })}
+            />,
           );
 
           await waitForComponentToLoad();
@@ -173,7 +179,9 @@ describe('OrgDetailsEdit', () => {
     describe('when is true', () => {
       it('should disable inputs and buttons', async () => {
         renderWithProviders(
-          <OrgDetailsEdit {...createMockOrgDetailsEditProps({ readOnly: true })} />,
+          <OrganizationDetailsEdit
+            {...createMockOrganizationDetailsEditProps({ readOnly: true })}
+          />,
         );
 
         const displayNameInput = await waitForComponentToLoad();
@@ -193,7 +201,9 @@ describe('OrgDetailsEdit', () => {
         const user = userEvent.setup();
 
         renderWithProviders(
-          <OrgDetailsEdit {...createMockOrgDetailsEditProps({ readOnly: false })} />,
+          <OrganizationDetailsEdit
+            {...createMockOrganizationDetailsEditProps({ readOnly: false })}
+          />,
         );
 
         const displayNameInput = await waitForComponentToLoad();
@@ -225,7 +235,9 @@ describe('OrgDetailsEdit', () => {
           mockSaveAction.disabled = true;
 
           renderWithProviders(
-            <OrgDetailsEdit {...createMockOrgDetailsEditProps({ saveAction: mockSaveAction })} />,
+            <OrganizationDetailsEdit
+              {...createMockOrganizationDetailsEditProps({ saveAction: mockSaveAction })}
+            />,
           );
 
           const displayNameInput = await waitForComponentToLoad();
@@ -247,7 +259,9 @@ describe('OrgDetailsEdit', () => {
           mockSaveAction.disabled = false;
 
           renderWithProviders(
-            <OrgDetailsEdit {...createMockOrgDetailsEditProps({ saveAction: mockSaveAction })} />,
+            <OrganizationDetailsEdit
+              {...createMockOrganizationDetailsEditProps({ saveAction: mockSaveAction })}
+            />,
           );
 
           const displayNameInput = await waitForComponentToLoad();
@@ -274,7 +288,9 @@ describe('OrgDetailsEdit', () => {
             mockSaveAction.onBefore = vi.fn(() => true);
 
             renderWithProviders(
-              <OrgDetailsEdit {...createMockOrgDetailsEditProps({ saveAction: mockSaveAction })} />,
+              <OrganizationDetailsEdit
+                {...createMockOrganizationDetailsEditProps({ saveAction: mockSaveAction })}
+              />,
             );
 
             const displayNameInput = await waitForComponentToLoad();
@@ -304,7 +320,9 @@ describe('OrgDetailsEdit', () => {
             mockSaveAction.onBefore = vi.fn(() => false);
 
             renderWithProviders(
-              <OrgDetailsEdit {...createMockOrgDetailsEditProps({ saveAction: mockSaveAction })} />,
+              <OrganizationDetailsEdit
+                {...createMockOrganizationDetailsEditProps({ saveAction: mockSaveAction })}
+              />,
             );
 
             const displayNameInput = await waitForComponentToLoad();
@@ -340,7 +358,9 @@ describe('OrgDetailsEdit', () => {
           mockSaveAction.onAfter = vi.fn();
 
           renderWithProviders(
-            <OrgDetailsEdit {...createMockOrgDetailsEditProps({ saveAction: mockSaveAction })} />,
+            <OrganizationDetailsEdit
+              {...createMockOrganizationDetailsEditProps({ saveAction: mockSaveAction })}
+            />,
           );
 
           const displayNameInput = await waitForComponentToLoad();
@@ -372,8 +392,8 @@ describe('OrgDetailsEdit', () => {
           const mockCancelAction = { ...createMockCancelAction(), disabled: true };
 
           renderWithProviders(
-            <OrgDetailsEdit
-              {...createMockOrgDetailsEditProps({ cancelAction: mockCancelAction })}
+            <OrganizationDetailsEdit
+              {...createMockOrganizationDetailsEditProps({ cancelAction: mockCancelAction })}
             />,
           );
 
@@ -390,8 +410,8 @@ describe('OrgDetailsEdit', () => {
           const mockCancelAction = { ...createMockCancelAction(), disabled: false };
 
           renderWithProviders(
-            <OrgDetailsEdit
-              {...createMockOrgDetailsEditProps({ cancelAction: mockCancelAction })}
+            <OrganizationDetailsEdit
+              {...createMockOrganizationDetailsEditProps({ cancelAction: mockCancelAction })}
             />,
           );
 
@@ -410,8 +430,8 @@ describe('OrgDetailsEdit', () => {
           const mockCancelAction = createMockCancelAction();
 
           renderWithProviders(
-            <OrgDetailsEdit
-              {...createMockOrgDetailsEditProps({ cancelAction: mockCancelAction })}
+            <OrganizationDetailsEdit
+              {...createMockOrganizationDetailsEditProps({ cancelAction: mockCancelAction })}
             />,
           );
 
@@ -434,7 +454,9 @@ describe('OrgDetailsEdit', () => {
     describe('when is false', () => {
       it('should render the header with title', async () => {
         renderWithProviders(
-          <OrgDetailsEdit {...createMockOrgDetailsEditProps({ hideHeader: false })} />,
+          <OrganizationDetailsEdit
+            {...createMockOrganizationDetailsEditProps({ hideHeader: false })}
+          />,
         );
 
         await waitForComponentToLoad();
@@ -445,7 +467,9 @@ describe('OrgDetailsEdit', () => {
     describe('when is true', () => {
       it('should not render the header', async () => {
         renderWithProviders(
-          <OrgDetailsEdit {...createMockOrgDetailsEditProps({ hideHeader: true })} />,
+          <OrganizationDetailsEdit
+            {...createMockOrganizationDetailsEditProps({ hideHeader: true })}
+          />,
         );
 
         await waitForComponentToLoad();
@@ -461,7 +485,9 @@ describe('OrgDetailsEdit', () => {
         const mockBackButton = createMockBackButton();
 
         renderWithProviders(
-          <OrgDetailsEdit {...createMockOrgDetailsEditProps({ backButton: mockBackButton })} />,
+          <OrganizationDetailsEdit
+            {...createMockOrganizationDetailsEditProps({ backButton: mockBackButton })}
+          />,
         );
 
         await screen.findByRole('button', { name: /header.back_button_text/i });
@@ -470,7 +496,9 @@ describe('OrgDetailsEdit', () => {
 
     describe('when backButton is not provided', () => {
       it('should not render back button', async () => {
-        renderWithProviders(<OrgDetailsEdit {...createMockOrgDetailsEditProps()} />);
+        renderWithProviders(
+          <OrganizationDetailsEdit {...createMockOrganizationDetailsEditProps()} />,
+        );
 
         await waitForComponentToLoad();
 
@@ -486,7 +514,9 @@ describe('OrgDetailsEdit', () => {
         const mockBackButton = createMockBackButton();
 
         renderWithProviders(
-          <OrgDetailsEdit {...createMockOrgDetailsEditProps({ backButton: mockBackButton })} />,
+          <OrganizationDetailsEdit
+            {...createMockOrganizationDetailsEditProps({ backButton: mockBackButton })}
+          />,
         );
 
         const backButton = await screen.findByRole('button', { name: /header.back_button_text/i });

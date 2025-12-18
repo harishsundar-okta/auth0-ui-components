@@ -20,7 +20,7 @@ import type { OrganizationDetailsEditProps } from '../../../types/my-org/org-man
  * editing and deletion capabilities in a single interface. This component provides
  * a complete editing experience with form validation, lifecycle hooks, and user feedback.
  */
-function OrgDetailsEditComponent({
+function OrganizationDetailsEditComponent({
   schema,
   customMessages = {},
   styling = {
@@ -95,7 +95,7 @@ function OrgDetailsEditComponent({
   );
 }
 
-export const OrgDetailsEdit = withMyOrganizationService(
-  OrgDetailsEditComponent,
+export const OrganizationDetailsEdit = withMyOrganizationService(
+  OrganizationDetailsEditComponent,
   MY_ORGANIZATION_DETAILS_EDIT_SCOPES,
 );
