@@ -2,8 +2,6 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import type { createTokenManager } from '../../../auth/token-manager';
 import {
-  saveOriginalFetch,
-  restoreOriginalFetch,
   createMockFetch,
   getConfigFromMockCalls,
   getFetcherFromMockCalls,
@@ -44,18 +42,17 @@ describe('initializeMyOrgClient', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    saveOriginalFetch();
     mockFetch = createMockFetch();
     mockFetch.mockResolvedValue({
       ok: true,
       json: async () => ({}),
     });
-    global.fetch = mockFetch;
+    vi.stubGlobal('fetch', mockFetch);
   });
 
   afterEach(() => {
-    restoreOriginalFetch();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   describe('proxy mode initialization', () => {
