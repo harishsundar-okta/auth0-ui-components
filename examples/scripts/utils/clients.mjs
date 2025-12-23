@@ -54,7 +54,10 @@ export async function checkDashboardClientChanges(
   const missingLogoutUrls = desiredLogoutUrls.filter(
     (url) => !clientToCheck.allowed_logout_urls?.includes(url)
   )
-  const wrongAppType = exampleType === 'next-rwa' ? clientToCheck.app_type !== "regular_web" : clientToCheck.app_type !== "spa"
+  const checkAppType = {
+    wrongAppType: (exampleType === 'next-rwa' ? clientToCheck.app_type !== "regular_web" : clientToCheck.app_type !== "spa"),
+    requiredAppType: (exampleType === 'next-rwa' ? "regular_web" : "spa")
+  }
 
   // Check if my_org config needs update
   // If profiles are TO_BE_CREATED, we'll need to update after creating them
@@ -83,7 +86,7 @@ export async function checkDashboardClientChanges(
   const needsUpdate =
     missingCallbacks.length > 0 ||
     missingLogoutUrls.length > 0 ||
-    wrongAppType ||
+    checkAppType.wrongAppType ||
     myOrgConfigNeedsUpdate ||
     organizationSettingsNeedUpdate ||
     refreshTokenPoliciesNeedUpdate
@@ -94,7 +97,7 @@ export async function checkDashboardClientChanges(
       changes.push(`Add ${missingCallbacks.length} callback(s)`)
     if (missingLogoutUrls.length > 0)
       changes.push(`Add ${missingLogoutUrls.length} logout URL(s)`)
-    if (wrongAppType) changes.push("Set app_type to ", exampleType === 'nextjs-rwa' ? "regular_web" : "spa")
+    if (checkAppType.wrongAppType) changes.push(`Set app_type to ${checkAppType.requiredAppType}`)
     if (myOrgConfigNeedsUpdate) changes.push("Update My Org configuration")
     if (organizationSettingsNeedUpdate)
       changes.push("Update organization settings")
@@ -108,7 +111,7 @@ export async function checkDashboardClientChanges(
       updates: {
         missingCallbacks,
         missingLogoutUrls,
-        wrongAppType,
+        checkAppType,
         myOrgConfigNeedsUpdate,
         organizationSettingsNeedUpdate,
         connectionProfileId,
@@ -295,8 +298,8 @@ export async function applyDashboardClientChanges(
         ]
       }
 
-      if (updates.wrongAppType) {
-        updateData.app_type = "regular_web"
+      if (updates.checkAppType.wrongAppType) {
+        updateData.app_type = updates.checkAppType.requiredAppType
       }
 
       if (updates.organizationSettingsNeedUpdate) {

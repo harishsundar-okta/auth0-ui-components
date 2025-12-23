@@ -130,12 +130,12 @@ This will:
 Use the ShadCN CLI to add the OrgDetailsEdit component:
 
 ```sh
-npx shadcn@latest add https://auth0-ui-components.vercel.app/r/my-org/org-details-edit.json
+npx shadcn@latest add https://ui.auth0.com/r/my-org/org-details-edit.json
 ```
 
 This will install the `OrgDetailsEdit` component in your `blocks/` directory.
 
-**[Check docs](https://auth0-ui-components.vercel.app/) to view all available components.**
+**[Check docs](https://ui.auth0.com/) to view all available components.**
 
 **Note:** If you encounter certificate issues, use this workaround:
 
@@ -232,9 +232,9 @@ export default OrganizationManagement;
 
 For detailed configuration options, props, troubleshooting, and component-specific requirements, please refer to the official component documentation:
 
-**[Auth0 Universal Components Documentation](https://auth0-ui-components.vercel.app/getting-started)**
+**[Auth0 Universal Components Documentation](https://ui.auth0.com/getting-started)**
 
-**Important**: Each component may have specific Auth0 configuration requirements. Before using any component, please check the [Auth0 UI Components Documentation](https://auth0-ui-components.vercel.app/) for component-specific prerequisites and setup instructions.
+**Important**: Each component may have specific Auth0 configuration requirements. Before using any component, please check the [Auth0 UI Components Documentation](https://ui.auth0.com/) for component-specific prerequisites and setup instructions.
 
 ## Troubleshooting
 
