@@ -95,7 +95,7 @@ describe('ProvisioningManageToken', () => {
     render(<ProvisioningManageToken {...defaultProps} />);
 
     const badges = await screen.findAllByText('token_item.status_active');
-    expect(badges).toHaveLength(1);
+    expect(badges).toHaveLength(2);
   });
 
   it('should show expired badge for expired tokens', async () => {
