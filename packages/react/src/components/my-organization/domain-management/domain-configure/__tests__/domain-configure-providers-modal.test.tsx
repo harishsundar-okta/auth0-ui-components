@@ -850,10 +850,23 @@ describe('DomainConfigureProvidersModal', () => {
 
     it('should show correct tooltip for each provider independently', async () => {
       vi.useFakeTimers();
-      const props = createMockDomainConfigureProvidersModalProps();
-      renderWithProviders(<DomainConfigureProvidersModal {...props} />);
 
-      const switches = screen.getAllByRole('switch');
+      // Test first provider (enabled) separately
+      const props1 = createMockDomainConfigureProvidersModalProps({
+        providers: [
+          createMockIdentityProviderAssociatedWithDomain({
+            id: 'con_google123',
+            display_name: 'Google Workspace',
+            strategy: 'google-apps',
+            is_associated: true,
+          }),
+        ],
+      });
+      const { unmount: unmount1 } = renderWithProviders(
+        <DomainConfigureProvidersModal {...props1} />,
+      );
+
+      let switches = screen.getAllByRole('switch');
 
       // Hover first switch (enabled)
       await act(async () => {
@@ -866,16 +879,29 @@ describe('DomainConfigureProvidersModal', () => {
         0,
       );
 
-      // Leave first switch
-      await act(async () => {
-        fireEvent.pointerLeave(switches[0]!);
-        await vi.advanceTimersByTimeAsync(200);
+      vi.useRealTimers();
+      unmount1();
+
+      // Test second provider (disabled) separately
+      vi.useFakeTimers();
+      const props2 = createMockDomainConfigureProvidersModalProps({
+        providers: [
+          createMockIdentityProviderAssociatedWithDomain({
+            id: 'con_okta456',
+            display_name: 'Okta Enterprise',
+            strategy: 'okta',
+            is_associated: false,
+          }),
+        ],
       });
+      renderWithProviders(<DomainConfigureProvidersModal {...props2} />);
+
+      switches = screen.getAllByRole('switch');
 
       // Hover second switch (disabled)
       await act(async () => {
-        fireEvent.pointerEnter(switches[1]!);
-        fireEvent.pointerMove(switches[1]!);
+        fireEvent.pointerEnter(switches[0]!);
+        fireEvent.pointerMove(switches[0]!);
         await vi.advanceTimersByTimeAsync(800);
       });
 
