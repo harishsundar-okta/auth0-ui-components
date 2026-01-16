@@ -29,6 +29,7 @@ export async function checkDashboardClientChanges(
 
   const desiredCallbacks = (exampleType === 'next-rwa') ? [`${APP_BASE_URL}/auth/callback`] : [APP_BASE_URL]
   const desiredLogoutUrls = [APP_BASE_URL]
+  const desiredAllowedWebOrigins = (exampleType === 'next-rwa') ? [] : [APP_BASE_URL]
 
   if (!existingClient) {
     return createChangeItem(ChangeAction.CREATE, {
@@ -53,6 +54,9 @@ export async function checkDashboardClientChanges(
   )
   const missingLogoutUrls = desiredLogoutUrls.filter(
     (url) => !clientToCheck.allowed_logout_urls?.includes(url)
+  )
+  const missingAllowedWebOrigins = desiredAllowedWebOrigins.filter(
+    (o) => !clientToCheck.allowed_web_origins?.includes(o)
   )
   const checkAppType = {
     wrongAppType: (exampleType === 'next-rwa' ? clientToCheck.app_type !== "regular_web" : clientToCheck.app_type !== "spa"),
@@ -92,6 +96,7 @@ export async function checkDashboardClientChanges(
   const needsUpdate =
     missingCallbacks.length > 0 ||
     missingLogoutUrls.length > 0 ||
+    missingAllowedWebOrigins.length > 0 ||
     checkAppType.wrongAppType ||
     myOrgConfigNeedsUpdate ||
     organizationSettingsNeedUpdate ||
@@ -103,6 +108,8 @@ export async function checkDashboardClientChanges(
       changes.push(`Add ${missingCallbacks.length} callback(s)`)
     if (missingLogoutUrls.length > 0)
       changes.push(`Add ${missingLogoutUrls.length} logout URL(s)`)
+    if (missingAllowedWebOrigins.length > 0)
+      changes.push(`Add ${missingAllowedWebOrigins.length} allowed web origin(s)`)
     if (checkAppType.wrongAppType) changes.push(`Set app_type to ${checkAppType.requiredAppType}`)
     if (myOrgConfigNeedsUpdate) changes.push("Update My Org configuration")
     if (organizationSettingsNeedUpdate)
@@ -117,6 +124,7 @@ export async function checkDashboardClientChanges(
       updates: {
         missingCallbacks,
         missingLogoutUrls,
+        missingAllowedWebOrigins,
         checkAppType,
         myOrgConfigNeedsUpdate,
         organizationSettingsNeedUpdate,
@@ -213,6 +221,7 @@ export async function applyDashboardClientChanges(
       const desiredLogoutUrls = [APP_BASE_URL]
       const desiredAppType = (exampleType === 'nextjs-rwa') ? "regular_web" : "spa" 
       const desiredTokenEndpointAuthMethod = (exampleType === 'nextjs-rwa') ? "client_secret_post" : "none"
+      const desiredAllowedWebOrigins = desiredAppType === 'spa' ? [APP_BASE_URL] : []
 
       // prettier-ignore
       const createClientArgs = [
@@ -222,6 +231,7 @@ export async function applyDashboardClientChanges(
           description: "The client to facilitate login to the dashboard in the context of an organization.",
           callbacks: desiredCallbacks,
           allowed_logout_urls: desiredLogoutUrls,
+          web_origins: desiredAllowedWebOrigins,
           app_type: desiredAppType,
           oidc_conformant: true,
           is_first_party: true,
@@ -248,6 +258,7 @@ export async function applyDashboardClientChanges(
               "samlp",
             ],
           },
+          allowed_web_origins: desiredAllowedWebOrigins,
           refresh_token: {
             expiration_type: "expiring",
             rotation_type: "rotating",
@@ -304,6 +315,13 @@ export async function applyDashboardClientChanges(
         ]
       }
 
+      if (updates.missingAllowedWebOrigins && updates.missingAllowedWebOrigins.length > 0) {
+        updateData.web_origins = [
+          ...(existing.allowed_web_origins || []),
+          ...updates.missingAllowedWebOrigins,
+        ]
+      }
+
       if (updates.checkAppType.wrongAppType) {
         updateData.app_type = updates.checkAppType.requiredAppType
         updateData.token_endpoint_auth_method = (updates.checkAppType.requiredAppType === 'regular_web') ? "client_secret_post" : "none"
@@ -356,7 +374,7 @@ export async function applyDashboardClientChanges(
         }
       }
 
-      const res = await auth0ApiCall("patch", `clients/${existing.client_id}`, updateData)
+      await auth0ApiCall("patch", `clients/${existing.client_id}`, updateData)
       spinner.succeed(`Updated ${DASHBOARD_CLIENT_NAME} client`)
 
       // Fetch updated client with client_secret to return
