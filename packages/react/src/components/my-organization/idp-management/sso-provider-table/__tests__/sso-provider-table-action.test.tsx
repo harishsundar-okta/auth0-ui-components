@@ -1,4 +1,4 @@
-import { screen, fireEvent, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -366,88 +366,68 @@ describe('SsoProviderTableActionsColumn', () => {
 
   describe('Tooltip Functionality', () => {
     it('should show enabled tooltip for enabled provider on hover', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const provider = createMockProvider({ is_enabled: true });
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.enabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('table.actions.enabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show disabled tooltip for disabled provider on hover', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const provider = createMockProvider({ is_enabled: false });
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.disabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('table.actions.disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show disabled tooltip when is_enabled is undefined', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const provider = createMockProvider({ is_enabled: undefined });
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.disabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('table.actions.disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show disabled tooltip when is_enabled is null', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const provider = createMockProvider({ is_enabled: null });
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.disabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('table.actions.disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show correct tooltip based on provider state', async () => {
       // Test enabled provider tooltip
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const enabledProvider = createMockProvider({ is_enabled: true });
       const { unmount } = renderWithProviders(
         <SsoProviderTableActionsColumn
@@ -456,21 +436,16 @@ describe('SsoProviderTableActionsColumn', () => {
       );
 
       let switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.enabled_tooltip');
       });
 
-      let tooltips = screen.getAllByText('table.actions.enabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
       unmount();
 
       // Test disabled provider tooltip
-      vi.useFakeTimers();
       const disabledProvider = createMockProvider({ is_enabled: false });
       renderWithProviders(
         <SsoProviderTableActionsColumn
@@ -479,21 +454,16 @@ describe('SsoProviderTableActionsColumn', () => {
       );
 
       switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.disabled_tooltip');
       });
-
-      tooltips = screen.getAllByText('table.actions.disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show tooltip when hovering over span wrapper', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const provider = createMockProvider({ is_enabled: true });
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
@@ -503,39 +473,29 @@ describe('SsoProviderTableActionsColumn', () => {
 
       expect(spanWrapper?.tagName).toBe('SPAN');
 
-      await act(async () => {
-        fireEvent.pointerEnter(spanWrapper!);
-        fireEvent.pointerMove(spanWrapper!);
-        await vi.advanceTimersByTimeAsync(800);
+      await user.hover(spanWrapper!);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.enabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('table.actions.enabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show tooltip on keyboard focus with span wrapper', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const provider = createMockProvider({ is_enabled: false });
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
 
-      const switchElement = screen.getByRole('switch');
-      switchElement.focus();
+      await user.tab();
 
-      await act(async () => {
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.disabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('table.actions.disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
-    it('should not show tooltip when spinner is displayed', async () => {
-      vi.useFakeTimers();
+    it('should not show tooltip when spinner is displayed', () => {
       const props = createMockSsoProviderTableActionsColumnProps({
         isUpdating: true,
         isUpdatingId: 'provider_123',
@@ -544,8 +504,6 @@ describe('SsoProviderTableActionsColumn', () => {
 
       // Switch should not be rendered
       expect(screen.queryByRole('switch')).not.toBeInTheDocument();
-
-      vi.useRealTimers();
     });
   });
 
@@ -561,7 +519,7 @@ describe('SsoProviderTableActionsColumn', () => {
     });
 
     it('should not block pointer events through span wrapper', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const provider = createMockProvider({ is_enabled: true });
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
@@ -570,16 +528,12 @@ describe('SsoProviderTableActionsColumn', () => {
       const spanWrapper = switchElement.parentElement;
 
       // Hover over span wrapper should trigger tooltip
-      await act(async () => {
-        fireEvent.pointerEnter(spanWrapper!);
-        fireEvent.pointerMove(spanWrapper!);
-        await vi.advanceTimersByTimeAsync(800);
+      await user.hover(spanWrapper!);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.enabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('table.actions.enabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should not block keyboard navigation through span wrapper', async () => {
@@ -599,24 +553,18 @@ describe('SsoProviderTableActionsColumn', () => {
     });
 
     it('should allow tooltip trigger to work through span wrapper', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const provider = createMockProvider({ is_enabled: false });
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
 
-      const switchElement = screen.getByRole('switch');
+      // Focus via tab
+      await user.tab();
 
-      // Focus and wait for tooltip
-      switchElement.focus();
-
-      await act(async () => {
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('table.actions.disabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('table.actions.disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
   });
 

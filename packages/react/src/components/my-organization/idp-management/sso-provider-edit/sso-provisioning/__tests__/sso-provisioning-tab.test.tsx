@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -147,25 +147,20 @@ describe('SsoProvisioningTab', () => {
 
   describe('Tooltip Functionality', () => {
     it('should show provider disabled tooltip when provider is disabled', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       renderComponent({ provider: { ...mockProvider, is_enabled: false } });
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.provider_disabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('header.provider_disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show disable provisioning tooltip when provider is enabled and provisioning is enabled', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       mockUseSsoProviderEdit.mockReturnValueOnce({
         provisioningConfig: { id: 'provisioning_123' },
         isProvisioningLoading: false,
@@ -186,21 +181,16 @@ describe('SsoProvisioningTab', () => {
       });
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.disable_provisioning_tooltip');
       });
-
-      const tooltips = screen.getAllByText('header.disable_provisioning_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show enable provisioning tooltip when provider is enabled and provisioning is disabled', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       mockUseSsoProviderEdit.mockReturnValueOnce({
         provisioningConfig: null,
         isProvisioningLoading: false,
@@ -221,22 +211,17 @@ describe('SsoProvisioningTab', () => {
       });
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.enable_provisioning_tooltip');
       });
-
-      const tooltips = screen.getAllByText('header.enable_provisioning_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show correct tooltip based on provider and provisioning state', async () => {
       // State 1: Provider disabled
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       mockUseSsoProviderEdit.mockReturnValueOnce({
         provisioningConfig: null,
         isProvisioningLoading: false,
@@ -257,19 +242,15 @@ describe('SsoProvisioningTab', () => {
       });
 
       let switchElement = screen.getByRole('switch');
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
-      });
+      await user.hover(switchElement);
 
-      let tooltips = screen.getAllByText('header.provider_disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-      vi.useRealTimers();
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.provider_disabled_tooltip');
+      });
       unmount1();
 
       // State 2: Provider enabled, provisioning enabled
-      vi.useFakeTimers();
       mockUseSsoProviderEdit.mockReturnValueOnce({
         provisioningConfig: { id: 'provisioning_123' },
         isProvisioningLoading: false,
@@ -290,19 +271,15 @@ describe('SsoProvisioningTab', () => {
       });
 
       switchElement = screen.getByRole('switch');
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
-      });
+      await user.hover(switchElement);
 
-      tooltips = screen.getAllByText('header.disable_provisioning_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-      vi.useRealTimers();
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.disable_provisioning_tooltip');
+      });
       unmount2();
 
       // State 3: Provider enabled, provisioning disabled
-      vi.useFakeTimers();
       mockUseSsoProviderEdit.mockReturnValueOnce({
         provisioningConfig: null,
         isProvisioningLoading: false,
@@ -323,19 +300,15 @@ describe('SsoProvisioningTab', () => {
       });
 
       switchElement = screen.getByRole('switch');
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
-      });
+      await user.hover(switchElement);
 
-      tooltips = screen.getAllByText('header.enable_provisioning_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-      vi.useRealTimers();
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.enable_provisioning_tooltip');
+      });
     });
 
-    it('should not show tooltip when loading spinner is displayed', async () => {
-      vi.useFakeTimers();
+    it('should not show tooltip when loading spinner is displayed', () => {
       mockUseSsoProviderEdit.mockReturnValueOnce({
         provisioningConfig: null,
         isProvisioningLoading: true,
@@ -355,12 +328,10 @@ describe('SsoProvisioningTab', () => {
 
       // When loading, spinner is shown instead of switch
       expect(screen.queryByRole('switch')).not.toBeInTheDocument();
-
-      vi.useRealTimers();
     });
 
     it('should show tooltip on keyboard focus', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       mockUseSsoProviderEdit.mockReturnValueOnce({
         provisioningConfig: null,
         isProvisioningLoading: false,
@@ -380,21 +351,16 @@ describe('SsoProvisioningTab', () => {
         provider: { ...mockProvider, is_enabled: true },
       });
 
-      const switchElement = screen.getByRole('switch');
-      switchElement.focus();
+      await user.tab();
 
-      await act(async () => {
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.enable_provisioning_tooltip');
       });
-
-      const tooltips = screen.getAllByText('header.enable_provisioning_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show provider disabled tooltip even when switch is disabled', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       mockUseSsoProviderEdit.mockReturnValueOnce({
         provisioningConfig: null,
         isProvisioningLoading: false,
@@ -415,16 +381,12 @@ describe('SsoProvisioningTab', () => {
       const switchElement = screen.getByRole('switch');
       expect(switchElement).toBeDisabled();
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await user.hover(switchElement);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.provider_disabled_tooltip');
       });
-
-      const tooltips = screen.getAllByText('header.provider_disabled_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
   });
 });

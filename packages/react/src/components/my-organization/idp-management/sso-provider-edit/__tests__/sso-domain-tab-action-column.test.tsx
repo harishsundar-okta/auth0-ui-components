@@ -1,4 +1,4 @@
-import { screen, fireEvent, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -196,104 +196,79 @@ describe('SsoDomainTabActionsColumn', () => {
 
   describe('Tooltip Functionality', () => {
     it('should show disable tooltip for enabled domain on hover', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const props = createMockSsoDomainTabActionColumnProps();
       renderWithProviders(<SsoDomainTabActionsColumn {...props} />);
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('content.table.actions.disable_domain_tooltip');
       });
-
-      const tooltips = screen.getAllByText('content.table.actions.disable_domain_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show enable tooltip for disabled domain on hover', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const props = createMockSsoDomainTabActionColumnProps({
         idpDomains: [],
       });
       renderWithProviders(<SsoDomainTabActionsColumn {...props} />);
 
       const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('content.table.actions.enable_domain_tooltip');
       });
-
-      const tooltips = screen.getAllByText('content.table.actions.enable_domain_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show correct tooltip based on domain status', async () => {
       // Test enabled domain tooltip
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const enabledProps = createMockSsoDomainTabActionColumnProps({
         idpDomains: ['domain_123'],
       });
       const { unmount } = renderWithProviders(<SsoDomainTabActionsColumn {...enabledProps} />);
 
       let switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('content.table.actions.disable_domain_tooltip');
       });
 
-      let tooltips = screen.getAllByText('content.table.actions.disable_domain_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
       unmount();
 
       // Test disabled domain tooltip
-      vi.useFakeTimers();
       const disabledProps = createMockSsoDomainTabActionColumnProps({
         idpDomains: [],
       });
       renderWithProviders(<SsoDomainTabActionsColumn {...disabledProps} />);
 
       switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('content.table.actions.enable_domain_tooltip');
       });
-
-      tooltips = screen.getAllByText('content.table.actions.enable_domain_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should show tooltip on keyboard focus', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const props = createMockSsoDomainTabActionColumnProps();
       renderWithProviders(<SsoDomainTabActionsColumn {...props} />);
 
-      const switchElement = screen.getByRole('switch');
-      switchElement.focus();
+      await user.tab();
 
-      await act(async () => {
-        await vi.advanceTimersByTimeAsync(800);
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('content.table.actions.disable_domain_tooltip');
       });
-
-      const tooltips = screen.getAllByText('content.table.actions.disable_domain_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
 
     it('should not show tooltip when domain is not verified', () => {
@@ -307,23 +282,19 @@ describe('SsoDomainTabActionsColumn', () => {
     });
 
     it('should show tooltip even when switch is disabled (readOnly)', async () => {
-      vi.useFakeTimers();
+      const user = userEvent.setup();
       const props = createMockSsoDomainTabActionColumnProps({ readOnly: true });
       renderWithProviders(<SsoDomainTabActionsColumn {...props} />);
 
       const switchElement = screen.getByRole('switch');
       expect(switchElement).toBeDisabled();
 
-      await act(async () => {
-        fireEvent.pointerEnter(switchElement);
-        fireEvent.pointerMove(switchElement);
-        await vi.advanceTimersByTimeAsync(800);
+      await user.hover(switchElement);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('content.table.actions.disable_domain_tooltip');
       });
-
-      const tooltips = screen.getAllByText('content.table.actions.disable_domain_tooltip');
-      expect(tooltips.length).toBeGreaterThan(0);
-
-      vi.useRealTimers();
     });
   });
 
@@ -362,7 +333,7 @@ describe('SsoDomainTabActionsColumn', () => {
     });
 
     it('should handle domain with undefined status', () => {
-      const domain = createMockDomain({ status: undefined as any });
+      const domain = createMockDomain({ status: undefined });
       const props = createMockSsoDomainTabActionColumnProps({ domain });
       renderWithProviders(<SsoDomainTabActionsColumn {...props} />);
 
