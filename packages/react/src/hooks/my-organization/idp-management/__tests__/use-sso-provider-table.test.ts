@@ -4,7 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mockToast, createMockI18nService } from '../../../../internals';
 import { createMockCoreClient } from '../../../../internals/__mocks__/core/core-client.mocks';
-import { setupMockUseCoreClient } from '../../../../internals/test-utilities';
+import {
+  setupMockUseCoreClient,
+  setupMockUseCoreClientNull,
+} from '../../../../internals/test-utilities';
 import * as useCoreClientModule from '../../../use-core-client';
 import * as useTranslatorModule from '../../../use-translator';
 import { useSsoProviderTable } from '../use-sso-provider-table';
@@ -143,9 +146,7 @@ describe('useSsoProviderTable', () => {
     // Test: Ensures the hook doesn't attempt to fetch data when coreClient is unavailable
     // Loading state should remain true and providers array should stay empty
     it('should not fetch if coreClient is not available', async () => {
-      vi.spyOn(useCoreClientModule, 'useCoreClient').mockReturnValue({
-        coreClient: null as any,
-      });
+      setupMockUseCoreClientNull(useCoreClientModule);
 
       const { result } = renderHook(() => useSsoProviderTable());
 
@@ -303,7 +304,7 @@ describe('useSsoProviderTable', () => {
     // Test: Ensures the function safely handles providers without an ID
     // Should return false without attempting any API calls
     it('should return false if provider has no id', async () => {
-      const providerWithoutId = { ...mockIdentityProviders[0], id: undefined };
+      const providerWithoutId = { ...mockIdentityProviders[0], id: undefined } as IdentityProvider;
 
       setupMockMyOrgClient({
         list: vi.fn().mockResolvedValue({ identity_providers: mockIdentityProviders }),
@@ -315,7 +316,7 @@ describe('useSsoProviderTable', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      await waitFor(() => result.current.onEnableProvider(providerWithoutId as any, true));
+      await waitFor(() => result.current.onEnableProvider(providerWithoutId, true));
     });
   });
 
@@ -397,7 +398,7 @@ describe('useSsoProviderTable', () => {
     // Test: Ensures the function safely handles providers without an ID
     // Should not attempt to call the delete API
     it('should not delete if provider has no id', async () => {
-      const providerWithoutId = { ...mockIdentityProviders[0], id: undefined };
+      const providerWithoutId = { ...mockIdentityProviders[0], id: undefined } as IdentityProvider;
       const mockDelete = vi.fn();
 
       setupMockMyOrgClient({
@@ -411,7 +412,7 @@ describe('useSsoProviderTable', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      await waitFor(() => result.current.onDeleteConfirm(providerWithoutId as any));
+      await waitFor(() => result.current.onDeleteConfirm(providerWithoutId));
 
       expect(mockDelete).not.toHaveBeenCalled();
     });
@@ -497,7 +498,7 @@ describe('useSsoProviderTable', () => {
     // Test: Ensures the function safely handles providers without an ID
     // Should not attempt to call the detach API
     it('should not remove if provider has no id', async () => {
-      const providerWithoutId = { ...mockIdentityProviders[0], id: undefined };
+      const providerWithoutId = { ...mockIdentityProviders[0], id: undefined } as IdentityProvider;
       const mockDetach = vi.fn();
 
       setupMockMyOrgClient({
@@ -511,7 +512,7 @@ describe('useSsoProviderTable', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      await waitFor(() => result.current.onRemoveConfirm(providerWithoutId as any));
+      await waitFor(() => result.current.onRemoveConfirm(providerWithoutId));
 
       expect(mockDetach).not.toHaveBeenCalled();
     });
