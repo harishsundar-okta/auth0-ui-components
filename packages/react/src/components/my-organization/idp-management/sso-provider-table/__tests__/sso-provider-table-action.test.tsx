@@ -175,8 +175,7 @@ describe('SsoProviderTableActionsColumn', () => {
     });
 
     it('should handle provider with missing is_enabled property', () => {
-      const provider = createMockProvider();
-      delete (provider as any).is_enabled;
+      const { is_enabled, ...provider } = createMockProvider();
       const props = createMockSsoProviderTableActionsColumnProps({ provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
 
@@ -587,8 +586,12 @@ describe('SsoProviderTableActionsColumn', () => {
     });
 
     it('should handle provider with all optional fields missing', () => {
-      const provider = { id: 'provider_123' };
-      const props = createMockSsoProviderTableActionsColumnProps({ provider: provider as any });
+      const provider = createMockProvider({
+        name: undefined,
+        display_name: undefined,
+        is_enabled: undefined,
+      });
+      const props = createMockSsoProviderTableActionsColumnProps({ provider: provider });
       renderWithProviders(<SsoProviderTableActionsColumn {...props} />);
 
       const switchElement = screen.getByRole('switch');
