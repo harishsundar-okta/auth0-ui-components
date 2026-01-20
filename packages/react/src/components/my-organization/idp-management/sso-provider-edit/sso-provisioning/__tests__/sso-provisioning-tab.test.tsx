@@ -19,7 +19,7 @@ const mockUseTranslator = vi.fn(() => ({
   t: (key: string) => key,
 }));
 
-const mockUseSsoProviderEdit = vi.fn(() => ({
+const createMockSsoProviderEditReturn = (overrides = {}) => ({
   provisioningConfig: null as { id: string } | null,
   isProvisioningLoading: false,
   isProvisioningUpdating: false,
@@ -33,7 +33,10 @@ const mockUseSsoProviderEdit = vi.fn(() => ({
   listScimTokens: mockOnListScimTokens,
   createScimToken: mockOnCreateScimToken,
   deleteScimToken: mockOnDeleteScimToken,
-}));
+  ...overrides,
+});
+
+const mockUseSsoProviderEdit = vi.fn(() => createMockSsoProviderEditReturn());
 
 vi.mock('../../../../../../hooks/use-translator', () => ({
   useTranslator: () => mockUseTranslator(),
@@ -161,21 +164,11 @@ describe('SsoProvisioningTab', () => {
 
     it('should show disable provisioning tooltip when provider is enabled and provisioning is enabled', async () => {
       const user = userEvent.setup();
-      mockUseSsoProviderEdit.mockReturnValueOnce({
-        provisioningConfig: { id: 'provisioning_123' },
-        isProvisioningLoading: false,
-        isProvisioningUpdating: false,
-        isProvisioningDeleting: false,
-        isScimTokensLoading: false,
-        isScimTokenCreating: false,
-        isScimTokenDeleting: false,
-        fetchProvisioning: mockFetchProvisioning,
-        createProvisioning: mockOnCreateProvisioning,
-        deleteProvisioning: mockOnDeleteProvisioning,
-        listScimTokens: mockOnListScimTokens,
-        createScimToken: mockOnCreateScimToken,
-        deleteScimToken: mockOnDeleteScimToken,
-      });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: { id: 'provisioning_123' },
+        }),
+      );
       renderComponent({
         provider: { ...mockProvider, is_enabled: true },
       });
@@ -191,21 +184,11 @@ describe('SsoProvisioningTab', () => {
 
     it('should show enable provisioning tooltip when provider is enabled and provisioning is disabled', async () => {
       const user = userEvent.setup();
-      mockUseSsoProviderEdit.mockReturnValueOnce({
-        provisioningConfig: null,
-        isProvisioningLoading: false,
-        isProvisioningUpdating: false,
-        isProvisioningDeleting: false,
-        isScimTokensLoading: false,
-        isScimTokenCreating: false,
-        isScimTokenDeleting: false,
-        fetchProvisioning: mockFetchProvisioning,
-        createProvisioning: mockOnCreateProvisioning,
-        deleteProvisioning: mockOnDeleteProvisioning,
-        listScimTokens: mockOnListScimTokens,
-        createScimToken: mockOnCreateScimToken,
-        deleteScimToken: mockOnDeleteScimToken,
-      });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
       renderComponent({
         provider: { ...mockProvider, is_enabled: true },
       });
@@ -222,21 +205,11 @@ describe('SsoProvisioningTab', () => {
     it('should show correct tooltip based on provider and provisioning state', async () => {
       // State 1: Provider disabled
       const user = userEvent.setup();
-      mockUseSsoProviderEdit.mockReturnValueOnce({
-        provisioningConfig: null,
-        isProvisioningLoading: false,
-        isProvisioningUpdating: false,
-        isProvisioningDeleting: false,
-        isScimTokensLoading: false,
-        isScimTokenCreating: false,
-        isScimTokenDeleting: false,
-        fetchProvisioning: mockFetchProvisioning,
-        createProvisioning: mockOnCreateProvisioning,
-        deleteProvisioning: mockOnDeleteProvisioning,
-        listScimTokens: mockOnListScimTokens,
-        createScimToken: mockOnCreateScimToken,
-        deleteScimToken: mockOnDeleteScimToken,
-      });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
       const { unmount: unmount1 } = renderComponent({
         provider: { ...mockProvider, is_enabled: false },
       });
@@ -251,21 +224,11 @@ describe('SsoProvisioningTab', () => {
       unmount1();
 
       // State 2: Provider enabled, provisioning enabled
-      mockUseSsoProviderEdit.mockReturnValueOnce({
-        provisioningConfig: { id: 'provisioning_123' },
-        isProvisioningLoading: false,
-        isProvisioningUpdating: false,
-        isProvisioningDeleting: false,
-        isScimTokensLoading: false,
-        isScimTokenCreating: false,
-        isScimTokenDeleting: false,
-        fetchProvisioning: mockFetchProvisioning,
-        createProvisioning: mockOnCreateProvisioning,
-        deleteProvisioning: mockOnDeleteProvisioning,
-        listScimTokens: mockOnListScimTokens,
-        createScimToken: mockOnCreateScimToken,
-        deleteScimToken: mockOnDeleteScimToken,
-      });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: { id: 'provisioning_123' },
+        }),
+      );
       const { unmount: unmount2 } = renderComponent({
         provider: { ...mockProvider, is_enabled: true },
       });
@@ -280,21 +243,11 @@ describe('SsoProvisioningTab', () => {
       unmount2();
 
       // State 3: Provider enabled, provisioning disabled
-      mockUseSsoProviderEdit.mockReturnValueOnce({
-        provisioningConfig: null,
-        isProvisioningLoading: false,
-        isProvisioningUpdating: false,
-        isProvisioningDeleting: false,
-        isScimTokensLoading: false,
-        isScimTokenCreating: false,
-        isScimTokenDeleting: false,
-        fetchProvisioning: mockFetchProvisioning,
-        createProvisioning: mockOnCreateProvisioning,
-        deleteProvisioning: mockOnDeleteProvisioning,
-        listScimTokens: mockOnListScimTokens,
-        createScimToken: mockOnCreateScimToken,
-        deleteScimToken: mockOnDeleteScimToken,
-      });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
       renderComponent({
         provider: { ...mockProvider, is_enabled: true },
       });
@@ -309,21 +262,12 @@ describe('SsoProvisioningTab', () => {
     });
 
     it('should not show tooltip when loading spinner is displayed', () => {
-      mockUseSsoProviderEdit.mockReturnValueOnce({
-        provisioningConfig: null,
-        isProvisioningLoading: true,
-        isProvisioningUpdating: false,
-        isProvisioningDeleting: false,
-        isScimTokensLoading: false,
-        isScimTokenCreating: false,
-        isScimTokenDeleting: false,
-        fetchProvisioning: mockFetchProvisioning,
-        createProvisioning: mockOnCreateProvisioning,
-        deleteProvisioning: mockOnDeleteProvisioning,
-        listScimTokens: mockOnListScimTokens,
-        createScimToken: mockOnCreateScimToken,
-        deleteScimToken: mockOnDeleteScimToken,
-      });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+          isProvisioningLoading: true,
+        }),
+      );
       renderComponent();
 
       // When loading, spinner is shown instead of switch
@@ -332,21 +276,11 @@ describe('SsoProvisioningTab', () => {
 
     it('should show tooltip on keyboard focus', async () => {
       const user = userEvent.setup();
-      mockUseSsoProviderEdit.mockReturnValueOnce({
-        provisioningConfig: null,
-        isProvisioningLoading: false,
-        isProvisioningUpdating: false,
-        isProvisioningDeleting: false,
-        isScimTokensLoading: false,
-        isScimTokenCreating: false,
-        isScimTokenDeleting: false,
-        fetchProvisioning: mockFetchProvisioning,
-        createProvisioning: mockOnCreateProvisioning,
-        deleteProvisioning: mockOnDeleteProvisioning,
-        listScimTokens: mockOnListScimTokens,
-        createScimToken: mockOnCreateScimToken,
-        deleteScimToken: mockOnDeleteScimToken,
-      });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
       renderComponent({
         provider: { ...mockProvider, is_enabled: true },
       });
@@ -361,21 +295,11 @@ describe('SsoProvisioningTab', () => {
 
     it('should show provider disabled tooltip even when switch is disabled', async () => {
       const user = userEvent.setup();
-      mockUseSsoProviderEdit.mockReturnValueOnce({
-        provisioningConfig: null,
-        isProvisioningLoading: false,
-        isProvisioningUpdating: false,
-        isProvisioningDeleting: false,
-        isScimTokensLoading: false,
-        isScimTokenCreating: false,
-        isScimTokenDeleting: false,
-        fetchProvisioning: mockFetchProvisioning,
-        createProvisioning: mockOnCreateProvisioning,
-        deleteProvisioning: mockOnDeleteProvisioning,
-        listScimTokens: mockOnListScimTokens,
-        createScimToken: mockOnCreateScimToken,
-        deleteScimToken: mockOnDeleteScimToken,
-      });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
       renderComponent({ provider: { ...mockProvider, is_enabled: false, id: '' } });
 
       const switchElement = screen.getByRole('switch');
