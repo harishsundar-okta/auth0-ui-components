@@ -73,7 +73,7 @@ export interface SsoProviderNotificationMessages {
   provisioning_attributes_sync_success?: string;
 }
 
-export interface AttributeMappingSectionMessages {
+interface AttributeMappingSectionMessages {
   title?: string;
   description?: string;
   table?: {
