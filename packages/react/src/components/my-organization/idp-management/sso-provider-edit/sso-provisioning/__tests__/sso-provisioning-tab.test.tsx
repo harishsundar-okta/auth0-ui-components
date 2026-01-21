@@ -19,13 +19,6 @@ const mockUseTranslator = vi.fn(() => ({
   t: (key: string) => key,
 }));
 
-const mockFetchProvisioning = vi.fn();
-const mockCreateProvisioning = vi.fn();
-const mockDeleteProvisioning = vi.fn();
-const mockListScimTokens = vi.fn();
-const mockCreateScimToken = vi.fn();
-const mockDeleteScimToken = vi.fn();
-
 vi.mock('../../../../../../hooks/use-translator', () => ({
   useTranslator: () => mockUseTranslator(),
 }));
@@ -44,11 +37,11 @@ vi.mock('../../../../../../hooks/my-organization/idp-management/use-sso-provider
     isScimTokenCreating: false,
     isScimTokenDeleting: false,
     fetchProvisioning: mockFetchProvisioning,
-    createProvisioning: mockCreateProvisioning,
-    deleteProvisioning: mockDeleteProvisioning,
-    listScimTokens: mockListScimTokens,
-    createScimToken: mockCreateScimToken,
-    deleteScimToken: mockDeleteScimToken,
+    createProvisioning: mockOnCreateProvisioning,
+    deleteProvisioning: mockOnDeleteProvisioning,
+    listScimTokens: mockOnListScimTokens,
+    createScimToken: mockOnCreateScimToken,
+    deleteScimToken: mockOnDeleteScimToken,
   }),
 }));
 
@@ -177,19 +170,50 @@ describe('SsoProvisioningTab', () => {
     });
   });
 
-  describe('provider enabled state', () => {
-    it('should show tooltip when provider is disabled', () => {
+  describe('Tooltip Functionality', () => {
+    it('should show provider disabled tooltip when provider is disabled', async () => {
+      const user = userEvent.setup();
       renderComponent({ provider: { ...mockProvider, is_enabled: false } });
 
       const switchElement = screen.getByRole('switch');
-      expect(switchElement).toBeInTheDocument();
+      await user.hover(switchElement);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.provider_disabled_tooltip');
+      });
     });
 
-    it('should not show tooltip when provider is enabled', () => {
-      renderComponent({ provider: { ...mockProvider, is_enabled: true } });
+    it('should show disable provisioning tooltip when provider is enabled and provisioning is enabled', async () => {
+      const user = userEvent.setup();
+      renderComponent({
+        provider: { ...mockProvider, is_enabled: true },
+        provisioningConfig: { id: 'provisioning_123' },
+      });
 
       const switchElement = screen.getByRole('switch');
-      expect(switchElement).toBeInTheDocument();
+      await user.hover(switchElement);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.disable_provisioning_tooltip');
+      });
+    });
+
+    it('should show enable provisioning tooltip when provider is enabled and provisioning is disabled', async () => {
+      const user = userEvent.setup();
+      renderComponent({
+        provider: { ...mockProvider, is_enabled: true },
+        provisioningConfig: null,
+      });
+
+      const switchElement = screen.getByRole('switch');
+      await user.hover(switchElement);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.enable_provisioning_tooltip');
+      });
     });
   });
 
