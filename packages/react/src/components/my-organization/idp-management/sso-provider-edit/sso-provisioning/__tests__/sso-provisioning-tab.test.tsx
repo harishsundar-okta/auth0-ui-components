@@ -8,6 +8,9 @@ import {
   mockOnCreateProvisioning,
   mockOnDeleteProvisioning,
   mockOnListScimTokens,
+  mockOnCreateScimToken,
+  mockOnDeleteScimToken,
+  mockFetchProvisioning,
 } from '../../../../../../internals';
 import { SsoProvisioningTab } from '../sso-provisioning-tab';
 
