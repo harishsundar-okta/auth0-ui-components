@@ -19,6 +19,25 @@ const mockUseTranslator = vi.fn(() => ({
   t: (key: string) => key,
 }));
 
+const createMockSsoProviderEditReturn = (overrides = {}) => ({
+  provisioningConfig: null,
+  isProvisioningLoading: false,
+  isProvisioningUpdating: false,
+  isProvisioningDeleting: false,
+  isScimTokensLoading: false,
+  isScimTokenCreating: false,
+  isScimTokenDeleting: false,
+  fetchProvisioning: mockFetchProvisioning,
+  createProvisioning: mockOnCreateProvisioning,
+  deleteProvisioning: mockOnDeleteProvisioning,
+  listScimTokens: mockOnListScimTokens,
+  createScimToken: mockOnCreateScimToken,
+  deleteScimToken: mockOnDeleteScimToken,
+  ...overrides,
+});
+
+const mockUseSsoProviderEdit = vi.fn(() => createMockSsoProviderEditReturn());
+
 vi.mock('../../../../../../hooks/use-translator', () => ({
   useTranslator: () => mockUseTranslator(),
 }));
@@ -28,21 +47,7 @@ vi.mock('../../../../../../hooks/use-theme', () => ({
 }));
 
 vi.mock('../../../../../../hooks/my-organization/idp-management/use-sso-provider-edit', () => ({
-  useSsoProviderEdit: () => ({
-    provisioningConfig: null,
-    isProvisioningLoading: false,
-    isProvisioningUpdating: false,
-    isProvisioningDeleting: false,
-    isScimTokensLoading: false,
-    isScimTokenCreating: false,
-    isScimTokenDeleting: false,
-    fetchProvisioning: mockFetchProvisioning,
-    createProvisioning: mockOnCreateProvisioning,
-    deleteProvisioning: mockOnDeleteProvisioning,
-    listScimTokens: mockOnListScimTokens,
-    createScimToken: mockOnCreateScimToken,
-    deleteScimToken: mockOnDeleteScimToken,
-  }),
+  useSsoProviderEdit: () => mockUseSsoProviderEdit(),
 }));
 
 describe('SsoProvisioningTab', () => {
@@ -171,48 +176,114 @@ describe('SsoProvisioningTab', () => {
   });
 
   describe('Tooltip Functionality', () => {
-    it('should show provider disabled tooltip when provider is disabled', async () => {
+    it('should show correct tooltip based on provider and provisioning state', async () => {
+      // State 1: Provider disabled
       const user = userEvent.setup();
-      renderComponent({ provider: { ...mockProvider, is_enabled: false } });
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
+      const { unmount: unmount1 } = renderComponent({
+        provider: { ...mockProvider, is_enabled: false },
+      });
 
-      const switchElement = screen.getByRole('switch');
+      let switchElement = screen.getByRole('switch');
       await user.hover(switchElement);
 
       await waitFor(() => {
         const tooltip = screen.getByRole('tooltip', { hidden: true });
         expect(tooltip).toHaveTextContent('header.provider_disabled_tooltip');
       });
-    });
+      unmount1();
 
-    it('should show disable provisioning tooltip when provider is enabled and provisioning is enabled', async () => {
-      const user = userEvent.setup();
-      renderComponent({
+      // State 2: Provider enabled, provisioning enabled
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: { id: 'provisioning_123' },
+        }),
+      );
+      const { unmount: unmount2 } = renderComponent({
         provider: { ...mockProvider, is_enabled: true },
-        provisioningConfig: { id: 'provisioning_123' },
       });
 
-      const switchElement = screen.getByRole('switch');
+      switchElement = screen.getByRole('switch');
       await user.hover(switchElement);
 
       await waitFor(() => {
         const tooltip = screen.getByRole('tooltip', { hidden: true });
         expect(tooltip).toHaveTextContent('header.disable_provisioning_tooltip');
       });
-    });
+      unmount2();
 
-    it('should show enable provisioning tooltip when provider is enabled and provisioning is disabled', async () => {
-      const user = userEvent.setup();
+      // State 3: Provider enabled, provisioning disabled
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
       renderComponent({
         provider: { ...mockProvider, is_enabled: true },
-        provisioningConfig: null,
       });
 
-      const switchElement = screen.getByRole('switch');
+      switchElement = screen.getByRole('switch');
       await user.hover(switchElement);
 
       await waitFor(() => {
         const tooltip = screen.getByRole('tooltip', { hidden: true });
         expect(tooltip).toHaveTextContent('header.enable_provisioning_tooltip');
+      });
+    });
+
+    it('should not show tooltip when loading spinner is displayed', () => {
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+          isProvisioningLoading: true,
+        }),
+      );
+      renderComponent();
+
+      // When loading, spinner is shown instead of switch
+      expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+    });
+
+    it('should show tooltip on keyboard focus', async () => {
+      const user = userEvent.setup();
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
+      renderComponent({
+        provider: { ...mockProvider, is_enabled: true },
+      });
+
+      await user.tab();
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.enable_provisioning_tooltip');
+      });
+    });
+
+    it('should show provider disabled tooltip even when switch is disabled', async () => {
+      const user = userEvent.setup();
+      mockUseSsoProviderEdit.mockReturnValueOnce(
+        createMockSsoProviderEditReturn({
+          provisioningConfig: null,
+        }),
+      );
+      renderComponent({ provider: { ...mockProvider, is_enabled: false, id: '' } });
+
+      const switchElement = screen.getByRole('switch');
+      expect(switchElement).toBeDisabled();
+
+      await user.hover(switchElement);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip', { hidden: true });
+        expect(tooltip).toHaveTextContent('header.provider_disabled_tooltip');
       });
     });
   });
