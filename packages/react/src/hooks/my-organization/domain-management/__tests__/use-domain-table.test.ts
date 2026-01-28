@@ -735,7 +735,7 @@ describe('useDomainTable', () => {
   describe('Callback Dependencies', () => {
     it('should update callbacks when options change', () => {
       const options1 = createMockOptions();
-      const { wrapper, queryClient } = createTestQueryClientWrapper();
+      const { wrapper, queryClient: _queryClient } = createTestQueryClientWrapper();
       const { result, rerender } = renderHook((props) => useDomainTable(props), {
         initialProps: options1,
         wrapper,
