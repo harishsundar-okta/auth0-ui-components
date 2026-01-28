@@ -46,6 +46,16 @@ export function registryMiddleware(): Plugin {
           return next();
         }
 
+        // Security: Prevent path traversal
+        const normalizedFileName = path.normalize(fileName).replace(/^(\.\.([\\/]|$))+/, '');
+
+        if (normalizedFileName !== fileName || normalizedFileName.includes('..')) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Invalid file path' }));
+          return;
+        }
+
         const versionInfo = getVersionInfo();
         const versionParam = url.searchParams.get('version');
         let versionPath: string;
@@ -70,10 +80,20 @@ export function registryMiddleware(): Plugin {
           }
         }
 
-        const versionedPath = path.join(process.cwd(), 'public', 'r', versionPath, fileName);
+        const baseDir = path.resolve(process.cwd(), 'public', 'r', versionPath);
+        const versionedPath = path.resolve(baseDir, normalizedFileName);
+
+        // Security: Ensure resolved path is within base directory
+        if (!versionedPath.startsWith(baseDir + path.sep) && versionedPath !== baseDir) {
+          res.statusCode = 403;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Access denied' }));
+          return;
+        }
 
         if (fs.existsSync(versionedPath)) {
           try {
+            // nosemgrep: express-fs-filename
             const content = fs.readFileSync(versionedPath, 'utf-8');
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
