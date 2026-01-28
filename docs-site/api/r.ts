@@ -5,6 +5,18 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const SPECIAL_FILES = ['index.json', 'registry.json', 'versions.json'];
 
+interface VersionInfo {
+  current: string;
+  latest: string;
+  currentPath: string;
+  latestPath: string;
+  majorVersions?: Record<
+    string,
+    { latest: string; stable: string | null; beta: string; path: string }
+  >;
+  versions?: Record<string, { status: string; major: string }>;
+}
+
 function getBasePath(): string {
   // Vercel builds to docs-site/dist, which becomes the outputDirectory
   // In production, cwd is /var/task and files are at /var/task/dist/r
@@ -24,7 +36,7 @@ function getBasePath(): string {
   return paths[0]!; // Fallback
 }
 
-function getVersionInfo(basePath: string): any {
+function getVersionInfo(basePath: string): VersionInfo {
   try {
     const versionsPath = path.join(basePath, 'versions.json');
     if (fs.existsSync(versionsPath)) {
@@ -89,11 +101,10 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     versionPath = versionParam;
   } else if (versionParam.startsWith('v') && !versionParam.includes('/')) {
     // Major version only (e.g., 'v1') - get latest for that major
-    const majorData = versionInfo as any;
-    versionPath = majorData.majorVersions?.[versionParam]?.path || versionInfo.currentPath;
+    versionPath = versionInfo.majorVersions?.[versionParam]?.path || versionInfo.currentPath;
   } else {
     // Just version number (e.g., '1.0.0-beta.5') - find the major and construct path
-    const versionData = (versionInfo as any).versions?.[versionParam];
+    const versionData = versionInfo.versions?.[versionParam];
     if (versionData) {
       versionPath = `v${versionData.major}/${versionParam}`;
     } else {

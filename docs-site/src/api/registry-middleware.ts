@@ -5,7 +5,19 @@ import type { Plugin } from 'vite';
 
 const SPECIAL_FILES = ['index.json', 'registry.json', 'versions.json'];
 
-function getVersionInfo(): any {
+interface VersionInfo {
+  current: string;
+  latest: string;
+  currentPath: string;
+  latestPath: string;
+  majorVersions?: Record<
+    string,
+    { latest: string; stable: string | null; beta: string; path: string }
+  >;
+  versions?: Record<string, { status: string; major: string }>;
+}
+
+function getVersionInfo(): VersionInfo {
   try {
     const versionsPath = path.join(process.cwd(), 'public', 'r', 'versions.json');
     if (fs.existsSync(versionsPath)) {
