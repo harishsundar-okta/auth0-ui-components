@@ -3,18 +3,17 @@ import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 import { renderWithProviders } from '../../../../../internals';
+import { createMockI18nService } from '../../../../../internals/__mocks__/core/i18n-service.mocks';
 import type { SsoProviderTabProps } from '../../../../../types/my-organization/idp-management/sso-provider/sso-provider-tab-types';
 import { SsoProviderTab } from '../sso-provider-tab';
 
 // Mock hooks
 vi.mock('../../../../../hooks/use-translator', () => ({
   useTranslator: () => ({
-    t: (key: string, params?: any) => {
-      if (key === 'delete_button_label') return 'Delete';
-      if (key === 'remove_button_label') return 'Remove';
-      if (key === 'title' && params?.providerName) return `Delete ${params.providerName}`;
-      return key;
-    },
+    t: createMockI18nService().translator('idp_management.edit_sso_provider.tabs.sso'),
+    changeLanguage: vi.fn(),
+    currentLanguage: 'en',
+    fallbackLanguage: 'en',
   }),
 }));
 
@@ -89,7 +88,7 @@ describe('SsoProviderTab', () => {
       it('should render delete section', () => {
         renderWithProviders(<SsoProviderTab {...mockProps} />);
 
-        expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'delete_button_label' })).toBeInTheDocument();
       });
     });
 
@@ -98,7 +97,9 @@ describe('SsoProviderTab', () => {
         const props = { ...mockProps, shouldAllowDeletion: false };
         renderWithProviders(<SsoProviderTab {...props} />);
 
-        expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: 'delete_button_label' }),
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -106,7 +107,7 @@ describe('SsoProviderTab', () => {
       it('should render remove section', () => {
         renderWithProviders(<SsoProviderTab {...mockProps} />);
 
-        expect(screen.getByRole('button', { name: 'Remove' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'remove_button_label' })).toBeInTheDocument();
       });
     });
 
@@ -134,7 +135,7 @@ describe('SsoProviderTab', () => {
       const user = userEvent.setup();
       renderWithProviders(<SsoProviderTab {...mockProps} />);
 
-      const deleteButton = screen.getByRole('button', { name: 'Delete' });
+      const deleteButton = screen.getByRole('button', { name: 'delete_button_label' });
       await user.click(deleteButton);
 
       // The delete button opens a modal, not calls onDelete directly
@@ -146,7 +147,7 @@ describe('SsoProviderTab', () => {
       const user = userEvent.setup();
       renderWithProviders(<SsoProviderTab {...mockProps} />);
 
-      const removeButton = screen.getByRole('button', { name: 'Remove' });
+      const removeButton = screen.getByRole('button', { name: 'remove_button_label' });
       await user.click(removeButton);
 
       // The remove button opens a modal, not calls onRemove directly
@@ -162,7 +163,7 @@ describe('SsoProviderTab', () => {
         renderWithProviders(<SsoProviderTab {...props} />);
 
         // Verify the delete button still renders (loading is handled in modal)
-        expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'delete_button_label' })).toBeInTheDocument();
       });
     });
 
@@ -172,7 +173,7 @@ describe('SsoProviderTab', () => {
         renderWithProviders(<SsoProviderTab {...props} />);
 
         // Verify the remove button still renders (loading is handled in modal)
-        expect(screen.getByRole('button', { name: 'Remove' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'remove_button_label' })).toBeInTheDocument();
       });
     });
   });
@@ -183,7 +184,7 @@ describe('SsoProviderTab', () => {
         const props = { ...mockProps, readOnly: true };
         renderWithProviders(<SsoProviderTab {...props} />);
 
-        const deleteButton = screen.getByRole('button', { name: 'Delete' });
+        const deleteButton = screen.getByRole('button', { name: 'delete_button_label' });
         expect(deleteButton).toBeDisabled();
       });
 
@@ -191,9 +192,82 @@ describe('SsoProviderTab', () => {
         const props = { ...mockProps, readOnly: true };
         renderWithProviders(<SsoProviderTab {...props} />);
 
-        const removeButton = screen.getByRole('button', { name: 'Remove' });
+        const removeButton = screen.getByRole('button', { name: 'remove_button_label' });
         expect(removeButton).toBeDisabled();
       });
+    });
+  });
+
+  describe('attribute sync warning', () => {
+    it('should render SsoProviderAttributeSyncAlert when hasSsoAttributeSyncWarning is true', () => {
+      const props = { ...mockProps, hasSsoAttributeSyncWarning: true };
+      renderWithProviders(<SsoProviderTab {...props} />);
+
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+
+    it('should not render SsoProviderAttributeSyncAlert when hasSsoAttributeSyncWarning is false', () => {
+      const props = { ...mockProps, hasSsoAttributeSyncWarning: false };
+      renderWithProviders(<SsoProviderTab {...props} />);
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('should pass onAttributeSync to SsoProviderAttributeSyncAlert', async () => {
+      const onAttributeSync = vi.fn();
+      const props = {
+        ...mockProps,
+        hasSsoAttributeSyncWarning: true,
+        onAttributeSync,
+      };
+      renderWithProviders(<SsoProviderTab {...props} />);
+
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+
+    it('should pass isSyncingAttributes to SsoProviderAttributeSyncAlert', () => {
+      const props = {
+        ...mockProps,
+        hasSsoAttributeSyncWarning: true,
+        isSyncingAttributes: true,
+      };
+      renderWithProviders(<SsoProviderTab {...props} />);
+
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+  });
+
+  describe('styling', () => {
+    it('should apply custom styling variables', () => {
+      const customStyling = {
+        variables: {
+          common: { '--font-size-heading': '24px' },
+          light: {},
+          dark: {},
+        },
+        classes: {},
+      };
+      const props = { ...mockProps, styling: customStyling };
+      renderWithProviders(<SsoProviderTab {...props} />);
+
+      expect(screen.getByText('content.title')).toBeInTheDocument();
+    });
+
+    it('should apply custom styling classes', () => {
+      const customStyling = {
+        variables: { common: {}, light: {}, dark: {} },
+        classes: {
+          'SsoProviderAttributeSyncAlert-root': 'custom-alert-class',
+        },
+      };
+      const props = {
+        ...mockProps,
+        styling: customStyling,
+        hasSsoAttributeSyncWarning: true,
+      };
+      renderWithProviders(<SsoProviderTab {...props} />);
+
+      expect(screen.getByRole('alert')).toBeInTheDocument();
     });
   });
 });
