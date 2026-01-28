@@ -229,6 +229,70 @@ describe('useIdpConfig', () => {
     });
   });
 
+  it('should not refetch when data is fresh and not invalidated', async () => {
+    const mockIdpConfig = {
+      strategies: {
+        okta: {
+          enabled_features: ['provisioning'],
+          provisioning_methods: ['scim'],
+        },
+      },
+    };
+    mockGet.mockResolvedValue(mockIdpConfig);
+
+    const { result, queryClient } = renderUseIdpConfig();
+
+    await waitFor(() => {
+      expect(result.current.isLoadingIdpConfig).toBe(false);
+    });
+
+    const initialCallCount = mockGet.mock.calls.length;
+
+    // Manually set the query data with a fresh timestamp
+    queryClient.setQueryData(['idp-config', 'config'], mockIdpConfig, {
+      updatedAt: Date.now() - 1000, // 1 second ago (fresh)
+    });
+
+    // Call fetchIdpConfig again
+    await result.current.fetchIdpConfig();
+
+    // Should return early without calling the API again
+    expect(mockGet.mock.calls.length).toBe(initialCallCount);
+  });
+
+  it('should refetch when data is stale', async () => {
+    const mockIdpConfig = {
+      strategies: {
+        okta: {
+          enabled_features: ['provisioning'],
+          provisioning_methods: ['scim'],
+        },
+      },
+    };
+    mockGet.mockResolvedValue(mockIdpConfig);
+
+    const { result, queryClient } = renderUseIdpConfig();
+
+    await waitFor(() => {
+      expect(result.current.isLoadingIdpConfig).toBe(false);
+    });
+
+    const initialCallCount = mockGet.mock.calls.length;
+
+    // Manually set the query data with a stale timestamp (older than 10 minutes)
+    queryClient.setQueryData(['idp-config', 'config'], mockIdpConfig, {
+      updatedAt: Date.now() - 11 * 60 * 1000, // 11 minutes ago (stale)
+    });
+
+    // Call fetchIdpConfig again
+    await result.current.fetchIdpConfig();
+
+    // Should call the API again due to stale data
+    await waitFor(() => {
+      expect(mockGet.mock.calls.length).toBeGreaterThan(initialCallCount);
+    });
+  });
+
   it('should not fetch idp config when coreClient is not available', async () => {
     vi.mocked(useCoreClient).mockReturnValue({ coreClient: null });
 

@@ -183,6 +183,33 @@ describe('useConfig', () => {
     });
   });
 
+  it('should not refetch when data is fresh and not invalidated', async () => {
+    const mockConfig = {
+      allowed_strategies: ['okta'],
+      connection_deletion_behavior: 'allow',
+    };
+    mockGet.mockResolvedValue(mockConfig);
+
+    const { result, queryClient } = renderUseConfig();
+
+    await waitFor(() => {
+      expect(result.current.isLoadingConfig).toBe(false);
+    });
+
+    const initialCallCount = mockGet.mock.calls.length;
+
+    // Manually set the query data with a fresh timestamp
+    queryClient.setQueryData(['config', 'details'], mockConfig, {
+      updatedAt: Date.now() - 1000, // 1 second ago (fresh)
+    });
+
+    // Call fetchConfig again
+    await result.current.fetchConfig();
+
+    // Should return early without calling the API again
+    expect(mockGet.mock.calls.length).toBe(initialCallCount);
+  });
+
   it('should not fetch config when coreClient is not available', async () => {
     vi.spyOn(useCoreClientModule, 'useCoreClient').mockReturnValue({
       coreClient: null,

@@ -315,6 +315,32 @@ describe('useOrganizationDetailsEdit', () => {
         mockCoreClient.getMyOrganizationApiClient().organizationDetails.update,
       ).not.toHaveBeenCalled();
     });
+
+    it('should handle cancel with factory default organization', async () => {
+      const onAfter = vi.fn();
+
+      // Mock to return null, which triggers factory default
+      const apiService = mockCoreClient.getMyOrganizationApiClient();
+      (apiService.organizationDetails.get as ReturnType<typeof vi.fn>).mockResolvedValue(null);
+
+      const { result } = renderUseOrganizationDetailsEdit({
+        cancelAction: { onAfter },
+      });
+
+      await waitFor(() => {
+        expect(result.current.isFetchLoading).toBe(false);
+      });
+
+      // Trigger cancel via the previousAction onClick
+      const onClick = result.current.formActions.previousAction?.onClick;
+      if (onClick) {
+        onClick({} as Event);
+      }
+
+      // Should call onAfter with the factory default organization
+      expect(onAfter).toHaveBeenCalled();
+      expect(onAfter).toHaveBeenCalledWith(result.current.organization);
+    });
   });
 
   describe('when form actions are disabled', () => {

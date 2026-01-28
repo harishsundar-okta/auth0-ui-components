@@ -1,6 +1,5 @@
 import {
   BusinessError,
-  hasApiErrorBody,
   OrganizationDetailsFactory,
   OrganizationDetailsMappers,
   type OrganizationPrivate,
