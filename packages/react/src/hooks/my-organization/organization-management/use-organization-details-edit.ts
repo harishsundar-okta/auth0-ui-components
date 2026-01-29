@@ -16,11 +16,6 @@ import type {
 import { useCoreClient } from '../../use-core-client';
 import { useTranslator } from '../../use-translator';
 
-const CACHE_CONFIG = {
-  ORGANIZATION_DETAILS_STALE_TIME: 5 * 60 * 1000, // 5 minutes
-  ORGANIZATION_DETAILS_GC_TIME: 10 * 60 * 1000, // 10 minutes
-} as const;
-
 export const organizationDetailsQueryKeys = {
   all: ['organization-details'] as const,
   details: () => [...organizationDetailsQueryKeys.all, 'details'] as const,
@@ -66,8 +61,6 @@ export function useOrganizationDetailsEdit({
         return OrganizationDetailsFactory.create();
       }
     },
-    staleTime: CACHE_CONFIG.ORGANIZATION_DETAILS_STALE_TIME,
-    gcTime: CACHE_CONFIG.ORGANIZATION_DETAILS_GC_TIME,
     enabled: !!coreClient,
   });
 

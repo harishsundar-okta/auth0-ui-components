@@ -10,11 +10,6 @@ import { useCallback, useMemo } from 'react';
 import type { UseConfigResult } from '../../../types/my-organization/config/config-types';
 import { useCoreClient } from '../../use-core-client';
 
-const CACHE_CONFIG = {
-  CONFIG_STALE_TIME: 5 * 60 * 1000,
-  CONFIG_GC_TIME: 10 * 60 * 1000,
-} as const;
-
 export const configQueryKeys = {
   all: ['config'] as const,
   details: () => [...configQueryKeys.all, 'details'] as const,
@@ -36,8 +31,6 @@ export function useConfig(): UseConfigResult {
         .organization.configuration.get();
       return result;
     },
-    staleTime: CACHE_CONFIG.CONFIG_STALE_TIME,
-    gcTime: CACHE_CONFIG.CONFIG_GC_TIME,
     enabled: !!coreClient,
     retry: (failureCount, error) => {
       // Don't retry on 404 errors (config not set)
@@ -87,17 +80,6 @@ export function useConfig(): UseConfigResult {
   // ============================================
 
   const fetchConfig = useCallback(async (): Promise<void> => {
-    const existingData = queryClient.getQueryData(configQueryKeys.details());
-    const queryState = queryClient.getQueryState(configQueryKeys.details());
-
-    // Only refetch if data is stale or doesn't exist
-    if (existingData && queryState && !queryState.isInvalidated) {
-      const dataAge = Date.now() - (queryState.dataUpdatedAt || 0);
-      if (dataAge < CACHE_CONFIG.CONFIG_STALE_TIME) {
-        return;
-      }
-    }
-
     await queryClient.invalidateQueries({ queryKey: configQueryKeys.details() });
   }, [queryClient]);
 

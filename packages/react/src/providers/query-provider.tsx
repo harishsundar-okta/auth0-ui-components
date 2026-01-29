@@ -14,16 +14,16 @@ import type { QueryCacheConfig } from '../types/cache-types';
  * Default cache configuration values.
  *
  * These defaults provide a balance between reducing API calls and keeping data fresh:
- * - `staleTime: 30s` - Data is considered fresh for 30 seconds, avoiding redundant fetches
- * - `gcTime: 60s` - Unused cache entries are garbage collected after 60 seconds
+ * - `staleTime: 2min` - Data is considered fresh for 2 minutes, avoiding redundant fetches
+ * - `gcTime: 5min` - Unused cache entries are garbage collected after 5 minutes
  * - `refetchOnWindowFocus: false` - Prevents unexpected refetches when switching tabs
  *
  * @see https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults
  */
 export const DEFAULT_CACHE_CONFIG: Readonly<Required<QueryCacheConfig>> = {
   enabled: true,
-  staleTime: 5 * 60 * 1000,
-  gcTime: 10 * 60 * 1000,
+  staleTime: 2 * 60 * 1000,
+  gcTime: 5 * 60 * 1000,
   refetchOnWindowFocus: false,
 } as const;
 

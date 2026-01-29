@@ -156,41 +156,14 @@ describe('useConfig', () => {
     expect(result.current.shouldAllowDeletion).toBe(false);
   });
 
-  it('should refetch config when fetchConfig is called', async () => {
+  it('should invalidate and refetch when fetchConfig is called', async () => {
     const mockConfig = {
       allowed_strategies: ['okta'],
       connection_deletion_behavior: 'allow',
     };
     mockGet.mockResolvedValue(mockConfig);
 
-    const { result, queryClient } = renderUseConfig();
-
-    await waitFor(() => {
-      expect(result.current.isLoadingConfig).toBe(false);
-    });
-
-    expect(mockGet).toHaveBeenCalledTimes(1);
-
-    queryClient.setQueryData(['config', 'details'], mockConfig, {
-      updatedAt: Date.now() - 6 * 60 * 1000,
-    });
-
-    await result.current.fetchConfig();
-
-    await waitFor(() => {
-      result.current.fetchConfig();
-      expect(mockGet).toHaveBeenCalledTimes(2);
-    });
-  });
-
-  it('should not refetch when data is fresh and not invalidated', async () => {
-    const mockConfig = {
-      allowed_strategies: ['okta'],
-      connection_deletion_behavior: 'allow',
-    };
-    mockGet.mockResolvedValue(mockConfig);
-
-    const { result, queryClient } = renderUseConfig();
+    const { result } = renderUseConfig();
 
     await waitFor(() => {
       expect(result.current.isLoadingConfig).toBe(false);
@@ -198,16 +171,13 @@ describe('useConfig', () => {
 
     const initialCallCount = mockGet.mock.calls.length;
 
-    // Manually set the query data with a fresh timestamp
-    queryClient.setQueryData(['config', 'details'], mockConfig, {
-      updatedAt: Date.now() - 1000, // 1 second ago (fresh)
-    });
-
-    // Call fetchConfig again
+    // Call fetchConfig - should always invalidate and trigger refetch
     await result.current.fetchConfig();
 
-    // Should return early without calling the API again
-    expect(mockGet.mock.calls.length).toBe(initialCallCount);
+    // Should trigger a refetch
+    await waitFor(() => {
+      expect(mockGet.mock.calls.length).toBeGreaterThan(initialCallCount);
+    });
   });
 
   it('should not fetch config when coreClient is not available', async () => {

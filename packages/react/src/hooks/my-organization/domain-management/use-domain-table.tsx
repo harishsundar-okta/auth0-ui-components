@@ -15,12 +15,6 @@ import type {
 import { useCoreClient } from '../../use-core-client';
 import { useTranslator } from '../../use-translator';
 
-const CACHE_CONFIG = {
-  DOMAINS_STALE_TIME: 5 * 60 * 1000,
-  DOMAINS_GC_TIME: 10 * 60 * 1000,
-  PROVIDERS_STALE_TIME: 2 * 60 * 1000,
-} as const;
-
 export const domainQueryKeys = {
   all: ['domains'] as const,
   list: () => [...domainQueryKeys.all, 'list'] as const,
@@ -52,8 +46,6 @@ export function useDomainTable({
       const response = await coreClient!.getMyOrganizationApiClient().organization.domains.list();
       return response?.organization_domains ?? [];
     },
-    staleTime: CACHE_CONFIG.DOMAINS_STALE_TIME,
-    gcTime: CACHE_CONFIG.DOMAINS_GC_TIME,
     enabled: !!coreClient,
   });
 
@@ -85,7 +77,6 @@ export function useDomainTable({
 
       return providersWithAssociation;
     },
-    staleTime: CACHE_CONFIG.PROVIDERS_STALE_TIME,
     enabled: !!coreClient && !!selectedDomainId, // Only fetch when domain is selected
   });
 
@@ -122,7 +113,6 @@ export function useDomainTable({
 
           return providersWithAssociation;
         },
-        staleTime: CACHE_CONFIG.PROVIDERS_STALE_TIME,
       });
     },
     [coreClient, queryClient],
@@ -277,16 +267,6 @@ export function useDomainTable({
   );
 
   const fetchDomains = useCallback(async (): Promise<void> => {
-    const existingData = queryClient.getQueryData(domainQueryKeys.list());
-    const queryState = queryClient.getQueryState(domainQueryKeys.list());
-
-    if (existingData && queryState && !queryState.isInvalidated) {
-      const dataAge = Date.now() - (queryState.dataUpdatedAt || 0);
-      if (dataAge < CACHE_CONFIG.DOMAINS_STALE_TIME) {
-        return;
-      }
-    }
-
     await queryClient.invalidateQueries({ queryKey: domainQueryKeys.list() });
   }, [queryClient]);
 

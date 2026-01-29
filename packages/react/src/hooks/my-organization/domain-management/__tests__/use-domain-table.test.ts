@@ -158,8 +158,8 @@ describe('useDomainTable', () => {
       expect(result.current.domains).toEqual([]);
     });
 
-    it('should not refetch when data is fresh and not invalidated', async () => {
-      const { result, queryClient } = renderUseDomainTable(mockOptions);
+    it('should invalidate and refetch when fetchDomains is called', async () => {
+      const { result } = renderUseDomainTable(mockOptions);
 
       // Wait for initial fetch to complete
       await waitFor(() => {
@@ -170,42 +170,10 @@ describe('useDomainTable', () => {
         mockCoreClient.getMyOrganizationApiClient().organization.domains.list,
       ).mock.calls.length;
 
-      // Manually set the query data with a fresh timestamp
-      queryClient.setQueryData(['domains', 'list'], [], {
-        updatedAt: Date.now() - 1000, // 1 second ago (fresh)
-      });
-
-      // Call fetchDomains again
+      // Call fetchDomains - should always invalidate and trigger refetch
       await result.current.fetchDomains();
 
-      // Should return early without calling the API again
-      expect(
-        vi.mocked(mockCoreClient.getMyOrganizationApiClient().organization.domains.list).mock.calls
-          .length,
-      ).toBe(initialCallCount);
-    });
-
-    it('should refetch when data is stale', async () => {
-      const { result, queryClient } = renderUseDomainTable(mockOptions);
-
-      // Wait for initial fetch to complete
-      await waitFor(() => {
-        expect(result.current.isFetching).toBe(false);
-      });
-
-      const initialCallCount = vi.mocked(
-        mockCoreClient.getMyOrganizationApiClient().organization.domains.list,
-      ).mock.calls.length;
-
-      // Manually set the query data with a stale timestamp (older than 5 minutes)
-      queryClient.setQueryData(['domains', 'list'], [], {
-        updatedAt: Date.now() - 6 * 60 * 1000, // 6 minutes ago (stale)
-      });
-
-      // Call fetchDomains again
-      await result.current.fetchDomains();
-
-      // Should call the API again due to stale data
+      // Should trigger a refetch
       await waitFor(() => {
         expect(
           vi.mocked(mockCoreClient.getMyOrganizationApiClient().organization.domains.list).mock

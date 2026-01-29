@@ -8,11 +8,6 @@ import type {
 } from '../../../types/my-organization/config/config-idp-types';
 import { useCoreClient } from '../../use-core-client';
 
-const CACHE_CONFIG = {
-  IDP_CONFIG_STALE_TIME: 10 * 60 * 1000, // 10 minutes
-  IDP_CONFIG_GC_TIME: 15 * 60 * 1000, // 15 minutes
-} as const;
-
 export const idpConfigQueryKeys = {
   all: ['idp-config'] as const,
   config: () => [...idpConfigQueryKeys.all, 'config'] as const,
@@ -38,8 +33,6 @@ export function useIdpConfig(): UseConfigIdpResult {
         .organization.configuration.identityProviders.get()) as unknown as IdpConfig;
       return result;
     },
-    staleTime: CACHE_CONFIG.IDP_CONFIG_STALE_TIME,
-    gcTime: CACHE_CONFIG.IDP_CONFIG_GC_TIME,
     enabled: !!coreClient,
     retry: (failureCount, error) => {
       // Don't retry on 404 errors (config not set)
@@ -67,17 +60,6 @@ export function useIdpConfig(): UseConfigIdpResult {
   // ============================================
 
   const fetchIdpConfig = useCallback(async (): Promise<void> => {
-    const existingData = queryClient.getQueryData(idpConfigQueryKeys.config());
-    const queryState = queryClient.getQueryState(idpConfigQueryKeys.config());
-
-    // Return early if data is fresh and not invalidated
-    if (existingData && queryState && !queryState.isInvalidated) {
-      const dataAge = Date.now() - (queryState.dataUpdatedAt || 0);
-      if (dataAge < CACHE_CONFIG.IDP_CONFIG_STALE_TIME) {
-        return;
-      }
-    }
-
     await queryClient.invalidateQueries({ queryKey: idpConfigQueryKeys.config() });
   }, [queryClient]);
 
