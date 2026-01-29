@@ -8,36 +8,37 @@ const SPECIAL_FILES = ['index.json', 'registry.json', 'versions.json'];
 interface VersionInfo {
   current: string;
   latest: string;
-  currentPath: string;
-  latestPath: string;
-  majorVersions?: Record<
-    string,
-    { latest: string; stable: string | null; beta: string; path: string }
-  >;
+  beta?: string;
+  stable?: string | null;
+  majorVersions?: Record<string, { latest: string; stable: string | null; beta: string }>;
   versions?: Record<string, { status: string; major: string }>;
+}
+
+function getVersionPath(version: string, versionInfo: VersionInfo): string {
+  const versionData = versionInfo.versions?.[version];
+  if (versionData) {
+    return `v${versionData.major}/${version}`;
+  }
+  // Fallback: assume v1
+  return `v1/${version}`;
 }
 
 function getVersionInfo(): VersionInfo {
   try {
     const versionsPath = path.join(process.cwd(), 'public', 'r', 'versions.json');
     if (fs.existsSync(versionsPath)) {
-      const versionsData = JSON.parse(fs.readFileSync(versionsPath, 'utf-8'));
-      return {
-        ...versionsData,
-        currentPath: versionsData.currentPath || versionsData.current || 'v1',
-        latestPath: versionsData.latestPath || versionsData.latest || 'v1',
-      };
+      return JSON.parse(fs.readFileSync(versionsPath, 'utf-8'));
     }
   } catch (error) {
     console.error('Failed to read versions.json:', error);
   }
-  // Fallback - minimal defaults without hardcoded versions
+  // Fallback
   return {
-    current: 'v1',
-    latest: 'v1',
-    currentPath: 'v1',
-    latestPath: 'v1',
-    majorVersions: {},
+    current: '1.0.0-beta.6',
+    latest: '1.0.0-beta.6',
+    versions: {
+      '1.0.0-beta.6': { status: 'beta', major: '1' },
+    },
   };
 }
 
@@ -73,23 +74,23 @@ export function registryMiddleware(): Plugin {
         let versionPath: string;
 
         if (!versionParam) {
-          versionPath = versionInfo.currentPath;
+          // Default to current version
+          versionPath = getVersionPath(versionInfo.current, versionInfo);
         } else if (versionParam === 'latest') {
-          versionPath = versionInfo.latestPath;
+          // Use latest version
+          versionPath = getVersionPath(versionInfo.latest, versionInfo);
         } else if (versionParam.startsWith('v') && versionParam.includes('/')) {
           // Full version path provided (e.g., 'v1/1.0.0-beta.5')
           versionPath = versionParam;
         } else if (versionParam.startsWith('v') && !versionParam.includes('/')) {
           // Major version only (e.g., 'v1') - get latest for that major
-          versionPath = versionInfo.majorVersions?.[versionParam]?.path || versionInfo.currentPath;
+          const majorVersion = versionInfo.majorVersions?.[versionParam]?.latest;
+          versionPath = majorVersion
+            ? getVersionPath(majorVersion, versionInfo)
+            : getVersionPath(versionInfo.current, versionInfo);
         } else {
-          // Just version number (e.g., '1.0.0-beta.5') - find the major and construct path
-          const versionData = versionInfo.versions?.[versionParam];
-          if (versionData) {
-            versionPath = `v${versionData.major}/${versionParam}`;
-          } else {
-            versionPath = versionInfo.currentPath;
-          }
+          // Just version number (e.g., '1.0.0-beta.5')
+          versionPath = getVersionPath(versionParam, versionInfo);
         }
 
         const baseDir = path.resolve(process.cwd(), 'public', 'r', versionPath);
