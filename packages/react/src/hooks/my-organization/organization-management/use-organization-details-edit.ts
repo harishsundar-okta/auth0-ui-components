@@ -1,5 +1,4 @@
 import {
-  BusinessError,
   OrganizationDetailsFactory,
   OrganizationDetailsMappers,
   type OrganizationPrivate,
@@ -40,7 +39,7 @@ export function useOrganizationDetailsEdit({
   // QUERY - Organization data managed by TanStack Query
   // ============================================
 
-  const organizationQuery = useQuery({
+  const organizationQuery = useQuery<OrganizationPrivate>({
     queryKey: organizationDetailsQueryKeys.details(),
     queryFn: async () => {
       try {
@@ -57,15 +56,16 @@ export function useOrganizationDetailsEdit({
           message: errorMessage,
         });
 
-        // Return factory default instead of throwing to match original behavior
-        return OrganizationDetailsFactory.create();
+        throw error;
       }
     },
     enabled: !!coreClient,
+    retry: false,
   });
 
-  const organization = organizationQuery.data ?? OrganizationDetailsFactory.create();
-  const isFetchLoading = organizationQuery.isLoading;
+  const organization: OrganizationPrivate =
+    organizationQuery.data ?? OrganizationDetailsFactory.create();
+  const isFetchLoading = organizationQuery.isFetching;
 
   // ============================================
   // MUTATION - Update organization
@@ -73,14 +73,6 @@ export function useOrganizationDetailsEdit({
 
   const updateMutation = useMutation({
     mutationFn: async (data: OrganizationPrivate): Promise<OrganizationPrivate> => {
-      // Execute onBefore callback - throw if cancelled
-      if (saveAction?.onBefore) {
-        const canProceed = saveAction.onBefore(data);
-        if (!canProceed) {
-          throw new BusinessError({ message: 'Save cancelled by onBefore callback' });
-        }
-      }
-
       const updateData = OrganizationDetailsMappers.toAPI(data);
       const response = await coreClient!
         .getMyOrganizationApiClient()
@@ -108,11 +100,6 @@ export function useOrganizationDetailsEdit({
     },
 
     onError: (error) => {
-      // Don't show toast for BusinessError (onBefore cancellation)
-      if (error instanceof BusinessError) {
-        return;
-      }
-
       const errorMessage =
         error instanceof Error
           ? t('organization_changes_error_message', { message: error.message })
@@ -147,6 +134,13 @@ export function useOrganizationDetailsEdit({
         return false;
       }
 
+      if (saveAction?.onBefore) {
+        const canProceed = saveAction.onBefore(data);
+        if (!canProceed) {
+          return false;
+        }
+      }
+
       try {
         await updateMutation.mutateAsync(data);
         return true;
@@ -154,7 +148,7 @@ export function useOrganizationDetailsEdit({
         return false;
       }
     },
-    [updateMutation, coreClient],
+    [updateMutation, coreClient, saveAction],
   );
 
   const formActions = useMemo(
