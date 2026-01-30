@@ -69,7 +69,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
   );
 
   const showUnsavedIndicator = showUnsavedChanges && hasUnsavedChanges;
-  const isPreviousVisible = showPrevious && hasUnsavedChanges;
+  const isPreviousVisible = showUnsavedChanges ? showPrevious && hasUnsavedChanges : showPrevious;
 
   return (
     <div
@@ -89,9 +89,14 @@ export const FormActions: React.FC<FormActionsProps> = ({
           variant={previousButtonProps.variant}
           size={previousButtonProps.size}
           onClick={handlePreviousClick}
-          disabled={previousButtonProps.disabled || isLoading || !hasUnsavedChanges}
-          className={cn('FormActions-previous', !isPreviousVisible && 'invisible')}
-          aria-hidden={!isPreviousVisible}
+          disabled={
+            previousButtonProps.disabled || isLoading || (showUnsavedChanges && !hasUnsavedChanges)
+          }
+          className={cn(
+            'FormActions-previous',
+            showUnsavedChanges && !isPreviousVisible && 'invisible',
+          )}
+          aria-hidden={showUnsavedChanges && !isPreviousVisible}
           tabIndex={isPreviousVisible ? 0 : -1}
         >
           {previousButtonProps.label}
