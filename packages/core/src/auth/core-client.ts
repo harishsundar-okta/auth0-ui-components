@@ -36,18 +36,25 @@ export async function createCoreClient(
     getToken: (scope, aud, ignoreCache) => tokenManagerService.getToken(scope, aud, ignoreCache),
     isProxyMode: () => !!authDetails.authProxyUrl,
 
+    getDomain: () => authDetails.domain ?? authDetails.contextInterface?.getConfiguration()?.domain,
+
     ensureScopes: async (requiredScopes: string, audiencePath: string) => {
+      const isProxyMode = !!authDetails.authProxyUrl;
+
+      if (!isProxyMode) {
+        const domain =
+          authDetails.domain ?? authDetails.contextInterface?.getConfiguration()?.domain;
+
+        if (!domain) {
+          throw new Error('Authentication domain is missing, cannot initialize SPA service.');
+        }
+      }
+
       if (audiencePath === 'my-org') setOrgScopes(requiredScopes);
       if (audiencePath === 'me') setAccountScopes(requiredScopes);
 
-      if (authDetails.authProxyUrl) {
+      if (isProxyMode) {
         return;
-      }
-
-      const config = await authDetails.contextInterface?.getConfiguration();
-
-      if (!config?.domain) {
-        throw new Error('Authentication domain is missing.');
       }
 
       const token = await tokenManagerService.getToken(requiredScopes, audiencePath, true);
@@ -57,12 +64,18 @@ export async function createCoreClient(
     },
 
     getMyAccountApiClient: () => {
-      if (!myAccApi) throw new Error('myAccountApiClient not initialized.');
+      if (!myAccApi)
+        throw new Error(
+          'myAccountApiClient is not enabled. Please use it within Auth0ComponentProvider.',
+        );
       return myAccApi;
     },
 
     getMyOrganizationApiClient: () => {
-      if (!myOrgApi) throw new Error('myOrganizationApiClient not initialized.');
+      if (!myOrgApi)
+        throw new Error(
+          'myOrganizationApiClient is not enabled. Please ensure you are in an Auth0 Organization context.',
+        );
       return myOrgApi;
     },
   };

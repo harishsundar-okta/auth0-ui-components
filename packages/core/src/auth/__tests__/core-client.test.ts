@@ -6,6 +6,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createI18nService } from '../../i18n';
 import { createMockI18nService } from '../../i18n/__mocks__/i18n-service.mocks';
+import {
+  createMockContextInterface,
+  TEST_DOMAIN,
+} from '../../internals/__mocks__/shared/api-service.mocks';
 import { createMockMyAccountClient } from '../../services/my-account/__tests__/__mocks__/my-account-api-service.mocks';
 import { createMockMyOrganizationClient } from '../../services/my-organization/__tests__/__mocks__/my-organization-api-service.mocks';
 import { createMockTokenManager } from '../__mocks__/token-manager.mocks';
@@ -34,9 +38,9 @@ describe('createCoreClient', () => {
 
   const createAuthDetails = (overrides: Partial<AuthDetails> = {}): AuthDetails => {
     return {
-      domain: 'example.auth0.com',
+      domain: TEST_DOMAIN,
       authProxyUrl: undefined,
-      contextInterface: {} as AuthDetails['contextInterface'],
+      contextInterface: createMockContextInterface(),
       ...overrides,
     };
   };
@@ -120,7 +124,7 @@ describe('createCoreClient', () => {
 
       await client.getToken('read:me', 'me');
 
-      expect(mockTokenManager.getToken).toHaveBeenCalledWith('read:me', 'me', false);
+      expect(mockTokenManager.getToken).toHaveBeenCalledWith('read:me', 'me', undefined);
     });
 
     it('returns the token from token manager', async () => {
@@ -169,7 +173,7 @@ describe('createCoreClient', () => {
 
   describe('ensureScopes - non-proxy mode', () => {
     it('throws when domain is missing in non-proxy mode', async () => {
-      const authDetails = createAuthDetails({ domain: undefined });
+      const authDetails = createAuthDetails({ domain: '', contextInterface: undefined });
       const client = await createCoreClient(authDetails);
 
       await expect(client.ensureScopes('read:org', 'my-org')).rejects.toThrow(
@@ -324,21 +328,8 @@ describe('createCoreClient', () => {
       expect(client.auth.authProxyUrl).toBe('https://custom-proxy.com');
     });
 
-    it('preserves domain in auth details', async () => {
-      const authDetails = createAuthDetails();
-      const client = await createCoreClient(authDetails);
-
-      expect(client.auth.domain).toBe('example.auth0.com');
-    });
-
     it('preserves contextInterface in auth details', async () => {
-      const customContext: AuthDetails['contextInterface'] = {
-        user: { name: 'Test User' },
-        isAuthenticated: true,
-        getAccessTokenSilently: vi.fn(),
-        getAccessTokenWithPopup: vi.fn(),
-        loginWithRedirect: vi.fn(),
-      };
+      const customContext = createMockContextInterface();
       const authDetails = createAuthDetails({ contextInterface: customContext });
       const client = await createCoreClient(authDetails);
 

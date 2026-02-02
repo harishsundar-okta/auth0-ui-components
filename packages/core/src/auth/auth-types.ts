@@ -100,10 +100,11 @@ export interface BasicAuth0ContextInterface<TUser = User> {
   };
   getAccessTokenWithPopup: (options?: unknown) => Promise<string | undefined>;
   loginWithRedirect: (options?: unknown) => Promise<void>;
-  getConfiguration: () => Promise<ClientConfiguration>;
+  getConfiguration: () => Readonly<ClientConfiguration>;
 }
 
 export interface AuthDetails {
+  domain?: string | undefined;
   authProxyUrl?: string | undefined;
   contextInterface?: BasicAuth0ContextInterface | undefined;
 }
@@ -118,6 +119,7 @@ export interface BaseCoreClientInterface {
   ) => Promise<string | undefined>;
   isProxyMode: () => boolean;
   ensureScopes: (requiredScopes: string, audiencePath: string) => Promise<void>;
+  getDomain: () => string | undefined;
 }
 
 export interface CoreClientInterface extends BaseCoreClientInterface {
