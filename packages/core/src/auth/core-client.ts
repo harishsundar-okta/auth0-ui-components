@@ -4,16 +4,8 @@ import { initializeMyOrganizationClient } from '@core/services/my-organization/m
 import type { I18nInitOptions } from '../i18n';
 import { createI18nService } from '../i18n';
 
-import type { AuthDetails, BaseCoreClientInterface, CoreClientInterface } from './auth-types';
+import type { AuthDetails, CoreClientInterface } from './auth-types';
 import { createTokenManager } from './token-manager';
-
-function isProxyMode(auth: AuthDetails): boolean {
-  return !!auth.authProxyUrl;
-}
-
-function initializeAuthDetails(authDetails: AuthDetails): AuthDetails {
-  return authDetails;
-}
 
 export async function createCoreClient(
   authDetails: AuthDetails,
@@ -22,72 +14,56 @@ export async function createCoreClient(
   const i18nService = await createI18nService(
     i18nOptions || { currentLanguage: 'en-US', fallbackLanguage: 'en-US' },
   );
-  const auth = initializeAuthDetails(authDetails);
 
-  const tokenManagerService = createTokenManager(auth);
-  const { client: myOrganizationApiClient, setLatestScopes: setOrgScopes } =
-    initializeMyOrganizationClient(auth, tokenManagerService);
-  const { client: myAccountApiClient, setLatestScopes: setAccountScopes } =
-    initializeMyAccountClient(auth, tokenManagerService);
+  const tokenManagerService = createTokenManager(authDetails);
 
-  const baseCoreClient: BaseCoreClientInterface = {
-    auth,
-    i18nService,
+  const { client: myOrgApi, setLatestScopes: setOrgScopes } = initializeMyOrganizationClient(
+    authDetails,
+    tokenManagerService,
+  );
 
-    async getToken(scope: string, audiencePath: string, ignoreCache = false) {
-      return tokenManagerService.getToken(scope, audiencePath, ignoreCache);
-    },
-
-    isProxyMode() {
-      return isProxyMode(auth);
-    },
-
-    ensureScopes: async (requiredScopes: string, audiencePath: string) => {
-      if (isProxyMode(auth) && auth.authProxyUrl) {
-        if (audiencePath === 'my-org') {
-          setOrgScopes(requiredScopes);
-        }
-        if (audiencePath === 'me') {
-          setAccountScopes(requiredScopes);
-        }
-      } else {
-        if (!auth.domain) {
-          throw new Error('Authentication domain is missing, cannot initialize SPA service.');
-        }
-        if (audiencePath === 'my-org') {
-          setOrgScopes(requiredScopes);
-        }
-        if (audiencePath === 'me') {
-          setAccountScopes(requiredScopes);
-        }
-
-        const token = await tokenManagerService.getToken(requiredScopes, audiencePath, true);
-        if (!token) {
-          throw new Error(`Failed to retrieve token for audience: ${audiencePath}`);
-        }
-      }
-    },
-  };
+  const { client: myAccApi, setLatestScopes: setAccountScopes } = initializeMyAccountClient(
+    authDetails,
+    tokenManagerService,
+  );
 
   return {
-    ...baseCoreClient,
-    myAccountApiClient,
-    myOrganizationApiClient,
-    getMyAccountApiClient() {
-      if (!myAccountApiClient) {
-        throw new Error(
-          'myAccountApiClient is not enabled. Please use it within Auth0ComponentProvider.',
-        );
+    auth: authDetails,
+    i18nService,
+    myAccountApiClient: myAccApi,
+    myOrganizationApiClient: myOrgApi,
+
+    getToken: (scope, aud, ignoreCache) => tokenManagerService.getToken(scope, aud, ignoreCache),
+    isProxyMode: () => !!authDetails.authProxyUrl,
+
+    ensureScopes: async (requiredScopes: string, audiencePath: string) => {
+      if (audiencePath === 'my-org') setOrgScopes(requiredScopes);
+      if (audiencePath === 'me') setAccountScopes(requiredScopes);
+
+      if (authDetails.authProxyUrl) {
+        return;
       }
-      return myAccountApiClient;
+
+      const config = await authDetails.contextInterface?.getConfiguration();
+
+      if (!config?.domain) {
+        throw new Error('Authentication domain is missing.');
+      }
+
+      const token = await tokenManagerService.getToken(requiredScopes, audiencePath, true);
+      if (!token) {
+        throw new Error(`Failed to retrieve token for audience: ${audiencePath}`);
+      }
     },
-    getMyOrganizationApiClient() {
-      if (!myOrganizationApiClient) {
-        throw new Error(
-          'myOrganizationApiClient is not enabled. Please ensure you are in an Auth0 Organization context.',
-        );
-      }
-      return myOrganizationApiClient;
+
+    getMyAccountApiClient: () => {
+      if (!myAccApi) throw new Error('myAccountApiClient not initialized.');
+      return myAccApi;
+    },
+
+    getMyOrganizationApiClient: () => {
+      if (!myOrgApi) throw new Error('myOrganizationApiClient not initialized.');
+      return myOrgApi;
     },
   };
 }
