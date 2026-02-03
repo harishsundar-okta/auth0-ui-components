@@ -450,22 +450,16 @@ import 'src/auth0-ui-components/styles/globals.css';`}
 import { Auth0ComponentProvider } from '@auth0/universal-components-react/spa';
 import '@auth0/universal-components-react/styles';
 
-const authDetails = {
-  domain: import.meta.env.VITE_AUTH0_DOMAIN,
-};
-
 function App() {
   return (
     <Auth0Provider
-      domain={authDetails.domain}
+      domain={import.meta.env.VITE_AUTH0_DOMAIN}
       clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
       authorizationParams={{
         redirect_uri: window.location.origin
       }}
     >
-      <Auth0ComponentProvider 
-        authDetails={authDetails}
-      >
+      <Auth0ComponentProvider>
         {/* Your app components */}
       </Auth0ComponentProvider>
     </Auth0Provider>
