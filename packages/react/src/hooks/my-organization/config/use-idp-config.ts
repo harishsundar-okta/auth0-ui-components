@@ -20,9 +20,10 @@ export function useIdpConfig(): UseConfigIdpResult {
     queryKey: idpConfigQueryKeys.config(),
     queryFn: async () => {
       try {
-        return (await coreClient!
+        const response = await coreClient!
           .getMyOrganizationApiClient()
-          .organization.configuration.identityProviders.get()) as unknown as IdpConfig;
+          .organization.configuration.identityProviders.get();
+        return response as unknown as IdpConfig;
       } catch (error) {
         if (hasApiErrorBody(error) && error.body?.status === 404) {
           return null;
@@ -31,7 +32,10 @@ export function useIdpConfig(): UseConfigIdpResult {
       }
     },
     enabled: !!coreClient,
-    retry: (failureCount) => failureCount < 3,
+    retry: (failureCount, error) => {
+      if (hasApiErrorBody(error) && error.body?.status === 404) return false;
+      return failureCount < 3;
+    },
   });
 
   const idpConfig = idpConfigQuery.data ?? null;
@@ -48,7 +52,7 @@ export function useIdpConfig(): UseConfigIdpResult {
   };
 
   return {
-    idpConfig: idpConfig ?? null,
+    idpConfig,
     isIdpConfigValid: !!strategies && Object.keys(strategies).length > 0,
     isLoadingIdpConfig: idpConfigQuery.isLoading,
     fetchIdpConfig: () => queryClient.invalidateQueries({ queryKey: idpConfigQueryKeys.config() }),
