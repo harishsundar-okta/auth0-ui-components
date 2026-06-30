@@ -1,3 +1,9 @@
+/**
+ * Form components with react-hook-form integration.
+ * @module form
+ * @internal
+ */
+
 'use client';
 
 import type * as LabelPrimitive from '@radix-ui/react-label';
@@ -13,9 +19,9 @@ import {
   type FieldValues,
 } from 'react-hook-form';
 
-import { cn } from '../../lib/theme-utils';
-
-import { Label } from './label';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { useId } from '@/lib/utils/use-id-compat';
 
 const Form: typeof FormProvider = FormProvider;
 
@@ -89,7 +95,7 @@ type FormItemContextValue = {
 const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
 
 function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
-  const id = React.useId();
+  const id = useId();
 
   return (
     <FormItemContext.Provider value={{ id }}>

@@ -1,11 +1,11 @@
 'use client';
 
-// import { DomainTable } from '@auth0/universal-components-react/rwa';
+// import { DomainTable } from '@auth0/universal-components-react';
 
 export default function DomainManagementPage() {
   return (
     <div className="p-6 pt-8 space-y-6">
-      <p>
+      <p className="text-primary">
         Follow{' '}
         <a
           href="https://github.com/auth0/auth0-ui-components/tree/main/examples/next-rwa#adding-a-universal-component-to-your-app"

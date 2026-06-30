@@ -1,9 +1,70 @@
+/**
+ * Authentication type definitions for Auth0 integration.
+ * @module auth-types
+ * @internal
+ */
+
 import type { MyAccountClient } from '@auth0/myaccount-js';
 import type { MyOrganizationClient } from '@auth0/myorganization-js';
-import type { ArbitraryObject } from '@core/types';
 
 import type { I18nServiceInterface } from '../i18n';
+import type { MfaApiClient } from '../services/mfa-step-up/mfa-step-up-api-types';
 
+/**
+ * Auth parameters for fetcher functions.
+ *
+ * Intentionally custom: internal abstraction used by the fetcher layer, not a
+ * direct SDK API request/response type.
+ * @internal
+ */
+export interface FetcherAuthParams {
+  scope?: string[];
+  audience?: string;
+}
+
+/**
+ * Custom fetcher function signature expected by Auth0 SDK clients.
+ * @internal
+ */
+export type FetcherSupplier = (
+  url: string,
+  init?: RequestInit,
+  authParams?: FetcherAuthParams,
+) => Promise<Response>;
+
+/**
+ * Options for creating a fetcher.
+ * @internal
+ */
+export interface CreateFetcherOptions {
+  dpopNonceId?: string;
+}
+
+/**
+ * Fetcher interface returned by createFetcher.
+ * @internal
+ */
+export interface Auth0Fetcher {
+  fetchWithAuth: (
+    url: string,
+    init: RequestInit | undefined,
+    authParams: FetcherAuthParams | undefined,
+  ) => Promise<Response>;
+}
+
+/**
+ * Function signature for createFetcher.
+ * @internal
+ */
+export type CreateFetcherFunction = (options: CreateFetcherOptions) => Auth0Fetcher;
+
+/**
+ * Response structure from the token endpoint.
+ *
+ * Intentionally custom: `@auth0/auth0-spa-js` exports a similar type (with an
+ * additional `token_type` field) but is not a dependency of this package.
+ * @internal
+ */
 export type TokenEndpointResponse = {
   id_token: string;
   access_token: string;
@@ -12,71 +73,10 @@ export type TokenEndpointResponse = {
   scope?: string;
 };
 
-export type GetTokenSilentlyVerboseResponse = Omit<TokenEndpointResponse, 'refresh_token'>;
-
-export interface User {
-  name?: string;
-  given_name?: string;
-  family_name?: string;
-  middle_name?: string;
-  nickname?: string;
-  preferred_username?: string;
-  profile?: string;
-  picture?: string;
-  website?: string;
-  email?: string;
-  email_verified?: boolean;
-  gender?: string;
-  birthdate?: string;
-  zoneinfo?: string;
-  locale?: string;
-  phone_number?: string;
-  phone_number_verified?: boolean;
-  address?: string;
-  updated_at?: string;
-  sub?: string;
-  [key: string]: unknown;
-}
-
-export interface GetTokenSilentlyOptions {
-  cacheMode?: 'on' | 'off' | 'cache-only';
-  authorizationParams?: {
-    redirect_uri?: string;
-    scope?: string;
-    audience?: string;
-    [key: string]: unknown;
-  };
-  timeoutInSeconds?: number;
-  detailedResponse?: boolean;
-}
-
-export interface Auth0ContextInterface<TUser = User> {
-  user?: TUser;
-  // auth0-spa-js: getUser()
-  isAuthenticated: boolean;
-  isLoading: boolean; // auth0-spa-js: do not exists
-  error?: Error; // auth0-spa-js: do not exists
-  loginWithRedirect: (options?: unknown) => Promise<void>;
-  loginWithPopup: (options?: unknown) => Promise<void>;
-  logout: (options?: unknown) => Promise<void>;
-  getAccessTokenSilently: {
-    (
-      options: GetTokenSilentlyOptions & { detailedResponse: true },
-    ): Promise<GetTokenSilentlyVerboseResponse>;
-    (options?: GetTokenSilentlyOptions): Promise<string>;
-    (options: GetTokenSilentlyOptions): Promise<GetTokenSilentlyVerboseResponse | string>;
-  };
-  // auth0-spa-js: getTokenSilently
-  getAccessTokenWithPopup: (options?: unknown) => Promise<string | undefined>;
-  // auth0-spa-js: getTokenWithPopup
-  getIdTokenClaims: () => Promise<ArbitraryObject>;
-  // auth0-spa-js: getIdTokenClaims(): Promise<undefined | IdToken>
-  // react: getIdTokenClaims: (() => Promise<undefined | IdToken>);
-  // vue: idTokenClaims: Ref<undefined | IdToken>;
-  // angular: idTokenClaims$: Observable<undefined | null | IdToken>
-  handleRedirectCallback: () => Promise<ArbitraryObject>;
-}
-
+/**
+ * Client configuration for Auth0 SDK.
+ * @internal
+ */
 export interface ClientConfiguration {
   /**
    * The Auth0 domain that was configured
@@ -88,43 +88,74 @@ export interface ClientConfiguration {
   clientId: string;
 }
 
-export interface BasicAuth0ContextInterface<TUser = User> {
-  user?: TUser;
-  isAuthenticated: boolean;
-  getAccessTokenSilently: {
-    (
-      options: GetTokenSilentlyOptions & { detailedResponse: true },
-    ): Promise<GetTokenSilentlyVerboseResponse>;
-    (options?: GetTokenSilentlyOptions): Promise<string>;
-    (options: GetTokenSilentlyOptions): Promise<GetTokenSilentlyVerboseResponse | string>;
-  };
-  getAccessTokenWithPopup: (options?: unknown) => Promise<string | undefined>;
-  loginWithRedirect: (options?: unknown) => Promise<void>;
+/**
+ * Basic Auth0 context interface for minimal authentication operations.
+ * @internal
+ */
+export interface BasicAuth0ContextInterface {
   getConfiguration: () => Readonly<ClientConfiguration>;
+  mfa: MfaApiClient;
+  createFetcher: CreateFetcherFunction;
 }
 
+/**
+ * Auth config for proxy mode — routes requests through an auth proxy URL.
+ * @internal
+ */
+export type ProxyAuthConfig = {
+  mode: 'proxy';
+  proxyUrl: string;
+  domain?: string;
+  fetcher?: (url: string, init?: RequestInit) => Promise<Response>;
+};
+
+/**
+ * Auth config for SPA mode — uses a context interface and Auth0 domain directly.
+ * @internal
+ */
+export type SpaAuthConfig = {
+  mode: 'spa';
+  contextInterface: BasicAuth0ContextInterface;
+  domain: string;
+};
+
+/**
+ * Discriminated union of the two supported auth configurations.
+ * @internal
+ */
+export type ClientAuthConfig = ProxyAuthConfig | SpaAuthConfig;
+
+/**
+ * Authentication details for provider configuration.
+ * @internal
+ */
 export interface AuthDetails {
   domain?: string | undefined;
   authProxyUrl?: string | undefined;
   contextInterface?: BasicAuth0ContextInterface | undefined;
+  fetcher?: (url: string, init?: RequestInit, authParams?: FetcherAuthParams) => Promise<Response>;
+  previewMode?: boolean; // For docs - skip API client initialization
 }
 
+/**
+ * Base interface for CoreClient functionality.
+ * @internal
+ */
 export interface BaseCoreClientInterface {
   auth: AuthDetails;
   i18nService: I18nServiceInterface;
-  getToken: (
-    scope: string,
-    audiencePath: string,
-    ignoreCache?: boolean,
-  ) => Promise<string | undefined>;
   isProxyMode: () => boolean;
-  ensureScopes: (requiredScopes: string, audiencePath: string) => Promise<void>;
   getDomain: () => string | undefined;
 }
 
+/**
+ * Full CoreClient interface with API clients.
+ * @internal
+ */
 export interface CoreClientInterface extends BaseCoreClientInterface {
   myAccountApiClient: MyAccountClient | undefined;
   myOrganizationApiClient: MyOrganizationClient | undefined;
   getMyAccountApiClient: () => MyAccountClient;
   getMyOrganizationApiClient: () => MyOrganizationClient;
+  getMFAStepUpApiClient: () => MfaApiClient;
 }

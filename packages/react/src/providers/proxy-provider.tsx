@@ -1,37 +1,41 @@
+/**
+ * RWA proxy provider for server-side auth.
+ * @module proxy-provider
+ */
+
 'use client';
 
+import type {
+  AuthDetails,
+  CssImplementation,
+  TelemetryComponentGetter,
+  TelemetryConfig,
+} from '@auth0/universal-components-core';
 import * as React from 'react';
 
-import { Toaster } from '../components/ui/sonner';
-import { Spinner } from '../components/ui/spinner';
-import { CoreClientContext } from '../hooks/use-core-client';
-import { useCoreClientInitialization } from '../hooks/use-core-client-initialization';
-import { useToastProvider } from '../hooks/use-toast-provider';
-import type { Auth0ComponentProviderProps } from '../types/auth-types';
-
-import { QueryProvider } from './query-provider';
-import { ScopeManagerProvider } from './scope-manager-provider';
-import { ThemeProvider } from './theme-provider';
+import { Toaster } from '@/components/auth0/shared/sonner';
+import { StyledScope } from '@/components/auth0/shared/styled-scope';
+import { Spinner } from '@/components/ui/spinner';
+import { CoreClientContext } from '@/hooks/shared/use-core-client';
+import { useCoreClientInitialization } from '@/hooks/shared/use-core-client-initialization';
+import { useToastProvider } from '@/hooks/shared/use-toast-provider';
+import { DISTRIBUTION, FRAMEWORK } from '@/lib/constants/telemetry-constants';
+import { detectCssImplementation } from '@/lib/utils/shared/css-detection';
+import { QueryProvider } from '@/providers/query-provider';
+import { TelemetryProvider } from '@/providers/telemetry-provider';
+import { ThemeProvider } from '@/providers/theme-provider';
+import type { Auth0ComponentProviderProps } from '@/types/auth-types';
 
 /**
- * Auth0 Proxy Provider for Next.js and server-side authentication
- *
- * Use this when you have a backend proxy that handles Auth0 authentication.
- *
- * @example
- * ```tsx
- * <Auth0ProxyProvider
- *   authDetails={{ authProxyUrl: '/api/auth' }}
- *   themeSettings={{ mode: 'dark', theme: 'rounded' }}
- *   toastSettings={{ provider: 'custom', customMethods: {...} }}
- * >
- *   <YourApp />
- * </Auth0ProxyProvider>
- * ```
+ * Auth0 provider for RWAs using backend proxy auth.
+ * @param props - Provider configuration including domain, proxyConfig, i18n, themeSettings, toastSettings, cacheConfig, loader, and children.
+ * @returns Provider component tree
  */
 export const Auth0ComponentProvider = ({
   i18n,
-  authDetails,
+  domain,
+  proxyConfig,
+  previewMode,
   themeSettings = {
     theme: 'default',
     mode: 'light',
@@ -45,20 +49,46 @@ export const Auth0ComponentProvider = ({
   cacheConfig,
   loader,
   children,
-}: Auth0ComponentProviderProps & { children: React.ReactNode }) => {
+  telemetry: telemetryEnabled = true,
+}: Extract<Auth0ComponentProviderProps, { mode: 'proxy' }> & { children: React.ReactNode }) => {
   const mergedToastSettings = useToastProvider(toastSettings);
+  const { baseUrl, fetcher } = proxyConfig;
 
-  const memoizedAuthDetails = React.useMemo(
+  const [css, setCss] = React.useState<CssImplementation>('unknown');
+  const componentRef = React.useRef<string>('unknown');
+  const getComponent = React.useCallback<TelemetryComponentGetter>(() => componentRef.current, []);
+
+  React.useLayoutEffect(() => {
+    if (telemetryEnabled) {
+      setCss(detectCssImplementation());
+    }
+  }, [telemetryEnabled]);
+
+  const memoizedAuthDetails = React.useMemo<AuthDetails>(
     () => ({
-      ...authDetails,
-      contextInterface: undefined,
+      domain,
+      authProxyUrl: baseUrl,
+      fetcher,
+      previewMode,
     }),
-    [authDetails],
+    [domain, baseUrl, fetcher, previewMode],
+  );
+
+  const telemetry = React.useMemo<TelemetryConfig>(
+    () => ({
+      css,
+      distribution: DISTRIBUTION,
+      framework: FRAMEWORK,
+      enabled: telemetryEnabled,
+    }),
+    [css, telemetryEnabled],
   );
 
   const coreClient = useCoreClientInitialization({
     authDetails: memoizedAuthDetails,
     i18nOptions: i18n,
+    telemetry,
+    getComponent,
   });
 
   const coreClientValue = React.useMemo(
@@ -68,37 +98,40 @@ export const Auth0ComponentProvider = ({
     [coreClient],
   );
 
+  const fallback = loader || (
+    <StyledScope>
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Spinner />
+      </div>
+    </StyledScope>
+  );
+
   return (
-    <ThemeProvider
-      themeSettings={{
-        mode: themeSettings.mode,
-        variables: themeSettings.variables,
-        loader,
-        theme: themeSettings.theme,
-      }}
-    >
-      {mergedToastSettings.provider === 'sonner' && (
-        <Toaster
-          position={mergedToastSettings.settings?.position || 'top-right'}
-          closeButton={mergedToastSettings.settings?.closeButton ?? true}
-        />
-      )}
-      <React.Suspense
-        fallback={
-          loader || (
-            <div className="flex items-center justify-center min-h-[200px]">
-              <Spinner />
-            </div>
-          )
-        }
+    <TelemetryProvider componentRef={componentRef}>
+      <ThemeProvider
+        themeSettings={{
+          mode: themeSettings.mode,
+          variables: themeSettings.variables,
+          loader,
+          theme: themeSettings.theme,
+        }}
       >
-        <CoreClientContext.Provider value={coreClientValue}>
-          <QueryProvider cacheConfig={cacheConfig}>
-            <ScopeManagerProvider>{children}</ScopeManagerProvider>
-          </QueryProvider>
-        </CoreClientContext.Provider>
-      </React.Suspense>
-    </ThemeProvider>
+        {mergedToastSettings.provider === 'sonner' && (
+          <Toaster
+            position={mergedToastSettings.settings?.position || 'top-right'}
+            closeButton={mergedToastSettings.settings?.closeButton ?? true}
+            className="auth0-universal"
+          />
+        )}
+        {coreClient ? (
+          <CoreClientContext.Provider value={coreClientValue}>
+            <QueryProvider cacheConfig={cacheConfig}>{children}</QueryProvider>
+          </CoreClientContext.Provider>
+        ) : (
+          fallback
+        )}
+      </ThemeProvider>
+    </TelemetryProvider>
   );
 };
 

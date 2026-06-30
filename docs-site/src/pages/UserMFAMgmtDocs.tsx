@@ -139,35 +139,18 @@ export default function UserMFA() {
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3">Option 2: Shadcn CLI</h3>
             <p className="text-gray-600 mb-4">
-              If you're using Shadcn, you can add the UserMFAMgmt block directly to your project.
-              You'll still need to install the core package separately:
+              If you're using Shadcn, you can add the UserMFAMgmt block directly to your project:
             </p>
-            <div className="space-y-3">
-              <TabbedCodeBlock
-                tabs={[
-                  {
-                    label: 'npm',
-                    code: 'npm install @auth0/universal-components-core',
-                  },
-                  {
-                    label: 'pnpm',
-                    code: 'pnpm add @auth0/universal-components-core',
-                  },
-                ]}
-                language="bash"
-                title="1. Install Core Package"
-              />
-              <CodeBlock
-                code="npx shadcn@latest add https://auth0-universal-components.vercel.app/r/my-account/user-mfa-management.json"
-                language="bash"
-                title="2. Add Shadcn Block"
-              />
-            </div>
+            <CodeBlock
+              code="npx shadcn@latest add @auth0/user-mfa-management"
+              language="bash"
+              title="Add Shadcn Block"
+            />
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
               <p className="text-sm text-blue-800">
-                <strong>Note:</strong> Shadcn installs the React component source code in your{' '}
-                <code>src/auth0-ui-components/</code> directory along with all UI dependencies, but
-                you must install the core package separately via npm.
+                <strong>Note:</strong> This installs the React component source code in your{' '}
+                <code>src/components/auth0/</code> directory along with all UI dependencies and the
+                core package.
               </p>
             </div>
           </div>
@@ -178,14 +161,11 @@ export default function UserMFA() {
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-900">Basic Usage</h2>
         <CodeBlock
-          code={`// For SPA applications:
-import { UserMFAMgmt } from '@auth0/universal-components-react/spa';
-
-// For Next.js/RWA applications:
-// import { UserMFAMgmt } from '@auth0/universal-components-react/rwa';
+          code={`// For SPA/Next.js/RWA applications:
+import { UserMFAMgmt } from '@auth0/universal-components-react';
 
 // For shadcn users:
-// import { UserMFAMgmt } from '@/auth0-ui-components/blocks/my-account/mfa/user-mfa-management';
+// import { UserMFAMgmt } from '@/components/auth0/my-account/user-mfa-management';
 
 export function SecurityPage() {
   return (
@@ -759,7 +739,8 @@ interface UserMFAMgmtClasses {
         <h2 className="text-2xl font-semibold text-gray-900">Complete Integration Example</h2>
         <CodeBlock
           code={`import React from 'react';
-import { UserMFAMgmt, Auth0ComponentProvider } from '@auth0/universal-components-react/spa';
+import { UserMFAMgmt } from '@auth0/universal-components-react';
+import { Auth0ComponentProvider } from '@auth0/universal-components-react/spa';
 import { Auth0Provider } from '@auth0/auth0-react';
 
 function SecurityPage() {

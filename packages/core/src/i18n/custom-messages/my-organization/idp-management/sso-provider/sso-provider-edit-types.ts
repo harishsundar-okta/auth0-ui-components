@@ -1,3 +1,8 @@
+/**
+ * Custom message type definitions for SSO provider edit component.
+ * @module sso-provider-edit-types
+ * @internal
+ */
 import type { SsoDomainTabMessages } from '../sso-domain/sso-domain-tab-types';
 import type { SsoProvisioningTabMessages } from '../sso-provisioning/sso-provisioning-tab-types';
 
@@ -68,7 +73,9 @@ export interface SsoProviderNotificationMessages {
   update_success?: string;
   general_error?: string;
   provisioning_disabled_success?: string;
+  /** @deprecated Use scim_token_delete_success instead */
   scim_token_delete_sucess?: string;
+  scim_token_delete_success?: string;
   sso_attributes_sync_success?: string;
   provisioning_attributes_sync_success?: string;
 }

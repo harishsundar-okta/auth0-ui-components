@@ -1,4 +1,4 @@
-import { SsoProviderTable, type IdentityProvider } from '@auth0/universal-components-react/spa';
+import { SsoProviderTable, type IdpKnownResponse } from '@auth0/universal-components-react';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ const SsoProviderPage = () => {
   }, [navigate]);
 
   const handleEdit = useCallback(
-    (provider: IdentityProvider) => {
+    (provider: IdpKnownResponse) => {
       navigate(`/sso-provider/edit/${provider.id}`);
     },
     [navigate],
@@ -34,7 +34,7 @@ const SsoProviderPage = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 pt-8 space-y-6">
       <SsoProviderTable createAction={createAction} editAction={editAction} />
     </div>
   );

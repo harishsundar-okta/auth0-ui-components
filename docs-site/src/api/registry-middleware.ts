@@ -3,14 +3,35 @@ import path from 'path';
 
 import type { Plugin } from 'vite';
 
-const SPECIAL_FILES = ['index.json', 'registry.json', 'versions.json'];
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX = 60;
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+function pruneExpiredRateLimitEntries(now: number): void {
+  for (const [ip, entry] of rateLimitMap.entries()) {
+    if (now > entry.resetTime) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  pruneExpiredRateLimitEntries(now);
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
 
 interface VersionInfo {
-  current: string;
   latest: string;
-  beta?: string;
-  stable?: string | null;
-  majorVersions?: Record<string, { latest: string; stable: string | null; beta: string }>;
+  majorVersions?: Record<string, { latest: string }>;
   versions?: Record<string, { status: string; major: string }>;
 }
 
@@ -19,27 +40,19 @@ function getVersionPath(version: string, versionInfo: VersionInfo): string {
   if (versionData) {
     return `v${versionData.major}/${version}`;
   }
-  // Fallback: assume v1
   return `v1/${version}`;
 }
 
 function getVersionInfo(): VersionInfo {
-  try {
-    const versionsPath = path.join(process.cwd(), 'public', 'r', 'versions.json');
-    if (fs.existsSync(versionsPath)) {
-      return JSON.parse(fs.readFileSync(versionsPath, 'utf-8'));
-    }
-  } catch (error) {
-    console.error('Failed to read versions.json:', error);
+  const versionsPath = path.join(process.cwd(), 'public', 'r', 'versions.json');
+  if (!fs.existsSync(versionsPath)) {
+    throw new Error('versions.json not found. Run the build to generate it.');
   }
-  // Fallback
-  return {
-    current: '1.0.0-beta.6',
-    latest: '1.0.0-beta.6',
-    versions: {
-      '1.0.0-beta.6': { status: 'beta', major: '1' },
-    },
-  };
+  try {
+    return JSON.parse(fs.readFileSync(versionsPath, 'utf-8'));
+  } catch (error) {
+    throw new Error(`Failed to parse versions.json: ${error}`);
+  }
 }
 
 export function registryMiddleware(): Plugin {
@@ -51,17 +64,21 @@ export function registryMiddleware(): Plugin {
           return next();
         }
 
+        const clientIp =
+          (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+          req.socket.remoteAddress ||
+          'unknown';
+        if (isRateLimited(clientIp)) {
+          res.statusCode = 429;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Too Many Requests' }));
+          return;
+        }
+
         const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
         const fileName = url.pathname.replace(/^\/r\//, '');
 
-        // Special files are served directly without versioning
-        if (SPECIAL_FILES.includes(fileName)) {
-          return next();
-        }
-
-        // Security: Prevent path traversal
         const normalizedFileName = path.normalize(fileName).replace(/^(\.\.([\\/]|$))+/, '');
-
         if (normalizedFileName !== fileName || normalizedFileName.includes('..')) {
           res.statusCode = 400;
           res.setHeader('Content-Type', 'application/json');
@@ -69,34 +86,50 @@ export function registryMiddleware(): Plugin {
           return;
         }
 
-        const versionInfo = getVersionInfo();
+        const rootFilePath = path.join(process.cwd(), 'public', 'r', normalizedFileName);
         const versionParam = url.searchParams.get('version');
+        if (!versionParam && fs.existsSync(rootFilePath)) {
+          return next();
+        }
+
+        const versionInfo = getVersionInfo();
         let versionPath: string;
 
-        if (!versionParam) {
-          // Default to current version
-          versionPath = getVersionPath(versionInfo.current, versionInfo);
-        } else if (versionParam === 'latest') {
-          // Use latest version
+        if (!versionParam || versionParam === 'latest') {
           versionPath = getVersionPath(versionInfo.latest, versionInfo);
         } else if (versionParam.startsWith('v') && versionParam.includes('/')) {
-          // Full version path provided (e.g., 'v1/1.0.0-beta.5')
           versionPath = versionParam;
         } else if (versionParam.startsWith('v') && !versionParam.includes('/')) {
-          // Major version only (e.g., 'v1') - get latest for that major
           const majorVersion = versionInfo.majorVersions?.[versionParam]?.latest;
           versionPath = majorVersion
             ? getVersionPath(majorVersion, versionInfo)
-            : getVersionPath(versionInfo.current, versionInfo);
+            : getVersionPath(versionInfo.latest, versionInfo);
         } else {
-          // Just version number (e.g., '1.0.0-beta.5')
           versionPath = getVersionPath(versionParam, versionInfo);
         }
 
-        const baseDir = path.resolve(process.cwd(), 'public', 'r', versionPath);
-        const versionedPath = path.resolve(baseDir, normalizedFileName);
+        const normalizedVersionPath = path.normalize(versionPath);
+        if (
+          normalizedVersionPath !== versionPath ||
+          normalizedVersionPath.includes('..') ||
+          path.isAbsolute(normalizedVersionPath)
+        ) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Invalid version' }));
+          return;
+        }
 
-        // Security: Ensure resolved path is within base directory
+        const registryRoot = path.resolve(process.cwd(), 'public', 'r');
+        const baseDir = path.resolve(registryRoot, versionPath);
+        if (!baseDir.startsWith(registryRoot + path.sep) && baseDir !== registryRoot) {
+          res.statusCode = 403;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Access denied' }));
+          return;
+        }
+
+        const versionedPath = path.resolve(baseDir, normalizedFileName);
         if (!versionedPath.startsWith(baseDir + path.sep) && versionedPath !== baseDir) {
           res.statusCode = 403;
           res.setHeader('Content-Type', 'application/json');
@@ -106,7 +139,6 @@ export function registryMiddleware(): Plugin {
 
         if (fs.existsSync(versionedPath)) {
           try {
-            // nosemgrep: express-fs-filename
             const content = fs.readFileSync(versionedPath, 'utf-8');
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
@@ -128,7 +160,7 @@ export function registryMiddleware(): Plugin {
           res.end(
             JSON.stringify({
               error: 'Not Found',
-              message: `Component "${fileName}" does not exist in version "${versionPath}"`,
+              message: `Component "${normalizedFileName}" does not exist in version "${versionPath}"`,
               hint: 'Check available versions or component name',
             }),
           );

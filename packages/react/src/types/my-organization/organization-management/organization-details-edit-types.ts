@@ -1,3 +1,8 @@
+/**
+ * Organization details edit types.
+ * @module organization-details-edit-types
+ */
+
 import type {
   BlockComponentSharedProps,
   OrganizationDetailsSchemas,
@@ -5,6 +10,7 @@ import type {
   BackButton,
   OrganizationPrivate,
   OrganizationDetailsEditMessages,
+  ComponentStyling,
 } from '@auth0/universal-components-core';
 import type { LucideIcon } from 'lucide-react';
 import type React from 'react';
@@ -12,8 +18,9 @@ import type React from 'react';
 import type {
   OrganizationDetailsClasses,
   OrganizationDetailsFormActions,
-} from './organization-details-types';
+} from '@/types/my-organization/organization-management/organization-details-types';
 
+/** Type alias for organization edit CSS class overrides. */
 export type OrganizationEditClasses = OrganizationDetailsClasses;
 
 /**
@@ -48,6 +55,11 @@ export interface UseOrganizationDetailsEditOptions {
   customMessages?: OrganizationDetailsEditProps['customMessages'];
 }
 
+export type UseOrganizationDetailsEditServiceOptions = Pick<
+  UseOrganizationDetailsEditOptions,
+  'saveAction' | 'customMessages'
+>;
+
 export interface UseOrganizationDetailsEditResult {
   organization: OrganizationPrivate;
   isFetchLoading: boolean;
@@ -56,4 +68,15 @@ export interface UseOrganizationDetailsEditResult {
   formActions: OrganizationDetailsFormActions;
   fetchOrgDetails: () => Promise<void>;
   updateOrgDetails: (data: OrganizationPrivate) => Promise<boolean>;
+}
+
+export interface OrganizationDetailsEditViewProps {
+  organization: OrganizationPrivate;
+  schema: Partial<OrganizationDetailsEditSchemas> | undefined;
+  styling: ComponentStyling<OrganizationDetailsClasses>;
+  customMessages: OrganizationDetailsEditProps['customMessages'];
+  readOnly: OrganizationDetailsEditProps['readOnly'];
+  hideHeader: boolean;
+  backButton?: OrganizationEditBackButton;
+  formActions: OrganizationDetailsFormActions;
 }

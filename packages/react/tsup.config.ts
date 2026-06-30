@@ -2,6 +2,7 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: {
+    index: 'src/index.ts',
     spa: 'src/spa.ts',
     rwa: 'src/rwa.ts',
   },
@@ -10,8 +11,17 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   minify: true,
-  external: ['react', 'react-dom', 'react-hook-form', '@auth0/auth0-react'],
+  external: [
+    'react',
+    'react-dom',
+    'react-hook-form',
+    '@auth0/auth0-react',
+    '@tanstack/react-query',
+  ],
   banner: {
     js: '"use client";',
+  },
+  define: {
+    __DISTRIBUTION__: JSON.stringify('npm'),
   },
 });

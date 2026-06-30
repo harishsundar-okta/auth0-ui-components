@@ -1,3 +1,8 @@
+/**
+ * Domain management type definitions.
+ * @module domain-types
+ * @internal
+ */
 import type { MyOrganization } from '@auth0/myorganization-js';
 import type { InternalDomainCreateFormValues } from '@core/schemas';
 
@@ -10,17 +15,8 @@ export type CreateOrganizationDomainRequestContent =
 
 export type CreateDomainRequestContentPrivate = InternalDomainCreateFormValues;
 
-type DomainStatus = 'pending' | 'failed' | 'verified';
+export type DomainStatus = MyOrganization.OrgDomainStatusEnum;
 
-export interface DomainCreate {
-  domain: string;
-}
+export type DomainCreate = MyOrganization.CreateOrganizationDomainRequestContent;
 
-export interface Domain {
-  id: string;
-  org_id: string;
-  domain: string;
-  status: DomainStatus;
-  verification_txt: string;
-  verification_host: string;
-}
+export type Domain = MyOrganization.OrgDomain;

@@ -2,33 +2,36 @@ import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { Auth0ComponentProvider } from '../proxy-provider';
+import { useCoreClientInitialization } from '@/hooks/shared/use-core-client-initialization';
+import { Auth0ComponentProvider } from '@/providers/proxy-provider';
 
-vi.mock('../../hooks/use-core-client-initialization', () => ({
+vi.mock('@/hooks/shared/use-core-client-initialization', () => ({
   useCoreClientInitialization: vi.fn(() => ({
     isInitialized: true,
     error: undefined,
   })),
 }));
 
-vi.mock('../../components/ui/sonner', () => ({
+const mockUseCoreClientInitialization = vi.mocked(useCoreClientInitialization);
+
+vi.mock('@/components/auth0/shared/sonner', () => ({
   Toaster: () => <div data-testid="toaster" />,
 }));
 
-vi.mock('../../components/ui/spinner', () => ({
+vi.mock('@/components/ui/spinner', () => ({
   Spinner: () => <div data-testid="spinner" />,
-}));
-
-vi.mock('../scope-manager-provider', () => ({
-  ScopeManagerProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="scope-manager-provider">{children}</div>
-  ),
 }));
 
 vi.mock('../theme-provider', () => ({
   ThemeProvider: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="theme-provider">{children}</div>
   ),
+  ThemeContext: React.createContext({
+    theme: 'default',
+    isDarkMode: false,
+    variables: undefined,
+    loader: undefined,
+  }),
 }));
 
 describe('Auth0ComponentProvider', () => {
@@ -38,7 +41,11 @@ describe('Auth0ComponentProvider', () => {
 
   it('should render children', () => {
     render(
-      <Auth0ComponentProvider authDetails={{ authProxyUrl: '/api/auth' }}>
+      <Auth0ComponentProvider
+        domain="test.auth0.com"
+        mode="proxy"
+        proxyConfig={{ baseUrl: '/api/auth' }}
+      >
         <div data-testid="child-content">Test Content</div>
       </Auth0ComponentProvider>,
     );
@@ -49,7 +56,11 @@ describe('Auth0ComponentProvider', () => {
 
   it('should render ThemeProvider', () => {
     render(
-      <Auth0ComponentProvider authDetails={{ authProxyUrl: '/api/auth' }}>
+      <Auth0ComponentProvider
+        domain="test.auth0.com"
+        mode="proxy"
+        proxyConfig={{ baseUrl: '/api/auth' }}
+      >
         <div>Test</div>
       </Auth0ComponentProvider>,
     );
@@ -59,7 +70,11 @@ describe('Auth0ComponentProvider', () => {
 
   it('should render Toaster', () => {
     render(
-      <Auth0ComponentProvider authDetails={{ authProxyUrl: '/api/auth' }}>
+      <Auth0ComponentProvider
+        domain="test.auth0.com"
+        mode="proxy"
+        proxyConfig={{ baseUrl: '/api/auth' }}
+      >
         <div>Test</div>
       </Auth0ComponentProvider>,
     );
@@ -67,19 +82,13 @@ describe('Auth0ComponentProvider', () => {
     expect(screen.getByTestId('toaster')).toBeInTheDocument();
   });
 
-  it('should render ScopeManagerProvider', () => {
-    render(
-      <Auth0ComponentProvider authDetails={{ authProxyUrl: '/api/auth' }}>
-        <div>Test</div>
-      </Auth0ComponentProvider>,
-    );
-
-    expect(screen.getByTestId('scope-manager-provider')).toBeInTheDocument();
-  });
-
   it('should apply default theme settings when not provided', () => {
     render(
-      <Auth0ComponentProvider authDetails={{ authProxyUrl: '/api/auth' }}>
+      <Auth0ComponentProvider
+        domain="test.auth0.com"
+        mode="proxy"
+        proxyConfig={{ baseUrl: '/api/auth' }}
+      >
         <div>Test</div>
       </Auth0ComponentProvider>,
     );
@@ -90,7 +99,9 @@ describe('Auth0ComponentProvider', () => {
   it('should apply custom theme settings', () => {
     render(
       <Auth0ComponentProvider
-        authDetails={{ authProxyUrl: '/api/auth' }}
+        domain="test.auth0.com"
+        mode="proxy"
+        proxyConfig={{ baseUrl: '/api/auth' }}
         themeSettings={{
           mode: 'dark',
           theme: 'rounded',
@@ -111,7 +122,9 @@ describe('Auth0ComponentProvider', () => {
   it('should render custom loader when provided', () => {
     render(
       <Auth0ComponentProvider
-        authDetails={{ authProxyUrl: '/api/auth' }}
+        domain="test.auth0.com"
+        mode="proxy"
+        proxyConfig={{ baseUrl: '/api/auth' }}
         loader={<div data-testid="custom-loader">Loading...</div>}
       >
         <div>Test</div>
@@ -119,5 +132,22 @@ describe('Auth0ComponentProvider', () => {
     );
 
     expect(screen.getByTestId('theme-provider')).toBeInTheDocument();
+  });
+
+  it('should render fallback when coreClient is not initialized', () => {
+    mockUseCoreClientInitialization.mockReturnValue(null as never);
+
+    render(
+      <Auth0ComponentProvider
+        domain="test.auth0.com"
+        mode="proxy"
+        proxyConfig={{ baseUrl: '/api/auth' }}
+      >
+        <div data-testid="child-content">Test Content</div>
+      </Auth0ComponentProvider>,
+    );
+
+    expect(screen.getByTestId('spinner')).toBeInTheDocument();
+    expect(screen.queryByTestId('child-content')).not.toBeInTheDocument();
   });
 });

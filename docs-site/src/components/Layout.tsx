@@ -6,8 +6,9 @@ import {
   Sparkles,
   ExternalLink,
   Zap,
-  Github,
+  GitBranch,
   BookOpenText,
+  Palette,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -69,6 +70,12 @@ export default function Layout({ children }: LayoutProps) {
       href: '/',
     },
     {
+      title: 'Styling',
+      icon: Palette,
+      color: 'text-violet-500',
+      href: '/styling',
+    },
+    {
       title: 'My Account',
       icon: User,
       color: 'text-blue-500',
@@ -88,6 +95,8 @@ export default function Layout({ children }: LayoutProps) {
         { name: 'SsoProviderCreate', href: '/my-organization/sso-provider-create' },
         { name: 'SsoProviderEdit', href: '/my-organization/sso-provider-edit' },
         { name: 'DomainTable', href: '/my-organization/domain-table' },
+        { name: 'OrganizationMemberManagement', href: '/my-organization/member-management' },
+        { name: 'OrganizationMemberDetail', href: '/my-organization/member-detail' },
       ],
     },
   ];
@@ -254,7 +263,7 @@ export default function Layout({ children }: LayoutProps) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                   >
-                    <Github className="h-3.5 w-3.5" />
+                    <GitBranch className="h-3.5 w-3.5" />
                     {currentTech.sdkLabel}
                     <ExternalLink className="h-3 w-3" />
                   </a>

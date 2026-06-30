@@ -1,3 +1,8 @@
+/**
+ * SSO provisioning type definitions for SCIM token management.
+ * @module sso-provisioning-types
+ * @internal
+ */
 import type { MyOrganization } from '@auth0/myorganization-js';
 
 export type GetIdPProvisioningConfigResponseContent =
@@ -12,4 +17,5 @@ export type CreateIdpProvisioningScimTokenRequestContent =
   MyOrganization.CreateIdpProvisioningScimTokenRequestContent;
 export type IdpProvisioningConfig = MyOrganization.IdpProvisioningConfig;
 export type IdpScimTokenBase = MyOrganization.IdpScimTokenBase;
-export type IdpProvisioningUserAttributeMap = MyOrganization.IdpProvisioningUserAttributeMapItem[];
+export type IdpProvisioningUserAttributeMapItem =
+  MyOrganization.IdpProvisioningUserAttributeMapItem;

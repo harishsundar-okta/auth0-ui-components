@@ -1,10 +1,10 @@
 'use client';
 
-import { OrganizationDetailsEdit } from '@auth0/universal-components-react/rwa';
+import { OrganizationDetailsEdit } from '@auth0/universal-components-react';
 
 export default function OrganizationManagementPage() {
   return (
-    <div className="p-6 pt-8 space-y-6">
+    <div className="space-y-6">
       <OrganizationDetailsEdit />
     </div>
   );

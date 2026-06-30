@@ -1,4 +1,3 @@
-import './App.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Auth0ComponentProvider } from '@auth0/universal-components-react/spa';
 import React from 'react';
@@ -9,12 +8,16 @@ import { Navbar } from './components/nav-bar';
 import { Sidebar } from './components/side-bar';
 import DomainManagementPage from './views/domain-management-page';
 import HomePage from './views/home-page';
+import MemberDetailPage from './views/member-detail-page';
+import MemberManagementPage from './views/member-management-page';
 import MFAPage from './views/mfa-page';
+import PasskeyPage from './views/passkey-page';
 import OrganizationManagementPage from './views/organization-management-page';
 import ProfilePage from './views/profile-page';
 import SsoProviderCreatePage from './views/sso-provider-create-page';
 import SsoProviderEditPage from './views/sso-provider-edit-page';
 import SsoProviderPage from './views/sso-provider-page';
+import { useDarkMode } from './hooks/use-dark-mode';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -39,7 +42,7 @@ function AppContent() {
   const { isAuthenticated } = useAuth0();
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background" data-theme="default">
       <Navbar />
       {isAuthenticated && <Sidebar />}
       <main className={`pt-16 ${isAuthenticated ? 'ml-64' : ''}`}>
@@ -58,6 +61,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <MFAPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/passkeys"
+            element={
+              <ProtectedRoute>
+                <PasskeyPage />
               </ProtectedRoute>
             }
           />
@@ -101,6 +112,22 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/member-management/:user_id"
+            element={
+              <ProtectedRoute>
+                <MemberDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/member-management"
+            element={
+              <ProtectedRoute>
+                <MemberManagementPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
     </div>
@@ -109,13 +136,14 @@ function AppContent() {
 
 function App() {
   const { i18n } = useTranslation();
+  const isDarkMode = useDarkMode();
 
   return (
     <Auth0ComponentProvider
       i18n={{ currentLanguage: i18n.language }}
       themeSettings={{
         theme: 'default',
-        mode: 'light',
+        mode: isDarkMode ? 'dark' : 'light',
       }}
     >
       <AppContent />

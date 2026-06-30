@@ -1,9 +1,15 @@
+/**
+ * Text field with image preview.
+ * @module image-preview-field
+ * @internal
+ */
+
 import { ImageIcon } from 'lucide-react';
 import * as React from 'react';
 
-import { TextField } from '../../components/ui/text-field';
-import type { TextFieldProps } from '../../components/ui/text-field';
-import { cn } from '../../lib/theme-utils';
+import { TextField } from '@/components/ui/text-field';
+import type { TextFieldProps } from '@/components/ui/text-field';
+import { cn } from '@/lib/utils';
 
 export interface ImagePreviewFieldProps extends Omit<TextFieldProps, 'onChange'> {
   previewClassName?: string;
@@ -71,6 +77,7 @@ function ImagePreviewField({
 
   const hasError = error || (!isValidUrl && imageUrl.trim() !== '') || imageError;
   const showPreview = imageUrl.trim() !== '' && isValidUrl && !imageError;
+  const sanitizedImageUrl = showPreview ? encodeURI(imageUrl) : '';
 
   return (
     <div className="space-y-2">
@@ -84,8 +91,8 @@ function ImagePreviewField({
         {showPreview ? (
           <img
             loading="lazy"
-            srcSet={imageUrl}
-            src={imageUrl}
+            srcSet={sanitizedImageUrl}
+            src={sanitizedImageUrl}
             sizes={imgSizes}
             decoding="async"
             alt="Preview"

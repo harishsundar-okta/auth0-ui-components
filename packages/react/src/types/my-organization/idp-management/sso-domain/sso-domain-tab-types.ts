@@ -1,22 +1,27 @@
+/**
+ * SSO domain tab types.
+ * @module sso-domain-tab-types
+ */
+
 import type {
   ComponentAction,
   Domain,
   DomainCreateSchemas,
-  IdentityProvider,
+  IdpKnownResponse,
   SharedComponentProps,
   SsoDomainTabMessages,
 } from '@auth0/universal-components-core';
 
-/* ============ Components ============ */
-
+/** SSO domains tab edit action props. */
 export interface SsoDomainsTabEditProps {
   createAction?: ComponentAction<Domain>;
   verifyAction?: ComponentAction<Domain>;
   deleteAction?: ComponentAction<Domain, void>;
-  associateToProviderAction?: ComponentAction<Domain, IdentityProvider | null>;
-  deleteFromProviderAction?: ComponentAction<Domain, IdentityProvider | null>;
+  associateToProviderAction?: ComponentAction<Domain, IdpKnownResponse | null>;
+  deleteFromProviderAction?: ComponentAction<Domain, IdpKnownResponse | null>;
 }
 
+/** CSS classes for SsoDomainsTab. */
 export interface SsoDomainTabClasses {
   'SsoDomainsTab-header'?: string;
   'SsoDomainsTab-table'?: string;
@@ -25,10 +30,12 @@ export interface SsoDomainTabClasses {
   'SsoDomainsTab-deleteModal'?: string;
 }
 
+/** SSO provider edit domains tab schema. */
 export interface SsoProviderEditDomainsTabSchema {
   create: DomainCreateSchemas;
 }
 
+/** Props for SsoDomainsTab component. */
 export interface SsoDomainsTabProps
   extends SharedComponentProps<
     SsoDomainTabMessages,
@@ -37,10 +44,8 @@ export interface SsoDomainsTabProps
   > {
   domains: SsoDomainsTabEditProps | undefined;
   idpId: string;
-  provider: IdentityProvider | null;
+  provider: IdpKnownResponse | null;
 }
-
-/* ============ Subcomponents ============ */
 
 export interface SsoDomainTabActionColumn
   extends SharedComponentProps<
@@ -57,11 +62,9 @@ export interface SsoDomainTabActionColumn
   onToggle: (domain: Domain, newCheckedValue: boolean) => Promise<void>;
 }
 
-/* ============ Hooks ============ */
-
 export interface UseSsoDomainTabOptions extends SharedComponentProps {
   domains: SsoDomainsTabEditProps;
-  provider: IdentityProvider | null;
+  provider: IdpKnownResponse | null;
 }
 
 export interface UseSsoDomainTabReturn {

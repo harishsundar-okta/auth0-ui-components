@@ -1,8 +1,13 @@
+/**
+ * SSO provider edit types.
+ * @module sso-provider-edit-types
+ */
+
 import type {
   SharedComponentProps,
   BackButton,
   SsoProviderEditMessages,
-  IdentityProvider,
+  IdpKnownResponse,
   IdpId,
   OrganizationPrivate,
   UpdateIdentityProviderRequestContentPrivate,
@@ -11,10 +16,11 @@ import type {
   ListIdpProvisioningScimTokensResponseContent,
   GetIdPProvisioningConfigResponseContent,
   SsoProviderAttributeMappingsMessages,
-  IdpProvisioningUserAttributeMap,
-  IdpUserAttributeMap,
+  IdpProvisioningUserAttributeMapItem,
+  IdpUserAttributeMapItem,
   IdpStrategy,
   AttributeSyncAlertMessages,
+  GetIdpConfigurationResponseContent,
 } from '@auth0/universal-components-core';
 import type { LucideIcon } from 'lucide-react';
 import type React from 'react';
@@ -23,26 +29,25 @@ import type {
   SsoDomainsTabEditProps,
   SsoDomainTabClasses,
   SsoProviderEditDomainsTabSchema,
-} from '../sso-domain/sso-domain-tab-types';
-import type {
-  SsoProvisioningTabClasses,
-  SsoProvisioningTabEditProps,
-  SsoProvisioningTabSchemas,
-} from '../sso-provisioning/sso-provisioning-tab-types';
-
+} from '@/types/my-organization/idp-management/sso-domain/sso-domain-tab-types';
 import type {
   SsoProviderTabClasses,
   SsoProviderTabEditProps,
   SsoProviderTabSchemas,
-} from './sso-provider-tab-types';
+} from '@/types/my-organization/idp-management/sso-provider/sso-provider-tab-types';
+import type {
+  SsoProvisioningTabClasses,
+  SsoProvisioningTabEditProps,
+  SsoProvisioningTabSchemas,
+} from '@/types/my-organization/idp-management/sso-provisioning/sso-provisioning-tab-types';
 
-/* ============ Components ============ */
-
+/** Back button for SSO provider edit. */
 export interface SsoProviderEditBackButton extends Omit<BackButton, 'onClick'> {
   icon?: LucideIcon;
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
+/** CSS classes for SsoProviderEdit. */
 export interface SsoProviderEditClasses
   extends SsoProviderTabClasses,
     SsoProvisioningTabClasses,
@@ -51,12 +56,14 @@ export interface SsoProviderEditClasses
   'SsoProviderEdit-tabs'?: string;
 }
 
+/** SSO provider edit schemas. */
 export interface SsoProviderEditSchema {
   provider: SsoProviderTabSchemas;
   provisioning: SsoProvisioningTabSchemas;
   domains?: SsoProviderEditDomainsTabSchema;
 }
 
+/** Props for SsoProviderEdit component. */
 export interface SsoProviderEditProps
   extends SharedComponentProps<
     SsoProviderEditMessages,
@@ -71,18 +78,15 @@ export interface SsoProviderEditProps
   backButton?: SsoProviderEditBackButton;
 }
 
-/* ============ Subcomponents ============ */
-
-/* ============ Hooks ============ */
-
+/** useSsoProviderEdit options. */
 export interface UseSsoProviderEditOptions extends SharedComponentProps {
   sso?: SsoProviderTabEditProps;
   provisioning?: SsoProvisioningTabEditProps;
   domains?: SsoDomainsTabEditProps;
 }
 
-export interface UseSsoProviderEditReturn {
-  provider: IdentityProvider | null;
+export interface UseSsoProviderEditServiceReturn {
+  provider: IdpKnownResponse | null;
   organization: OrganizationPrivate | null;
   provisioningConfig: GetIdPProvisioningConfigResponseContent | null;
   isLoading: boolean;
@@ -99,7 +103,7 @@ export interface UseSsoProviderEditReturn {
   isProvisioningAttributesSyncing: boolean;
   hasSsoAttributeSyncWarning: boolean;
   hasProvisioningAttributeSyncWarning: boolean;
-  fetchProvider: () => Promise<IdentityProvider | null>;
+  fetchProvider: () => Promise<IdpKnownResponse | null>;
   fetchOrganizationDetails: () => Promise<void>;
   fetchProvisioning: () => Promise<GetIdPProvisioningConfigResponseContent | null>;
   updateProvider: (data: UpdateIdentityProviderRequestContentPrivate) => Promise<void>;
@@ -116,9 +120,18 @@ export interface UseSsoProviderEditReturn {
   onRemoveConfirm: () => Promise<void>;
 }
 
+export interface UseSsoProviderEditReturn extends UseSsoProviderEditServiceReturn {
+  shouldAllowDeletion: boolean;
+  isLoadingConfig: boolean;
+  idpConfig: GetIdpConfigurationResponseContent | null;
+  isLoadingIdpConfig: boolean;
+  showProvisioningTab: boolean;
+  handleToggleProvider: (enabled: boolean) => Promise<void>;
+}
+
 export interface SsoProviderAttributeMappingsProps
   extends SharedComponentProps<SsoProviderAttributeMappingsMessages> {
-  userAttributeMap: IdpProvisioningUserAttributeMap | IdpUserAttributeMap | null;
+  userAttributeMap: IdpProvisioningUserAttributeMapItem[] | IdpUserAttributeMapItem[] | null;
   strategy: IdpStrategy | null;
   isProvisioning?: boolean;
   className?: string;
@@ -130,4 +143,59 @@ export interface SsoProviderAttributeSyncAlertProps {
   onSync?: () => void | Promise<void>;
   isSyncing?: boolean;
   customMessages?: Partial<AttributeSyncAlertMessages>;
+}
+
+export type SsoProviderEditViewProps = {
+  logic: SsoProviderEditLogicProps;
+  handlers: SsoProviderEditHandlerProps;
+};
+
+export interface SsoProviderEditLogicProps
+  extends SsoProviderEditProps,
+    Omit<
+      UseSsoProviderEditLogicResult,
+      'handleToggleProvider' | 'isLoadingConfig' | 'isLoadingIdpConfig'
+    >,
+    Pick<
+      UseSsoProviderEditReturn,
+      | 'provider'
+      | 'organization'
+      | 'isLoading'
+      | 'isUpdating'
+      | 'isDeleting'
+      | 'isRemoving'
+      | 'isProvisioningUpdating'
+      | 'isProvisioningDeleting'
+      | 'isScimTokensLoading'
+      | 'isScimTokenCreating'
+      | 'isScimTokenDeleting'
+      | 'isSsoAttributesSyncing'
+      | 'isProvisioningAttributesSyncing'
+      | 'hasSsoAttributeSyncWarning'
+      | 'hasProvisioningAttributeSyncWarning'
+    > {}
+
+export interface SsoProviderEditHandlerProps {
+  updateProvider: (data: UpdateIdentityProviderRequestContentPrivate) => Promise<void>;
+  createProvisioningAction: () => Promise<void>;
+  deleteProvisioningAction: () => Promise<void>;
+  listScimTokens: () => Promise<ListIdpProvisioningScimTokensResponseContent | null>;
+  createScimTokenAction: (
+    data: CreateIdpProvisioningScimTokenRequestContent,
+  ) => Promise<CreateIdpProvisioningScimTokenResponseContent | undefined>;
+  deleteScimTokenAction: (idpScimTokenId: string) => Promise<void>;
+  syncSsoAttributes: () => Promise<void>;
+  syncProvisioningAttributes: () => Promise<void>;
+  onDeleteConfirm: () => Promise<void>;
+  onRemoveConfirm: () => Promise<void>;
+  handleToggleProvider: (enabled: boolean) => Promise<void>;
+}
+
+export interface UseSsoProviderEditLogicResult {
+  shouldAllowDeletion: boolean;
+  isLoadingConfig: boolean;
+  idpConfig: GetIdpConfigurationResponseContent | null;
+  isLoadingIdpConfig: boolean;
+  showProvisioningTab: boolean;
+  handleToggleProvider: (enabled: boolean) => Promise<void>;
 }

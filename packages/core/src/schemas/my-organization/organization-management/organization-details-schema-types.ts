@@ -1,9 +1,19 @@
 /**
+ * Organization details schema type definitions.
+ * @module organization-details-schema-types
+ * @internal
+ */
+
+/**
  * Schemas that can be used to override default schemas.
+ * @internal
  */
 export interface OrganizationDetailsSchemas {
   name?: {
+    regex?: RegExp;
     errorMessage?: string;
+    minLength?: number;
+    maxLength?: number;
   };
   displayName?: {
     regex?: RegExp;

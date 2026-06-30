@@ -1,4 +1,4 @@
-import { User, Building, Settings, Shield } from 'lucide-react';
+import { User, Building, Settings, Shield, Users, KeyRound } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,7 @@ export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="fixed top-0 left-0 z-40 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 shadow-lg pt-20">
+    <div className="fixed top-0 left-0 z-40 h-full w-64 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-700 shadow-lg pt-20">
       <div className="p-4 space-y-6">
         {/* My Account Section */}
         {config.features.enableMyAccount && (
@@ -24,10 +24,19 @@ export const Sidebar: React.FC = () => {
               <li>
                 <Link
                   to="/mfa"
-                  className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-accent/90 rounded-md dark:text-gray-300 dark:hover:text-white transition-colors"
                 >
                   <Shield className="h-4 w-4 flex-shrink-0" />
                   <span className="truncate">{t('sidebar.multi-factor-authentication')}</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/passkeys"
+                  className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-accent/90 rounded-md dark:text-gray-300 dark:hover:text-white transition-colors"
+                >
+                  <KeyRound className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">{t('sidebar.passkeys')}</span>
                 </Link>
               </li>
             </ul>
@@ -46,7 +55,7 @@ export const Sidebar: React.FC = () => {
             <li>
               <Link
                 to="/organization-management"
-                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-accent/90 rounded-md dark:text-gray-300 dark:hover:text-white transition-colors cursor-default"
               >
                 <Settings className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">{t('sidebar.organization-management')}</span>
@@ -55,7 +64,7 @@ export const Sidebar: React.FC = () => {
             <li>
               <Link
                 to="/sso-providers"
-                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-accent/90 rounded-md dark:text-gray-300 dark:hover:text-white transition-colors cursor-default"
               >
                 <Settings className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">{t('sidebar.sso-provider')}</span>
@@ -64,10 +73,19 @@ export const Sidebar: React.FC = () => {
             <li>
               <Link
                 to="/domain-management"
-                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-accent/90 rounded-md dark:text-gray-300 dark:hover:text-white transition-colors cursor-default"
               >
                 <Settings className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">{t('sidebar.domain-management')}</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/member-management"
+                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-accent/90 rounded-md dark:text-gray-300 dark:hover:text-white transition-colors cursor-default"
+              >
+                <Users className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{t('sidebar.member-management')}</span>
               </Link>
             </li>
           </ul>

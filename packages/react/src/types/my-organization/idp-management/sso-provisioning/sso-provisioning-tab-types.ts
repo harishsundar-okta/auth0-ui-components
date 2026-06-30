@@ -1,7 +1,12 @@
+/**
+ * SSO provisioning tab types.
+ * @module sso-provisioning-tab-types
+ */
+
 import type {
   SharedComponentProps,
   SsoProvisioningTabMessages,
-  IdentityProvider,
+  IdpKnownResponse,
   CreateIdpProvisioningScimTokenRequestContent,
   ListIdpProvisioningScimTokensResponseContent,
   CreateIdpProvisioningScimTokenResponseContent,
@@ -12,17 +17,20 @@ import type {
   CreateIdPProvisioningConfigResponseContent,
 } from '@auth0/universal-components-core';
 
-import type { ProvisioningManageTokenClasses } from './provisioning-manage-token-types';
+import type { ProvisioningManageTokenClasses } from '@/types/my-organization/idp-management/sso-provisioning/provisioning-manage-token-types';
 
+/** SSO provisioning tab edit action props. */
 export interface SsoProvisioningTabEditProps {
-  createAction?: ComponentAction<IdentityProvider, CreateIdPProvisioningConfigResponseContent>;
-  deleteAction?: ComponentAction<IdentityProvider, void>;
+  createAction?: ComponentAction<IdpKnownResponse, CreateIdPProvisioningConfigResponseContent>;
+  deleteAction?: ComponentAction<IdpKnownResponse, void>;
   createScimTokenAction?: ComponentAction<
-    IdentityProvider,
+    IdpKnownResponse,
     CreateIdpProvisioningScimTokenResponseContent
   >;
-  deleteScimTokenAction?: ComponentAction<IdentityProvider, void>;
+  deleteScimTokenAction?: ComponentAction<IdpKnownResponse, void>;
 }
+
+/** CSS classes for SsoProvisioningTab. */
 export interface SsoProvisioningTabClasses {
   'SsoProvisioningTab-root'?: string;
   'SsoProvisioningDetails-root'?: string;
@@ -31,9 +39,10 @@ export interface SsoProvisioningTabClasses {
   'SsoProviderAttributeSyncAlert-root'?: string;
 }
 
+/** Props for SsoProvisioningTab component. */
 export interface SsoProvisioningTabProps
   extends SharedComponentProps<SsoProvisioningTabMessages, SsoProvisioningTabClasses> {
-  provider: IdentityProvider;
+  provider: IdpKnownResponse;
   isProvisioningUpdating: boolean;
   isProvisioningDeleting: boolean;
   isScimTokensLoading: boolean;
@@ -73,7 +82,7 @@ export interface SsoProvisioningDetailsProps
     SsoProvisioningDetailsClasses,
     SsoProvisioningTabSchemas
   > {
-  provider: IdentityProvider;
+  provider: IdpKnownResponse;
   provisioningConfig: GetIdPProvisioningConfigResponseContent | null;
   isScimTokensLoading: boolean;
   isScimTokenCreating: boolean;

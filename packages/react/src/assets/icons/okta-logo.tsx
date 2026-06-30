@@ -1,5 +1,13 @@
+/**
+ * Okta logo icon component.
+ * @module okta-logo
+ * @internal
+ */
+
 import { OktaLogoSvg } from '@auth0/universal-components-core';
 import React from 'react';
+
+import { cn } from '@/lib/utils';
 
 export interface OktaLogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   width?: number | string;
@@ -26,7 +34,7 @@ const OktaLogo: React.FC<OktaLogoProps> = ({
       alt={title}
       width={width}
       height={height}
-      className={className}
+      className={cn('dark:invert', className)}
       {...props}
     />
   );

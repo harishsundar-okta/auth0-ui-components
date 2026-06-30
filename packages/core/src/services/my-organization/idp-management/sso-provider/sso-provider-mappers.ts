@@ -1,3 +1,8 @@
+/**
+ * SSO provider data mappers for API transformations.
+ * @module sso-provider-mappers
+ * @internal
+ */
 import type {
   ProviderDetailsFormValues,
   ProviderSelectionFormValues,
@@ -13,6 +18,8 @@ import type {
 
 type CombinedProviderFormValues = ProviderSelectionFormValues &
   ProviderDetailsFormValues & {
+    show_as_button?: boolean;
+    assign_membership_on_login?: boolean;
     options: ProviderConfigureFormValues;
   };
 
@@ -56,6 +63,9 @@ const STRATEGY_FIELD_MAPPINGS = {
 
 /**
  * Filters and validates form options based on strategy-specific API requirements.
+ * @param strategy - Authentication strategy
+ * @param formOptions - Form configuration options
+ * @returns Filtered options valid for the strategy
  */
 const getValidOptionsForStrategy = (
   strategy: IdpStrategy,
@@ -81,9 +91,12 @@ export const SsoProviderMappers = {
   /**
    * Transforms form data to API request format for creating SSO providers.
    * Filters out form-specific fields and includes only strategy-valid API fields.
+   * @param data - The data object to process
+   * @returns API request payload for provider creation
    */
   createToAPI(data: CombinedProviderFormValues): CreateIdentityProviderRequestContent {
-    const { strategy, name, display_name, options } = data;
+    const { strategy, name, display_name, show_as_button, assign_membership_on_login, options } =
+      data;
 
     if (!name || name.trim() === '') {
       throw new Error('Provider name is required');
@@ -93,6 +106,8 @@ export const SsoProviderMappers = {
       strategy,
       name: name.trim(),
       display_name,
+      show_as_button,
+      assign_membership_on_login,
       options: getValidOptionsForStrategy(strategy, options),
     } as CreateIdentityProviderRequestContent;
   },
@@ -100,6 +115,8 @@ export const SsoProviderMappers = {
   /**
    * Transforms form data to API request format for updating SSO providers.
    * Only includes fields that have been modified and are valid for the strategy.
+   * @param data - The data object to process
+   * @returns API request payload for provider update
    */
   updateToAPI(data: UpdateProviderFormValues): UpdateIdentityProviderRequestContent {
     const {

@@ -1,4 +1,4 @@
-import { SsoProviderEdit } from '@auth0/universal-components-react/spa';
+import { SsoProviderEdit } from '@auth0/universal-components-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const SsoProviderEditPage = () => {
@@ -6,7 +6,7 @@ const SsoProviderEditPage = () => {
   const { id } = useParams<{ id: string }>();
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 pt-8 space-y-6">
       <SsoProviderEdit
         providerId={id!}
         backButton={{

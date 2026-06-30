@@ -1,7 +1,86 @@
 {
   "common": {
     "copy": "コピー",
-    "copied": "コピーしました"
+    "copied": "コピーしました",
+    "copy_failed": "コピーに失敗しました",
+    "data_table": {
+      "select_all": "すべての行を選択",
+      "select_row": "行を選択"
+    },
+    "error": {
+      "generic": "リクエストの処理中に問題が発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。",
+      "bad_request": "リクエストが無効です。入力内容を確認してもう一度お試しください。",
+      "missing_token": "セッションが期限切れです。再度ログインしてください。",
+      "insufficient_scope": "この操作を実行するために必要なスコープ権限がありません。",
+      "forbidden": "この操作を実行する権限がありません。",
+      "not_found": "リクエストされたリソースが見つかりませんでした。",
+      "rate_limit": "リクエストが多すぎます。しばらくお待ちいただいてから再度お試しください。",
+      "network": "サーバーへの接続中に問題が発生しました。もう一度お試しください。"
+    }
+  },
+  "gate_keeper": {
+    "fallback": {
+      "title": "情報を読み込めませんでした",
+      "description": "もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。",
+      "retry": "再試行"
+    },
+    "mfa_error": {
+      "title": "追加認証が必要です",
+      "description": "追加認証を完了できませんでした。サポートにお問い合わせください。"
+    },
+    "mfa": {
+      "title": "アカウントを確認してください",
+      "subtitle": "この操作を実行するには、以下のオプションのいずれかから第二認証要素を入力してください。",
+      "authenticator_type": {
+        "otp": "認証アプリ",
+        "recovery-code": "リカバリーコード",
+        "email": "メールOTP",
+        "sms": "SMS",
+        "push": "Guardian アプリによるプッシュ通知",
+        "voice": "音声通話"
+      },
+      "no_authenticators": "利用可能な認証方法がありません。",
+      "verify_button": "確認",
+      "enroll_button": "設定",
+      "cancel": "キャンセル",
+      "back": "戻る",
+      "continue": "続ける",
+      "challenge": {
+        "otp_description": "認証アプリに表示されているワンタイムコードを入力してください。",
+        "phone_title": "電話番号を確認してください",
+        "code_sent_description": "${name} に送信したワンタイムコードを入力してください。",
+        "email_title": "メールアドレスを確認してください",
+        "push_title": "プッシュ通知を送信しました",
+        "push_description": "Guardianアプリで本人確認してください",
+        "push_waiting": "確認を待っています...",
+        "recovery_code_description": "保存済みのリカバリーコードを入力してください。",
+        "resend_prompt": "コードが届きませんでしたか？",
+        "resend": "再送信",
+        "verifying": "確認中..."
+      },
+      "enroll": {
+        "install_title": "認証アプリの設定",
+        "install_description": "続行するには、モバイルデバイスのアプリストアからAuth0 Guardianアプリをインストールしてください。",
+        "app_store": "App Store",
+        "google_play": "Google Play",
+        "phone_label": "電話番号（あなたの）",
+        "phone_description": "この番号に確認コードをお送りします。",
+        "phone_title": "SMSワンタイムパスワードを受け取る電話番号を入力してください。",
+        "email_label": "メールアドレス（あなたの）",
+        "email_description": "このメールアドレスに確認コードをお送りします。",
+        "email_title": "メールワンタイムパスワード用のメールアドレスを入力してください",
+        "enrolling": "設定中...",
+        "scan_description": "このQRコードを認証アプリでスキャンしてください。",
+        "scan_helper": "認証アプリでこのコードをスキャンしてセットアップを完了してください。スキャンできない場合は、以下のコードを手動で入力してください。",
+        "push_scan_description": "このQRコードをGuardianアプリでスキャンしてください。",
+        "qr_alt": "登録QRコード",
+        "recovery_title": "リカバリーコードを生成する",
+        "recovery_description": "これらのリカバリーコードをコピーして、安全な場所に保管してください。認証方法にアクセスできなくなった場合に必要になります。",
+        "recovery_confirmed": "これらのコードを安全に記録しました",
+        "invalid_email": "有効なメールアドレスを入力してください。",
+        "invalid_phone_number": "有効な電話番号を入力してください。"
+      }
+    }
   },
   "domain_management": {
     "domain_table": {
@@ -145,7 +224,7 @@
               "label": "名前",
               "placeholder": "組織名を入力してください",
               "helper_text": "組織の人間が読みやすい識別子で、エンドユーザーがアプリケーション内で自分の組織に移動するために使用されます。",
-              "error": "有効な組織名を入力してください"
+              "error": "小文字の英字、数字、ハイフン、アンダースコアのみ使用できます（例：my-org-01）"
             },
             "display_name": {
               "label": "表示名",
@@ -219,8 +298,8 @@
           "edit_button_text": "編集",
           "delete_button_text": "削除",
           "remove_button_text": "組織から削除",
-          "enabled_tooltip": "日本語でのプロビジョニングを無効にするには、トグルを切り替えてください。",
-          "disabled_tooltip": "日本語でのプロビジョニングを有効にするには、トグルを切り替えてください。"
+          "enabled_tooltip": "SSOプロバイダーを無効にするには、トグルを切り替えてください。",
+          "disabled_tooltip": "SSOプロバイダーを有効にするには、トグルを切り替えてください。"
         }
       },
       "create_consent_modal": {
@@ -810,7 +889,6 @@
       "modal": {
         "title": "${organizationName}から${providerName}を削除",
         "description": "この操作により、この組織のすべてのユーザーの<bold>${providerName}</bold>へのアクセスが取り消されます。ユーザーは削除されませんが、このプロバイダーを使用してサインインできなくなります",
-
         "content": {
           "description": "確認のためプロバイダー名を入力してください。",
           "field": {
@@ -832,6 +910,7 @@
       "delete_success": "${providerName}が削除されました。",
       "remove_success": "${providerName}が${organizationName}から削除されました",
       "update_success": "${providerName}への変更が保存されました。",
+      "enable_on_before": "プロバイダーの有効化バリデーションに失敗しました。",
       "general_error": "リクエストの処理中に問題が発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。",
       "domain_create": {
         "success": "${domainName}が作成されました。",
@@ -856,6 +935,7 @@
       },
       "provisioning_disabled_success": "プロビジョニングが無効になりました。",
       "scim_token_delete_sucess": "トークンが削除されました。",
+      "scim_token_delete_success": "トークンが削除されました。",
       "scim_token_create_success": "トークンが正常に生成されました",
       "sso_attributes_sync_success": "プロバイダーマッピングが更新されました。",
       "provisioning_attributes_sync_success": "プロビジョニングマッピングが更新されました。"
@@ -996,6 +1076,224 @@
         "enter_verify_code": "${verifier}に送信された6桁のコードを入力してください",
         "enter_opt_code": "認証アプリのコードを入力してください",
         "install_guardian_description": "続行するには、お使いのモバイルデバイスからアプリストア経由でAuth0 Guardianアプリをインストールしてください。"
+      }
+    }
+  },
+  "member_management": {
+    "header": {
+      "title": "メンバー",
+      "description": "組織のメンバーを管理します。"
+    },
+    "invite_button": "メンバーを招待",
+    "tabs": {
+      "members": "メンバー",
+      "invitations": "招待"
+    },
+    "member": {
+      "table": {
+        "columns": {
+          "name": "名前",
+          "email": "メール",
+          "roles": "ロール",
+          "last_login": "最終ログイン"
+        },
+        "empty_message": "この組織にはメンバーがいません。",
+        "search_placeholder": "名前またはメールでメンバーを検索",
+        "filter_by_role": "ロールでフィルター",
+        "all_roles": "すべて",
+        "reset_filter": "リセット",
+        "never": "一度もない",
+        "just_now": "たった今",
+        "ago": "前",
+        "minute": "分",
+        "minutes": "分",
+        "hour": "時間",
+        "hours": "時間",
+        "day": "日",
+        "days": "日",
+        "week": "週間",
+        "weeks": "週間",
+        "month": "か月",
+        "months": "か月",
+        "year": "年",
+        "years": "年"
+      },
+      "actions": {
+        "menu_label": "アクション",
+        "view_details": "詳細を表示",
+        "assign_role": "ロールを割り当てる",
+        "remove_from_organization": "組織から削除"
+      },
+      "error": {
+        "fetch_failed": "メンバーの読み込みに失敗しました。もう一度お試しください。",
+        "remove_failed": "メンバーの削除に失敗しました。もう一度お試しください。",
+        "assign_role_failed": "ロールの割り当てに失敗しました。もう一度お試しください。",
+        "too_many_roles_per_assignment": "一度に割り当てられるロールは最大10件までです。",
+        "too_many_roles_per_removal": "一度に削除できるロールは最大10件までです。",
+        "member_role_limit_exceeded": "このメンバーのロールは最大50件に達しました。"
+      },
+      "detail": {
+        "back_button": "メンバー一覧に戻る",
+        "user_id_label": "ユーザーID:",
+        "tabs": {
+          "details": "詳細",
+          "roles": "ロール"
+        },
+        "user_details": {
+          "title": "ユーザー詳細",
+          "name": "名前",
+          "email": "メール",
+          "phone_number": "電話番号",
+          "provider": "プロバイダー",
+          "created_at": "作成日",
+          "last_login": "最終ログイン"
+        },
+        "actions": {
+          "remove_from_organization": {
+            "title": "組織からメンバーを削除",
+            "description": "一度確定すると、この操作は元に戻せません。",
+            "button": "削除",
+            "success": "${memberName} が ${organizationName} から削除されました。",
+            "modal": {
+              "title": "${organizationName} からメンバーを削除",
+              "description": "<bold>\"${memberName}\"</bold> をこの組織から削除してもよろしいですか？この操作はアカウントを削除しませんが、アクセスを取り消し、サインインできなくなります。",
+              "cancel_button": "キャンセル",
+              "confirm_button": "削除する"
+            }
+          }
+        },
+        "roles": {
+          "title": "ロール",
+          "description": "${organizationName} にアクセスする際のユーザーのロールと権限を管理します。",
+          "assign_button": "ロールを割り当てる",
+          "no_roles_available": "このメンバーに割り当てられるロールはもうありません。",
+          "max_roles_reached": "このメンバーの最大登録数 ${max} に達しました。",
+          "remove_button": "ロールを削除",
+          "remove_button_plural": "ロールを削除",
+          "roles_selected": "${count}件のロールが選択されています",
+          "roles_selected_plural": "${count}件のロールが選択されています",
+          "table": {
+            "name": "名前",
+            "description": "説明",
+            "empty_message": "割り当てられたロールはありません。",
+            "remove_button_label": "ロール ${roleName} を削除する"
+          },
+          "assign_modal": {
+            "title": "ロールを割り当てる",
+            "roles_label": "ロール",
+            "roles_placeholder": "ロールを選択",
+            "submit_button": "割り当て",
+            "cancel_button": "キャンセル",
+            "no_roles_available": "利用可能なすべてのロールがすでに割り当てられています。",
+            "success": "ロールが割り当てられました。",
+            "success_plural": "ロールが割り当てられました。"
+          },
+          "remove_confirm": {
+            "title": "メンバーからロールを削除しますか？",
+            "title_plural": "メンバーからロールを削除しますか？",
+            "description": "<bold>\"${memberName}\"</bold> から <bold>${roleName}</bold> ロールを削除します。",
+            "confirm_button": "削除",
+            "cancel_button": "キャンセル",
+            "success": "ロール \"${roleName}\" がメンバーから削除されました。",
+            "success_plural": "ロール \"${roleNames}\" がメンバーから削除されました。"
+          }
+        },
+        "error": {
+          "fetch_failed": "メンバー詳細の読み込みに失敗しました。もう一度お試しください。",
+          "fetch_roles_failed": "メンバーのロールの読み込みに失敗しました。もう一度お試しください。",
+          "remove_from_organization_failed": "組織からのメンバーの削除に失敗しました。もう一度お試しください。",
+          "assign_role_failed": "ロールの割り当てに失敗しました。もう一度お試しください。",
+          "remove_role_failed": "ロールの削除に失敗しました。もう一度お試しください。"
+        }
+      }
+    },
+    "invitation": {
+      "table": {
+        "columns": {
+          "email": "メール",
+          "status": "ステータス",
+          "inviter": "招待者",
+          "created_at": "作成日",
+          "expires_at": "有効期限",
+          "roles": "ロール"
+        },
+        "empty_message": "保留中の招待はありません。",
+        "search_placeholder": "メールで検索...",
+        "filter_by_role": "ロールで絞り込み",
+        "all_roles": "すべて",
+        "reset_filter": "リセット",
+        "showing_results": "${start}〜${end} / ${total}件",
+        "status_pending": "保留中",
+        "status_expired": "期限切れ"
+      },
+      "actions": {
+        "menu_label": "アクション",
+        "view_details": "詳細を表示",
+        "copy_url": "招待URLをコピー",
+        "copied": "コピーしました！",
+        "revoke_and_resend": "取り消して再送信",
+        "revoke": "招待を取り消す"
+      },
+      "create": {
+        "title": "メンバーを招待",
+        "description": "この組織に参加するための招待を送信します。",
+        "email_label": "メールアドレス",
+        "email_placeholder": "メールアドレスを入力してEnterを押してください",
+        "email_helper": "カンマ区切りで最大10名まで追加できます。",
+        "email_limit_error": "メールアドレスは最大10件まで追加できます。",
+        "email_invalid_error": "有効なメールアドレスを入力してください。",
+        "email_duplicate_error": "このメールアドレスは既に追加されています。",
+        "email_required_error": "メールアドレスを1つ以上入力してください。",
+        "roles_label": "ロール",
+        "roles_placeholder": "ロールを選択（任意）",
+        "provider_label": "プロバイダー",
+        "provider_placeholder": "プロバイダーを選択（任意）",
+        "provider_helper": "選択しない場合、メンバーは任意のプロバイダーでログインできます。",
+        "submit_button": "招待を送信",
+        "creating": "作成中...",
+        "cancel_button": "キャンセル",
+        "success": "${email}に招待が送信されました。",
+        "success_bulk": "招待が送信されました。"
+      },
+      "details": {
+        "title": "招待の詳細",
+        "email_label": "メール",
+        "status_label": "ステータス",
+        "roles_label": "ロール",
+        "provider_label": "IDプロバイダー",
+        "created_at_label": "作成日",
+        "expires_at_label": "有効期限",
+        "invited_by_label": "招待者",
+        "invitation_url_label": "招待URL",
+        "copy_url_button": "コピー",
+        "close_button": "閉じる",
+        "revoke_button": "招待を取り消す",
+        "resend_button": "取り消して再送信"
+      },
+      "revoke": {
+        "title": "招待を取り消す",
+        "description": "<bold>${email}</bold>への招待を取り消してもよろしいですか？",
+        "confirm_button": "取り消す",
+        "cancel_button": "キャンセル",
+        "success": "${email}への招待が取り消されました。"
+      },
+      "revoke_resend": {
+        "title": "招待を取り消して再送信",
+        "description": "現在の招待を取り消し、<bold>${email}</bold>に新しい招待を送信してもよろしいですか？",
+        "confirm_button": "続行",
+        "cancel_button": "キャンセル"
+      },
+      "success": {
+        "url_copied": "招待URLをクリップボードにコピーしました。",
+        "invitation_resent": "以前の招待が取り消されました。${email}に新しい招待が送信されました。"
+      },
+      "error": {
+        "fetch_failed": "招待の読み込みに失敗しました。もう一度お試しください。",
+        "create_failed": "招待の送信に失敗しました。もう一度お試しください。",
+        "revoke_failed": "招待の取り消しに失敗しました。もう一度お試しください。",
+        "resend_failed": "招待の再送信に失敗しました。もう一度お試しください。",
+        "revoke_resend_failed": "招待の取り消しと再送信に失敗しました。もう一度お試しください。",
+        "copy_url_failed": "招待URLのコピーに失敗しました。もう一度お試しください。"
       }
     }
   }

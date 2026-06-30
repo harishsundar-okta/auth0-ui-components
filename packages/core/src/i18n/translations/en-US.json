@@ -1,7 +1,86 @@
 {
   "common": {
     "copy": "Copy",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "copy_failed": "Failed to copy",
+    "data_table": {
+      "select_all": "Select all rows",
+      "select_row": "Select row"
+    },
+    "error": {
+      "generic": "There was an issue processing your request. Please try again or contact support if the issue persists.",
+      "bad_request": "The request is invalid. Please check your input and try again.",
+      "missing_token": "Your session has expired. Please log in again.",
+      "insufficient_scope": "You do not have the required scope permissions to perform this action.",
+      "forbidden": "You do not have permissions to perform this action.",
+      "not_found": "The requested resource was not found.",
+      "rate_limit": "Too many requests. Please wait a moment and try again.",
+      "network": "There was an issue connecting to the server. Please try again."
+    }
+  },
+  "gate_keeper": {
+    "fallback": {
+      "title": "We couldn't load this information",
+      "description": "Please try again or contact support if the problem persists.",
+      "retry": "Retry"
+    },
+    "mfa_error": {
+      "title": "Additional verification required",
+      "description": "Additional verification could not be completed. Please contact support."
+    },
+    "mfa": {
+      "title": "Verify your account",
+      "subtitle": "You must provide a second factor from one of the options below to perform this action.",
+      "authenticator_type": {
+        "otp": "Authenticator",
+        "recovery-code": "Recovery Codes",
+        "email": "Email OTP",
+        "sms": "SMS",
+        "push": "Push Notification with Guardian App",
+        "voice": "Voice"
+      },
+      "no_authenticators": "No authentication methods available.",
+      "verify_button": "Verify",
+      "enroll_button": "Set up",
+      "cancel": "Cancel",
+      "back": "Back",
+      "continue": "Continue",
+      "challenge": {
+        "otp_description": "Please enter the one-time code shown in your authenticator app.",
+        "phone_title": "Verify your phone number",
+        "code_sent_description": "Please enter the one-time code we just sent to ${name}.",
+        "email_title": "Verify your email address",
+        "push_title": "We just sent you a push notification",
+        "push_description": "Verify it's you on your Guardian App",
+        "push_waiting": "Waiting for verification...",
+        "recovery_code_description": "Enter your saved recovery codes.",
+        "resend_prompt": "Didn't receive the code?",
+        "resend": "Resend",
+        "verifying": "Verifying..."
+      },
+      "enroll": {
+        "install_title": "Setup Authenticator",
+        "install_description": "In order to continue, install the Auth0 Guardian app via the app store from your mobile device.",
+        "app_store": "App Store",
+        "google_play": "Google Play",
+        "phone_label": "Your phone number",
+        "phone_description": "We will send a verification code to this number.",
+        "phone_title": "Enter your phone number for SMS OTP",
+        "email_label": "Your Email Address",
+        "email_description": "We will send a verification code to this email address.",
+        "email_title": "Enter your email address for email OTP",
+        "enrolling": "Setting up...",
+        "scan_description": "Scan this QR code with your authenticator app.",
+        "scan_helper": "Complete the setup by scanning this code with your Authenticator App. If you can't scan the code, manually enter the code below.",
+        "push_scan_description": "Scan this QR code with the Guardian app",
+        "qr_alt": "Enrollment QR code",
+        "recovery_title": "Generate recovery codes",
+        "recovery_description": "Copy these recovery codes and store them somewhere safe. You will need them if you ever lose access to your authentication method.",
+        "recovery_confirmed": "I have safely recorded these codes",
+        "invalid_email": "Please enter a valid email address.",
+        "invalid_phone_number": "Please enter a valid phone number."
+      }
+    }
   },
   "domain_management": {
     "domain_table": {
@@ -145,7 +224,7 @@
               "label": "Name",
               "placeholder": "Enter organization name",
               "helper_text": "A human-readable identifier for the organization, used by end users to direct them to their organization in your application.",
-              "error": "Please enter a valid organization name"
+              "error": "Only lowercase letters, numbers, hyphens, and underscores are allowed (e.g., my-org-01)"
             },
             "display_name": {
               "label": "Display Name",
@@ -219,8 +298,8 @@
           "edit_button_text": "Edit",
           "delete_button_text": "Delete",
           "remove_button_text": "Remove from organization",
-          "enabled_tooltip": "Toggle to disable provisioning",
-          "disabled_tooltip": "Toggle to enable provisioning"
+          "enabled_tooltip": "Toggle to disable the SSO provider",
+          "disabled_tooltip": "Toggle to enable the SSO provider"
         }
       },
       "create_consent_modal": {
@@ -429,8 +508,8 @@
               "title": "Advanced Settings",
               "sign_request": {
                 "label": "Sign Request",
-                "helper_text_metadata_file": "When enabled, the SAML authentication request will be signed. Download the <link>certificate</link> and provide it to the SAMLP that will receive the signed assertion to validate the signature. This needs to be enabled first in the SAMLP. Once enabled, share the metadata URL for integration.",
-                "helper_text_metadata_url": "When enabled, the SAML authentication request will be signed. Download the <link>certificate</link> and provide it to the SAMLP that will receive the signed assertion to validate the signature."
+                "helper_text_metadata_file": "When enabled, the SAML authentication request will be signed. Download the <link>certificate</link> and provide it to the SAMLP that will receive the signed assertion to validate the signature. This needs to be enabled first in the SAMLP. Once enabled, share the metadata URL for integration.",
+                "helper_text_metadata_url": "When enabled, the SAML authentication request will be signed. Download the <link>certificate</link> and provide it to the SAMLP that will receive the signed assertion to validate the signature."
               },
               "request_protocol_binding": {
                 "label": "Request Protocol Binding",
@@ -507,7 +586,7 @@
               "title": "Advanced Settings",
               "sign_request": {
                 "label": "Sign Request",
-                "helper_text": "When enabled, the SAML authentication request will be signed. Download the <link>certificate</link> and provide it to the SAMLP that will receive the signed assertion to validate the signature. This needs to be enabled first in the SAMLP. Once enabled, share the metadata URL for integration.",
+                "helper_text": "When enabled, the SAML authentication request will be signed. Download the <link>certificate</link> and provide it to the SAMLP that will receive the signed assertion to validate the signature. This needs to be enabled first in the SAMLP. Once enabled, share the metadata URL for integration.",
                 "error": "Please select an option"
               },
               "sign_request_algorithm": {
@@ -831,6 +910,7 @@
       "delete_success": "${providerName} has been deleted.",
       "remove_success": "${providerName} has been removed from ${organizationName}",
       "update_success": "Changes to ${providerName} have been saved.",
+      "enable_on_before": "Enable provider validation failed.",
       "general_error": "There was an issue processing your request. Please try again or contact support if the issue persists.",
       "domain_create": {
         "success": "${domainName} has been created.",
@@ -855,6 +935,7 @@
       },
       "provisioning_disabled_success": "Provisioning has been disabled.",
       "scim_token_delete_sucess": "Token has been deleted.",
+      "scim_token_delete_success": "Token has been deleted.",
       "scim_token_create_success": "Token generated successfully",
       "sso_attributes_sync_success": "The provider mappings have been updated.",
       "provisioning_attributes_sync_success": "The provisioning mappings have been updated."
@@ -994,6 +1075,252 @@
         "enter_verify_code": "Enter the 6-digit code we sent to ${verifier}",
         "enter_opt_code": "Enter the code from your authenticator",
         "install_guardian_description": "In order to continue, install the Auth0 Guardian app via the app store from your mobile device"
+      }
+    }
+  },
+  "member_management": {
+    "header": {
+      "title": "Members",
+      "description": "Manage the members of your organization."
+    },
+    "invite_button": "Invite Member",
+    "tabs": {
+      "members": "Members",
+      "invitations": "Invitations"
+    },
+    "member": {
+      "table": {
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "roles": "Roles",
+          "last_login": "Last Login"
+        },
+        "empty_message": "This organization does not have any members.",
+        "search_placeholder": "Search for a member by name or email",
+        "filter_by_role": "Filter By Role",
+        "all_roles": "All",
+        "reset_filter": "Reset",
+        "never": "Never",
+        "just_now": "Just now",
+        "ago": "ago",
+        "minute": "minute",
+        "minutes": "minutes",
+        "hour": "hour",
+        "hours": "hours",
+        "day": "day",
+        "days": "days",
+        "week": "week",
+        "weeks": "weeks",
+        "month": "month",
+        "months": "months",
+        "year": "year",
+        "years": "years"
+      },
+      "actions": {
+        "menu_label": "Actions",
+        "view_details": "View Details",
+        "assign_role": "Assign Role",
+        "remove_from_organization": "Remove from Organization"
+      },
+      "error": {
+        "fetch_failed": "Failed to load members. Please try again.",
+        "remove_failed": "Failed to remove member. Please try again.",
+        "assign_role_failed": "Failed to assign role. Please try again.",
+        "too_many_roles_per_assignment": "You can only assign a maximum of 10 roles at a time.",
+        "too_many_roles_per_removal": "You can only remove a maximum of 10 roles at a time.",
+        "member_role_limit_exceeded": "You have reached the maximum of 50 roles for this member."
+      },
+      "detail": {
+        "back_button": "Back to Members",
+        "user_id_label": "User ID:",
+        "tabs": {
+          "details": "Details",
+          "roles": "Roles"
+        },
+        "user_details": {
+          "title": "User Details",
+          "name": "Name",
+          "email": "Email",
+          "phone_number": "Phone Number",
+          "provider": "Provider",
+          "created_at": "Created At",
+          "last_login": "Last Login"
+        },
+        "actions": {
+          "remove_from_organization": {
+            "title": "Remove Member from Organization",
+            "description": "Once confirmed, this operation cannot be undone.",
+            "button": "Delete",
+            "success": "${memberName} has been removed from the ${organizationName}.",
+            "modal": {
+              "title": "Remove Member from ${organizationName}",
+              "description": "Are you sure you want to remove <bold>\"${memberName}\"</bold> from this organization? This action will not delete their account but it will revoke their access and prevent them from signing in.",
+              "cancel_button": "Cancel",
+              "confirm_button": "Remove"
+            }
+          }
+        },
+        "roles": {
+          "title": "Roles",
+          "description": "Manage user roles and permissions when accessing ${organizationName}.",
+          "assign_button": "Assign Roles",
+          "no_roles_available": "There are no more roles available to assign to this member.",
+          "max_roles_reached": "You have reached the maximum of ${max} roles for this member.",
+          "remove_button": "Remove Role",
+          "remove_button_plural": "Remove Roles",
+          "roles_selected": "${count} role selected",
+          "roles_selected_plural": "${count} roles selected",
+          "table": {
+            "name": "Name",
+            "description": "Description",
+            "empty_message": "No roles assigned.",
+            "remove_button_label": "Remove role ${roleName}"
+          },
+          "assign_modal": {
+            "title": "Assign Roles",
+            "roles_label": "Roles",
+            "roles_placeholder": "Select role(s)",
+            "submit_button": "Assign Role(s)",
+            "cancel_button": "Cancel",
+            "no_roles_available": "All available roles are already assigned.",
+            "success": "The role has been assigned.",
+            "success_plural": "The roles have been assigned."
+          },
+          "remove_confirm": {
+            "title": "Remove Role from Member?",
+            "title_plural": "Remove Roles from Member?",
+            "description": "This will remove the <bold>${roleName}</bold> role from <bold>\"${memberName}\"</bold>.",
+            "confirm_button": "Remove",
+            "cancel_button": "Cancel",
+            "success": "\"${roleName}\" role has been removed from member.",
+            "success_plural": "\"${roleNames}\" roles have been removed from member."
+          }
+        },
+        "error": {
+          "fetch_failed": "Failed to load member details. Please try again.",
+          "fetch_roles_failed": "Failed to load member roles. Please try again.",
+          "remove_from_organization_failed": "Failed to remove member from organization. Please try again.",
+          "assign_role_failed": "Failed to assign role. Please try again.",
+          "remove_role_failed": "Failed to remove role. Please try again."
+        }
+      }
+    },
+    "invitation": {
+      "table": {
+        "columns": {
+          "email": "Email",
+          "status": "Status",
+          "inviter": "Invited By",
+          "created_at": "Created At",
+          "expires_at": "Expires At",
+          "roles": "Roles"
+        },
+        "empty_message": "No pending invitations.",
+        "search_placeholder": "Search by email...",
+        "filter_by_role": "Filter By Role",
+        "all_roles": "All",
+        "reset_filter": "Reset",
+        "showing_results": "Showing ${start}-${end} of ${total}",
+        "status_pending": "Pending",
+        "status_expired": "Expired"
+      },
+      "actions": {
+        "menu_label": "Actions",
+        "view_details": "View Details",
+        "copy_url": "Copy Invitation URL",
+        "copied": "Copied!",
+        "revoke_and_resend": "Revoke and Resend",
+        "revoke": "Revoke Invitation"
+      },
+      "create": {
+        "title": "Invite Member",
+        "description": "Send an invitation to join this organization.",
+        "email_label": "Email Address",
+        "email_placeholder": "Enter email address and press Enter",
+        "email_helper": "Add up to 10 members in a comma-separated list.",
+        "email_limit_error": "You can add up to 10 email addresses.",
+        "email_invalid_error": "Please enter a valid email address.",
+        "email_duplicate_error": "This email has already been added.",
+        "email_required_error": "Please enter at least one email address.",
+        "roles_label": "Roles",
+        "roles_placeholder": "Select roles (optional)",
+        "provider_label": "Provider",
+        "provider_placeholder": "Select provider (optional)",
+        "provider_helper": "If none is selected, the member can log in with any provider.",
+        "submit_button": "Send Invite",
+        "creating": "Creating...",
+        "cancel_button": "Cancel",
+        "success": "Invitation has been sent to ${email}.",
+        "success_bulk": "Invitations have been sent."
+      },
+      "details": {
+        "title": "Invitation Details",
+        "email_label": "Email",
+        "status_label": "Status",
+        "roles_label": "Roles",
+        "provider_label": "Identity Provider",
+        "created_at_label": "Created",
+        "expires_at_label": "Expires",
+        "invited_by_label": "Invited By",
+        "invitation_url_label": "Invitation URL",
+        "copy_url_button": "Copy",
+        "close_button": "Close",
+        "revoke_button": "Revoke Invitation",
+        "resend_button": "Revoke and Resend"
+      },
+      "revoke": {
+        "title": "Revoke Invitation",
+        "description": "Are you sure you want to revoke the invitation to <bold>${email}</bold>?",
+        "confirm_button": "Revoke",
+        "cancel_button": "Cancel",
+        "success": "Invitation for ${email} has been revoked."
+      },
+      "revoke_resend": {
+        "title": "Revoke and Resend Invitation",
+        "description": "Are you sure you want to revoke the current invitation and send a new one to <bold>${email}</bold>?",
+        "confirm_button": "Proceed",
+        "cancel_button": "Cancel"
+      },
+      "success": {
+        "url_copied": "Invitation URL copied to clipboard.",
+        "invitation_resent": "Previous invite revoked. A new invitation has been sent to ${email}."
+      },
+      "error": {
+        "fetch_failed": "Failed to load invitations. Please try again.",
+        "create_failed": "Failed to send invitation. Please try again.",
+        "revoke_failed": "Failed to revoke invitation. Please try again.",
+        "resend_failed": "Failed to resend invitation. Please try again.",
+        "revoke_resend_failed": "Failed to revoke and resend invitation. Please try again.",
+        "copy_url_failed": "Failed to copy invitation URL. Please try again."
+      }
+    }
+  },
+  "passkey": {
+    "header": {
+      "title": "Log-in methods",
+      "description": "Ways you can sign in to your account. You can use one of these or combine them for flexibility."
+    },
+    "section_title": "Passkeys",
+    "enabled": "enabled",
+    "created_at": "Created on ${date}",
+    "last_used": "Last used ${date}",
+    "passkey_name": "Passkey ${index}",
+    "no_passkeys": "No passkeys have been added to your account.",
+    "add_passkey": "Add passkey",
+    "actions": {
+      "revoke": "Revoke"
+    },
+    "success": {
+      "add": "Passkey added successfully.",
+      "revoke": "Passkey revoked successfully."
+    },
+    "modals": {
+      "revoke": {
+        "title": "Revoke passkey",
+        "consent": "This will revoke the passkey - <bold>${name}</bold> from your account.",
+        "cancel": "Cancel",
+        "confirm": "Revoke Passkey"
       }
     }
   }

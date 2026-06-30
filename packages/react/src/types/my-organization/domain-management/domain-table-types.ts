@@ -1,6 +1,11 @@
+/**
+ * Domain table types.
+ * @module domain-table-types
+ */
+
 import type {
   SharedComponentProps,
-  IdentityProvider,
+  IdpKnownResponse,
   DomainCreateMessages,
   DomainCreateSchemas,
   ComponentAction,
@@ -10,15 +15,13 @@ import type {
   DomainVerifyMessages,
   DomainTableMessages,
   CreateOrganizationDomainRequestContent,
-  EnhancedTranslationFunction,
   IdentityProviderAssociatedWithDomain,
 } from '@auth0/universal-components-core';
+import type React from 'react';
 
 export type { Domain };
 
-/* ============ Components ============ */
-
-// HTML classNames that the user can override
+/** CSS classes for DomainTable. */
 export interface DomainTableClasses {
   'DomainTable-header'?: string;
   'DomainTable-table'?: string;
@@ -27,7 +30,7 @@ export interface DomainTableClasses {
   'DomainTable-deleteModal'?: string;
 }
 
-// Component messages that the user can override
+/** DomainTable translation messages. */
 export interface DomainTableMainMessages extends DomainTableMessages {
   create: DomainCreateMessages;
   configure: DomainConfigureMessages;
@@ -35,27 +38,25 @@ export interface DomainTableMainMessages extends DomainTableMessages {
   delete: DomainDeleteMessages;
 }
 
-// Validation schemas that the user can override
+/** DomainTable validation schemas. */
 export interface DomainTableSchema {
   create?: DomainCreateSchemas;
 }
 
+/** Props for DomainTable component. */
 export interface DomainTableProps
   extends SharedComponentProps<DomainTableMainMessages, DomainTableClasses, DomainTableSchema> {
   hideHeader?: boolean;
   createAction?: ComponentAction<Domain>;
   verifyAction?: ComponentAction<Domain>;
   deleteAction?: ComponentAction<Domain>;
-  associateToProviderAction?: ComponentAction<Domain, IdentityProvider>;
-  deleteFromProviderAction?: ComponentAction<Domain, IdentityProvider>;
-  // Used in the "View" buttons to open an IdP
-  onOpenProvider?: (provider: IdentityProvider) => void;
-  // Used in the "Create provider" buttons to open the create IdP wizard
+  associateToProviderAction?: ComponentAction<Domain, IdpKnownResponse>;
+  deleteFromProviderAction?: ComponentAction<Domain, IdpKnownResponse>;
+  onOpenProvider?: (provider: IdpKnownResponse) => void;
   onCreateProvider?: () => void;
 }
 
-/* ============ Subcomponents ============ */
-
+/** Props for DomainTable actions column. */
 export interface DomainTableActionsColumnProps {
   customMessages?: Partial<DomainTableMainMessages>;
   readOnly: boolean;
@@ -66,8 +67,7 @@ export interface DomainTableActionsColumnProps {
   onDelete: (domain: Domain) => void;
 }
 
-/* ============ Hooks ============ */
-
+/** Options for domain table hooks (shared by service and public hook). */
 export interface UseDomainTableOptions {
   createAction?: DomainTableProps['createAction'];
   verifyAction?: DomainTableProps['verifyAction'];
@@ -77,7 +77,11 @@ export interface UseDomainTableOptions {
   customMessages?: DomainTableProps['customMessages'];
 }
 
-export interface UseDomainTableResult extends SharedComponentProps {
+/** @internal */
+export type UseDomainTableServiceOptions = UseDomainTableOptions;
+
+/** Return type for the internal domain table service hook. */
+export interface UseDomainTableServiceReturn {
   domains: Domain[];
   providers: IdentityProviderAssociatedWithDomain[];
   isFetching: boolean;
@@ -87,25 +91,26 @@ export interface UseDomainTableResult extends SharedComponentProps {
   isVerifying: boolean;
   fetchProviders: (domain: Domain) => Promise<void>;
   fetchDomains: () => Promise<void>;
-  onCreateDomain: (data: CreateOrganizationDomainRequestContent) => Promise<Domain | null>;
-  onVerifyDomain: (data: Domain) => Promise<boolean>;
+  onCreateDomain: (data: CreateOrganizationDomainRequestContent) => Promise<Domain>;
+  onVerifyDomain: (domain: Domain) => Promise<boolean>;
   onDeleteDomain: (domain: Domain) => Promise<void>;
-  onAssociateToProvider: (domain: Domain, provider: IdentityProvider) => Promise<void>;
-  onDeleteFromProvider: (domain: Domain, provider: IdentityProvider) => Promise<void>;
+  onAssociateToProvider: (domain: Domain, provider: IdpKnownResponse) => Promise<void>;
+  onDeleteFromProvider: (domain: Domain, provider: IdpKnownResponse) => Promise<void>;
 }
 
-export interface UseDomainTableLogicOptions {
-  t: EnhancedTranslationFunction;
-  onCreateDomain: UseDomainTableResult['onCreateDomain'];
-  onVerifyDomain: UseDomainTableResult['onVerifyDomain'];
-  onDeleteDomain: UseDomainTableResult['onDeleteDomain'];
-  onAssociateToProvider: UseDomainTableResult['onAssociateToProvider'];
-  onDeleteFromProvider: UseDomainTableResult['onDeleteFromProvider'];
-  fetchProviders: UseDomainTableResult['fetchProviders'];
-  fetchDomains: UseDomainTableResult['fetchDomains'];
-}
+/** Return type for the public domain table hook. */
+export interface UseDomainTableReturn {
+  // Data
+  domains: Domain[];
+  providers: IdentityProviderAssociatedWithDomain[];
 
-export interface UseDomainTableLogicResult {
+  // Loading states
+  isFetching: boolean;
+  isCreating: boolean;
+  isDeleting: boolean;
+  isVerifying: boolean;
+  isLoadingProviders: boolean;
+
   // Modal state
   showCreateModal: boolean;
   showConfigureModal: boolean;
@@ -115,19 +120,36 @@ export interface UseDomainTableLogicResult {
   selectedDomain: Domain | null;
 
   // State setters
-  setShowCreateModal: (show: boolean) => void;
-  setShowConfigureModal: (show: boolean) => void;
-  setShowVerifyModal: (show: boolean) => void;
-  setShowDeleteModal: (show: boolean) => void;
+  setShowCreateModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowConfigureModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVerifyModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 
   // Handlers
   handleCreate: (domainUrl: string) => Promise<void>;
   handleVerify: (domain: Domain) => Promise<void>;
-  handleDelete: (domain: Domain) => void;
-  handleToggleSwitch: (domain: Domain, provider: IdentityProvider, checked: boolean) => void;
+  handleDelete: (domain: Domain) => Promise<void>;
+  handleToggleSwitch: (
+    domain: Domain,
+    provider: IdpKnownResponse,
+    checked: boolean,
+  ) => Promise<void>;
   handleCloseVerifyModal: () => void;
   handleCreateClick: () => void;
   handleConfigureClick: (domain: Domain) => void;
   handleVerifyClick: (domain: Domain) => Promise<void>;
   handleDeleteClick: (domain: Domain) => void;
+}
+
+/** Props for the DomainTableView presentational component. @internal */
+export interface DomainTableViewProps {
+  domainTable: UseDomainTableReturn;
+  schema: DomainTableProps['schema'];
+  styling: DomainTableProps['styling'];
+  hideHeader: DomainTableProps['hideHeader'];
+  readOnly: DomainTableProps['readOnly'];
+  customMessages: DomainTableProps['customMessages'];
+  createAction: DomainTableProps['createAction'];
+  onOpenProvider: DomainTableProps['onOpenProvider'];
+  onCreateProvider: DomainTableProps['onCreateProvider'];
 }
