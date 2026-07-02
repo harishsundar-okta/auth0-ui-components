@@ -17,7 +17,6 @@
         "@radix-ui/react-popover@^1.1.14",
         "@radix-ui/react-slot@^1.2.3",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "class-variance-authority@^0.7.1",
         "clsx@^2.1.1",
         "lucide-react@^1.16.0",
@@ -198,6 +197,11 @@
           "target": "hooks/shared/use-error-handler.ts"
         },
         {
+          "path": "src/hooks/shared/use-telemetry.ts",
+          "type": "registry:component",
+          "target": "hooks/shared/use-telemetry.ts"
+        },
+        {
           "path": "src/hooks/shared/use-theme.ts",
           "type": "registry:component",
           "target": "hooks/shared/use-theme.ts"
@@ -236,6 +240,11 @@
           "path": "src/providers/spa-provider.tsx",
           "type": "registry:component",
           "target": "providers/spa-provider.tsx"
+        },
+        {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
         },
         {
           "path": "src/providers/theme-provider.tsx",
@@ -283,9 +292,29 @@
           "target": "lib/constants/my-account/mfa/mfa-constants.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
+        },
+        {
+          "path": "src/lib/utils/tanstack-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/tanstack-compat.ts"
+        },
+        {
+          "path": "src/lib/utils/use-id-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/use-id-compat.ts"
         },
         {
           "path": "src/assets/icons/apple-logo.tsx",
@@ -325,7 +354,6 @@
         "@radix-ui/react-slot@^1.2.3",
         "@radix-ui/react-switch@^1.1.0",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "class-variance-authority@^0.7.1",
         "clsx@^2.1.1",
         "lucide-react@^1.16.0",
@@ -484,6 +512,11 @@
           "target": "providers/spa-provider.tsx"
         },
         {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
+        },
+        {
           "path": "src/providers/theme-provider.tsx",
           "type": "registry:component",
           "target": "providers/theme-provider.tsx"
@@ -519,9 +552,19 @@
           "target": "types/toast-types.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
         },
         {
           "path": "src/styles/globals.css",
@@ -554,7 +597,6 @@
         "@radix-ui/react-slot@^1.2.3",
         "@radix-ui/react-switch@^1.1.0",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "@tanstack/react-table@^8.21.3",
         "class-variance-authority@^0.7.1",
         "clsx@^2.1.1",
@@ -745,6 +787,11 @@
           "target": "hooks/shared/use-error-handler.ts"
         },
         {
+          "path": "src/hooks/shared/use-telemetry.ts",
+          "type": "registry:component",
+          "target": "hooks/shared/use-telemetry.ts"
+        },
+        {
           "path": "src/hooks/shared/use-theme.ts",
           "type": "registry:component",
           "target": "hooks/shared/use-theme.ts"
@@ -783,6 +830,11 @@
           "path": "src/providers/spa-provider.tsx",
           "type": "registry:component",
           "target": "providers/spa-provider.tsx"
+        },
+        {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
         },
         {
           "path": "src/providers/theme-provider.tsx",
@@ -845,6 +897,11 @@
           "target": "lib/constants/form-constants.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
@@ -853,6 +910,21 @@
           "path": "src/lib/utils/my-organization/domain-management/domain-management-utils.ts",
           "type": "registry:component",
           "target": "lib/utils/my-organization/domain-management/domain-management-utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
+        },
+        {
+          "path": "src/lib/utils/tanstack-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/tanstack-compat.ts"
+        },
+        {
+          "path": "src/lib/utils/use-id-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/use-id-compat.ts"
         },
         {
           "path": "src/styles/globals.css",
@@ -884,7 +956,6 @@
         "@radix-ui/react-slot@^1.2.3",
         "@radix-ui/react-switch@^1.1.0",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "@uiw/color-convert@^2.9.2",
         "@uiw/react-color@^2.9.2",
         "class-variance-authority@^0.7.1",
@@ -1021,6 +1092,11 @@
           "target": "components/ui/tooltip.tsx"
         },
         {
+          "path": "src/hooks/my-organization/shared/services/use-organization-details-edit-service.ts",
+          "type": "registry:component",
+          "target": "hooks/my-organization/shared/services/use-organization-details-edit-service.ts"
+        },
+        {
           "path": "src/hooks/my-organization/use-organization-details-edit.ts",
           "type": "registry:component",
           "target": "hooks/my-organization/use-organization-details-edit.ts"
@@ -1039,6 +1115,16 @@
           "path": "src/hooks/shared/use-error-handler.ts",
           "type": "registry:component",
           "target": "hooks/shared/use-error-handler.ts"
+        },
+        {
+          "path": "src/hooks/shared/use-query-error-toast.ts",
+          "type": "registry:component",
+          "target": "hooks/shared/use-query-error-toast.ts"
+        },
+        {
+          "path": "src/hooks/shared/use-telemetry.ts",
+          "type": "registry:component",
+          "target": "hooks/shared/use-telemetry.ts"
         },
         {
           "path": "src/hooks/shared/use-theme.ts",
@@ -1079,6 +1165,11 @@
           "path": "src/providers/spa-provider.tsx",
           "type": "registry:component",
           "target": "providers/spa-provider.tsx"
+        },
+        {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
         },
         {
           "path": "src/providers/theme-provider.tsx",
@@ -1126,9 +1217,29 @@
           "target": "lib/constants/form-constants.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
+        },
+        {
+          "path": "src/lib/utils/tanstack-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/tanstack-compat.ts"
+        },
+        {
+          "path": "src/lib/utils/use-id-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/use-id-compat.ts"
         },
         {
           "path": "src/styles/globals.css",
@@ -1160,7 +1271,6 @@
         "@radix-ui/react-switch@^1.1.0",
         "@radix-ui/react-tabs@^1.1.12",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "@tanstack/react-table@^8.21.3",
         "class-variance-authority@^0.7.1",
         "clsx@^2.1.1",
@@ -1395,6 +1505,11 @@
           "target": "providers/spa-provider.tsx"
         },
         {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
+        },
+        {
           "path": "src/providers/theme-provider.tsx",
           "type": "registry:component",
           "target": "providers/theme-provider.tsx"
@@ -1450,6 +1565,11 @@
           "target": "lib/constants/my-organization/member-management/member-management-constants.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
@@ -1458,6 +1578,16 @@
           "path": "src/lib/utils/my-organization/member-management/member-management-utils.ts",
           "type": "registry:component",
           "target": "lib/utils/my-organization/member-management/member-management-utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
+        },
+        {
+          "path": "src/lib/utils/tanstack-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/tanstack-compat.ts"
         },
         {
           "path": "src/styles/globals.css",
@@ -1491,7 +1621,6 @@
         "@radix-ui/react-switch@^1.1.0",
         "@radix-ui/react-tabs@^1.1.12",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "@tanstack/react-table@^8.21.3",
         "class-variance-authority@^0.7.1",
         "clsx@^2.1.1",
@@ -1776,6 +1905,11 @@
           "target": "providers/spa-provider.tsx"
         },
         {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
+        },
+        {
           "path": "src/providers/theme-provider.tsx",
           "type": "registry:component",
           "target": "providers/theme-provider.tsx"
@@ -1836,6 +1970,11 @@
           "target": "lib/constants/my-organization/member-management/member-management-constants.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
@@ -1844,6 +1983,16 @@
           "path": "src/lib/utils/my-organization/member-management/member-management-utils.ts",
           "type": "registry:component",
           "target": "lib/utils/my-organization/member-management/member-management-utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
+        },
+        {
+          "path": "src/lib/utils/tanstack-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/tanstack-compat.ts"
         },
         {
           "path": "src/styles/globals.css",
@@ -1877,7 +2026,6 @@
         "@radix-ui/react-slot@^1.2.3",
         "@radix-ui/react-switch@^1.1.0",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "class-variance-authority@^0.7.1",
         "clsx@^2.1.1",
         "lucide-react@^1.16.0",
@@ -2087,6 +2235,11 @@
           "target": "components/ui/tooltip.tsx"
         },
         {
+          "path": "src/hooks/my-organization/shared/services/use-sso-provider-create-service.ts",
+          "type": "registry:component",
+          "target": "hooks/my-organization/shared/services/use-sso-provider-create-service.ts"
+        },
+        {
           "path": "src/hooks/my-organization/use-config.ts",
           "type": "registry:component",
           "target": "hooks/my-organization/use-config.ts"
@@ -2100,11 +2253,6 @@
           "path": "src/hooks/my-organization/use-provider-form-mode.ts",
           "type": "registry:component",
           "target": "hooks/my-organization/use-provider-form-mode.ts"
-        },
-        {
-          "path": "src/hooks/my-organization/use-sso-provider-create-logic.ts",
-          "type": "registry:component",
-          "target": "hooks/my-organization/use-sso-provider-create-logic.ts"
         },
         {
           "path": "src/hooks/my-organization/use-sso-provider-create.ts",
@@ -2125,6 +2273,11 @@
           "path": "src/hooks/shared/use-error-handler.ts",
           "type": "registry:component",
           "target": "hooks/shared/use-error-handler.ts"
+        },
+        {
+          "path": "src/hooks/shared/use-telemetry.ts",
+          "type": "registry:component",
+          "target": "hooks/shared/use-telemetry.ts"
         },
         {
           "path": "src/hooks/shared/use-theme.ts",
@@ -2165,6 +2318,11 @@
           "path": "src/providers/spa-provider.tsx",
           "type": "registry:component",
           "target": "providers/spa-provider.tsx"
+        },
+        {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
         },
         {
           "path": "src/providers/theme-provider.tsx",
@@ -2217,9 +2375,29 @@
           "target": "lib/constants/form-constants.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
+        },
+        {
+          "path": "src/lib/utils/tanstack-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/tanstack-compat.ts"
+        },
+        {
+          "path": "src/lib/utils/use-id-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/use-id-compat.ts"
         },
         {
           "path": "src/assets/icons/entraid-logo.tsx",
@@ -2290,7 +2468,6 @@
         "@radix-ui/react-switch@^1.1.0",
         "@radix-ui/react-tabs@^1.1.12",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "@tanstack/react-table@^8.21.3",
         "class-variance-authority@^0.7.1",
         "clsx@^2.1.1",
@@ -2636,6 +2813,11 @@
           "target": "components/ui/tooltip.tsx"
         },
         {
+          "path": "src/hooks/my-organization/shared/services/use-sso-provider-edit-service.ts",
+          "type": "registry:component",
+          "target": "hooks/my-organization/shared/services/use-sso-provider-edit-service.ts"
+        },
+        {
           "path": "src/hooks/my-organization/use-config.ts",
           "type": "registry:component",
           "target": "hooks/my-organization/use-config.ts"
@@ -2656,11 +2838,6 @@
           "target": "hooks/my-organization/use-sso-domain-tab.ts"
         },
         {
-          "path": "src/hooks/my-organization/use-sso-provider-edit-logic.ts",
-          "type": "registry:component",
-          "target": "hooks/my-organization/use-sso-provider-edit-logic.ts"
-        },
-        {
           "path": "src/hooks/my-organization/use-sso-provider-edit.ts",
           "type": "registry:component",
           "target": "hooks/my-organization/use-sso-provider-edit.ts"
@@ -2679,6 +2856,16 @@
           "path": "src/hooks/shared/use-error-handler.ts",
           "type": "registry:component",
           "target": "hooks/shared/use-error-handler.ts"
+        },
+        {
+          "path": "src/hooks/shared/use-query-error-toast.ts",
+          "type": "registry:component",
+          "target": "hooks/shared/use-query-error-toast.ts"
+        },
+        {
+          "path": "src/hooks/shared/use-telemetry.ts",
+          "type": "registry:component",
+          "target": "hooks/shared/use-telemetry.ts"
         },
         {
           "path": "src/hooks/shared/use-theme.ts",
@@ -2719,6 +2906,11 @@
           "path": "src/providers/spa-provider.tsx",
           "type": "registry:component",
           "target": "providers/spa-provider.tsx"
+        },
+        {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
         },
         {
           "path": "src/providers/theme-provider.tsx",
@@ -2826,6 +3018,11 @@
           "target": "lib/constants/form-constants.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
@@ -2834,6 +3031,21 @@
           "path": "src/lib/utils/my-organization/domain-management/domain-management-utils.ts",
           "type": "registry:component",
           "target": "lib/utils/my-organization/domain-management/domain-management-utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
+        },
+        {
+          "path": "src/lib/utils/tanstack-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/tanstack-compat.ts"
+        },
+        {
+          "path": "src/lib/utils/use-id-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/use-id-compat.ts"
         },
         {
           "path": "src/styles/globals.css",
@@ -2864,7 +3076,6 @@
         "@radix-ui/react-slot@^1.2.3",
         "@radix-ui/react-switch@^1.1.0",
         "@radix-ui/react-tooltip@^1.2.7",
-        "@tanstack/react-query@^5.56.2",
         "@tanstack/react-table@^8.21.3",
         "class-variance-authority@^0.7.1",
         "clsx@^2.1.1",
@@ -3044,6 +3255,11 @@
           "target": "hooks/shared/use-error-handler.ts"
         },
         {
+          "path": "src/hooks/shared/use-telemetry.ts",
+          "type": "registry:component",
+          "target": "hooks/shared/use-telemetry.ts"
+        },
+        {
           "path": "src/hooks/shared/use-theme.ts",
           "type": "registry:component",
           "target": "hooks/shared/use-theme.ts"
@@ -3082,6 +3298,11 @@
           "path": "src/providers/spa-provider.tsx",
           "type": "registry:component",
           "target": "providers/spa-provider.tsx"
+        },
+        {
+          "path": "src/providers/telemetry-provider.tsx",
+          "type": "registry:component",
+          "target": "providers/telemetry-provider.tsx"
         },
         {
           "path": "src/providers/theme-provider.tsx",
@@ -3134,9 +3355,24 @@
           "target": "types/toast-types.ts"
         },
         {
+          "path": "src/lib/constants/telemetry-constants.ts",
+          "type": "registry:component",
+          "target": "lib/constants/telemetry-constants.ts"
+        },
+        {
           "path": "src/lib/utils.ts",
           "type": "registry:component",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "src/lib/utils/shared/css-detection.ts",
+          "type": "registry:component",
+          "target": "lib/utils/shared/css-detection.ts"
+        },
+        {
+          "path": "src/lib/utils/tanstack-compat.ts",
+          "type": "registry:component",
+          "target": "lib/utils/tanstack-compat.ts"
         },
         {
           "path": "src/styles/globals.css",
